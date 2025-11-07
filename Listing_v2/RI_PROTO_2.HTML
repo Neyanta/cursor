@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub • Guest Directions — Ultra‑Simplified Prototype</title>
+  <style>
+    :root{
+      --bg:#ffffff;--ink:#111827;--ink2:#374151;--muted:#6b7280;--line:#e5e7eb;
+      --brand:#7c3aed;--brand-50:#f5f3ff;--brand-600:#6d28d9;--success:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:#fff;color:var(--ink)}
+    main{max-width:1040px;margin:0 auto;padding:24px}
+
+    .page-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .crumb{font-size:12px;color:var(--muted)}
+    h1{font-size:20px;margin:2px 0 0}
+    .save{font-size:12px;color:var(--muted)}
+
+    .card{border:1px solid var(--line);border-radius:14px;background:#fff;margin:14px 0;overflow:hidden}
+    .card-hd{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line);cursor:pointer}
+    .num{height:22px;width:22px;border-radius:999px;background:var(--brand-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+    .card-hd h3{margin:0;font-size:16px}
+    .done{margin-left:auto;font-size:12px;color:var(--success)}
+    .card-bd{padding:16px}
+
+    .row-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .row-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .field{margin:10px 0}
+    label{display:block;font-weight:600;font-size:13px;margin-bottom:6px;color:var(--ink2)}
+    input[type="text"],input[type="url"],input[type="tel"],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px}
+    textarea{min-height:88px;resize:vertical}
+
+    .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:8px 12px;border-radius:999px;cursor:pointer;margin-right:8px}
+    .chip input{display:none}
+    .chip.active{border-color:var(--brand-600);background:var(--brand-50);color:var(--brand-600)}
+
+    .point{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+    .point header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+    .pt-actions .btn{margin-left:6px}
+
+    .order{border:1px dashed var(--line);border-radius:10px;padding:10px;background:#fafaff;margin-top:8px}
+    .order .row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;margin-bottom:8px}
+
+    .tag{font-size:12px;color:var(--muted);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:#fafafa}
+
+    .btn{appearance:none;border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:10px;font-size:14px;cursor:pointer}
+    .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+    .btn.icon{padding:6px 8px}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .footer{position:sticky;bottom:0;background:linear-gradient(180deg, rgba(255,255,255,.55), #fff 45%);border-top:1px solid var(--line);padding:12px 16px;margin-top:18px;display:flex;justify-content:space-between;align-items:center}
+
+    .preview{border:1px solid var(--line);border-radius:12px;padding:14px}
+    .preview h4{margin:0 0 6px}
+    .divider{height:1px;background:var(--line);margin:12px 0}
+
+    .hidden{display:none}
+  </style>
+</head>
+<body>
+  <main>
+    <div class="page-hd">
+      <div>
+        <div class="crumb">Spanish Tour ▸ Setup ▸ Guest directions</div>
+        <h1>Guest directions</h1>
+      </div>
+      <div class="save" id="save">All changes saved ✓</div>
+    </div>
+
+    <!-- Section 1: Meeting points -->
+    <section class="card" id="sec-1">
+      <div class="card-hd" data-toggle="1">
+        <div class="num">1</div>
+        <h3>Meeting points</h3>
+        <span class="tag" id="ptCount">0 points</span>
+        <span class="done hidden" id="done-1">✓ Completed</span>
+      </div>
+      <div class="card-bd" id="bd-1">
+        <div id="points"></div>
+        <button class="btn" id="addPoint">＋ Add another point</button>
+
+        <div class="field hidden" id="orderQ">
+          <label>Do guests need to visit these points in a specific order?</label>
+          <label class="chip" data-order="yes"><input type="radio" name="order"/>Yes</label>
+          <label class="chip" data-order="no"><input type="radio" name="order"/>No</label>
+        </div>
+
+        <div class="order hidden" id="orderBox">
+          <div class="tag">Reorder points</div>
+          <div id="orderList"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Guest requirements -->
+    <section class="card" id="sec-2">
+      <div class="card-hd" data-toggle="2">
+        <div class="num">2</div>
+        <h3>Guest requirements</h3>
+        <span class="done hidden" id="done-2">✓ Completed</span>
+      </div>
+      <div class="card-bd" id="bd-2">
+        <div class="row-2">
+          <div class="field">
+            <label>How early should guests arrive?</label>
+            <input type="text" id="arrive" placeholder="e.g., 10 minutes before" />
+          </div>
+          <div class="field">
+            <label>Do guests need a government ID?</label>
+            <label class="chip" data-id="yes"><input type="radio" name="idreq"/>Yes</label>
+            <label class="chip" data-id="no"><input type="radio" name="idreq"/>No</label>
+          </div>
+        </div>
+        <div class="row-2">
+          <div class="field">
+            <label>Contact information (phone)</label>
+            <input type="tel" id="phone" placeholder="Enter phone number" />
+          </div>
+          <div class="field">
+            <label>Anything else guests should know?</label>
+            <input type="text" id="notes" placeholder="e.g., Wear comfortable shoes" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Preview voucher -->
+    <section class="card" id="sec-3">
+      <div class="card-hd" data-toggle="3">
+        <div class="num">3</div>
+        <h3>Preview voucher</h3>
+      </div>
+      <div class="card-bd" id="bd-3">
+        <div class="preview" id="preview">
+          <h4>Voucher preview</h4>
+          <div id="previewPts"></div>
+          <div class="divider"></div>
+          <div id="previewReq"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sticky footer: Back / Continue only -->
+    <div class="footer">
+      <div class="crumb">Sections auto‑save</div>
+      <div>
+        <button class="btn" id="backBtn" disabled>Back</button>
+        <button class="btn primary" id="nextBtn" disabled>Continue</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+    const state = {
+      step: 1,
+      points: [], // {id,address,address2,city,country,pincode,landmark,map,who,how,photos}
+      orderRequired: null,
+      arrive: '',
+      idRequired: null,
+      phone: '',
+      notes: ''
+    };
+
+    function save(){$('#save').textContent='Saving…';clearTimeout(window.__t);window.__t=setTimeout(()=>{$('#save').textContent='All changes saved ✓';render();},400)}
+
+    function setStep(n){ state.step = n; render(); scrollIntoView('#sec-'+n); }
+    function scrollIntoView(sel){ const el = $(sel); el && el.scrollIntoView({behavior:'smooth', block:'start'}); }
+
+    function addPoint(){
+      const id = Date.now()+Math.random().toString(16).slice(2);
+      state.points.push({id,address:'',address2:'',city:'',country:'',pincode:'',landmark:'',map:'',who:'',how:'',photos:false});
+      save();
+    }
+    function removePoint(id){ state.points = state.points.filter(p=>p.id!==id); if(state.points.length<2) state.orderRequired=null; save(); }
+    function movePoint(id,dir){ const i=state.points.findIndex(p=>p.id===id); const j=i+dir; if(j<0||j>=state.points.length) return; [state.points[i],state.points[j]]=[state.points[j],state.points[i]]; save(); }
+
+    function renderPoints(){
+      const box = $('#points'); box.innerHTML='';
+      state.points.forEach((p,idx)=>{
+        const el = document.createElement('div'); el.className='point';
+        el.innerHTML = `
+          <header>
+            <div><strong>Point ${idx+1}</strong></div>
+            <div class="pt-actions">
+              <button class="btn icon" ${idx===0?'disabled':''} data-up>↑</button>
+              <button class="btn icon" ${idx===state.points.length-1?'disabled':''} data-down>↓</button>
+              <button class="btn icon" data-del>✕</button>
+            </div>
+          </header>
+          <div class="field"><label>Address *</label><input data-k="address" type="text" placeholder="Enter full address" value="${p.address}"></div>
+          <div class="field"><label>Address line 2</label><input data-k="address2" type="text" placeholder="e.g., near main entrance" value="${p.address2}"></div>
+          <div class="row-3">
+            <div class="field"><label>City</label><input data-k="city" type="text" value="${p.city}"></div>
+            <div class="field"><label>Country</label><input data-k="country" type="text" value="${p.country}"></div>
+            <div class="field"><label>Pincode</label><input data-k="pincode" type="text" value="${p.pincode}"></div>
+          </div>
+          <div class="field"><label>Landmark / Building</label><input data-k="landmark" type="text" value="${p.landmark}" placeholder="e.g., Ticket counter"></div>
+          <div class="field"><label>Google map link</label><input data-k="map" type="url" placeholder="https://maps.app…" value="${p.map}"></div>
+          <div class="row-2">
+            <div class="field"><label>Who will guests meet here? *</label>
+              <select data-k="who">
+                <option ${p.who===''?'selected':''} value="">Select</option>
+                <option ${p.who==='Guide'?'selected':''}>Guide</option>
+                <option ${p.who==='Host'?'selected':''}>Host</option>
+                <option ${p.who==='Counter staff'?'selected':''}>Counter staff</option>
+              </select>
+            </div>
+            <div class="field"><label>How to identify / meet this person?</label>
+              <input data-k="how" type="text" placeholder="e.g., red jacket, black cap" value="${p.how}">
+            </div>
+          </div>
+          <div class="field">
+            <label>Photos of the starting point</label>
+            <label class="chip ${p.photos?'active':''}" data-photo="yes">Yes</label>
+            <label class="chip ${!p.photos?'active':''}" data-photo="no">No</label>
+          </div>`;
+
+        el.querySelectorAll('[data-k]').forEach(inp=>{
+          inp.addEventListener('input',()=>{ p[inp.dataset.k]=inp.value; save(); });
+        });
+        el.querySelector('[data-del]').addEventListener('click',()=>removePoint(p.id));
+        el.querySelector('[data-up]').addEventListener('click',()=>movePoint(p.id,-1));
+        el.querySelector('[data-down]').addEventListener('click',()=>movePoint(p.id,1));
+        el.querySelectorAll('[data-photo]').forEach(c=>c.addEventListener('click',()=>{ p.photos = c.dataset.photo==='yes'; el.querySelectorAll('[data-photo]').forEach(x=>x.classList.remove('active')); c.classList.add('active'); save(); }));
+        box.appendChild(el);
+      });
+
+      $('#ptCount').textContent = `${state.points.length} point${state.points.length!==1?'s':''}`;
+
+      // Show order question if 2+
+      $('#orderQ').classList.toggle('hidden', state.points.length<2);
+      renderOrder();
+    }
+
+    function renderOrder(){
+      const show = state.points.length>=2 && state.orderRequired===true;
+      $('#orderBox').classList.toggle('hidden', !show);
+      const list = $('#orderList'); list.innerHTML='';
+      if(!show) return;
+      state.points.forEach((p,i)=>{
+        const row = document.createElement('div'); row.className='row';
+        row.innerHTML = `<div>${i+1}. ${p.address||('Point '+(i+1))}</div>
+                         <div>
+                           <button class="btn icon" ${i===0?'disabled':''} data-up>↑</button>
+                           <button class="btn icon" ${i===state.points.length-1?'disabled':''} data-down>↓</button>
+                         </div>`;
+        row.querySelector('[data-up]')?.addEventListener('click',()=>movePoint(p.id,-1));
+        row.querySelector('[data-down]')?.addEventListener('click',()=>movePoint(p.id,1));
+        list.appendChild(row);
+      });
+    }
+
+    function hydratePreview(){
+      const pts = state.points.map((p,i)=>`
+        <div style="margin:6px 0;padding:8px;border:1px solid var(--line);border-radius:8px">
+          <strong>Point ${i+1}</strong><br/>
+          ${p.address || ''} ${p.address2?(', '+p.address2):''}<br/>
+          ${[p.city,p.country,p.pincode].filter(Boolean).join(', ')}<br/>
+          ${p.landmark?('<em>Landmark:</em> '+p.landmark+'<br/>'):''}
+          ${p.map?('<em>Map:</em> '+p.map+'<br/>'):''}
+          <em>Meet:</em> ${p.who || '—'} ${p.how?('— '+p.how):''}
+        </div>
+      `).join('');
+
+      const req = `
+        <div><strong>Arrive:</strong> ${state.arrive||'—'}</div>
+        <div><strong>Govt ID:</strong> ${state.idRequired===null?'—':(state.idRequired?'Required':'Not required')}</div>
+        <div><strong>Contact:</strong> ${state.phone||'—'}</div>
+        ${state.notes?(`<div><strong>Notes:</strong> ${state.notes}</div>`):''}
+      `;
+
+      $('#previewPts').innerHTML = pts || '<div class="tag">No points added yet</div>';
+      $('#previewReq').innerHTML = req;
+    }
+
+    function validate1(){
+      const ok = state.points.length>0 && state.points.every(p=>p.address.trim() && p.who);
+      const orderOK = state.points.length<2 || state.orderRequired!==null;
+      $('#done-1').classList.toggle('hidden', !(ok && orderOK));
+      return ok && orderOK;
+    }
+    function validate2(){
+      const idOK = state.idRequired!==null; // arrival/phone/notes optional in this simplified spec
+      $('#done-2').classList.toggle('hidden', !idOK);
+      return idOK;
+    }
+
+    function render(){
+      // Expand/collapse by step
+      [1,2,3].forEach(n=>{
+        $('#bd-'+n).style.display = (state.step===n)?'block':'none';
+      });
+      $('#backBtn').disabled = state.step===1;
+      $('#nextBtn').textContent = state.step===3? 'Continue' : 'Continue';
+
+      renderPoints();
+      hydratePreview();
+
+      // Update chips
+      $$('[data-order]').forEach(c=>c.classList.toggle('active', (state.orderRequired===true && c.dataset.order==='yes') || (state.orderRequired===false && c.dataset.order==='no')));
+      $$('[data-id]').forEach(c=>c.classList.toggle('active', (state.idRequired===true && c.dataset.id==='yes') || (state.idRequired===false && c.dataset.id==='no')));
+
+      // Enable next if current valid
+      const valid = state.step===1? validate1() : state.step===2? validate2() : true;
+      $('#nextBtn').disabled = !valid;
+
+      // counters
+      $('#ptCount').textContent = `${state.points.length} point${state.points.length!==1?'s':''}`;
+    }
+
+    // Listeners
+    $('#addPoint').addEventListener('click', addPoint);
+
+    $$('[data-order]').forEach(c=>c.addEventListener('click',()=>{ state.orderRequired = c.dataset.order==='yes'; save(); }));
+    $$('[data-id]').forEach(c=>c.addEventListener('click',()=>{ state.idRequired = c.dataset.id==='yes'; save(); }));
+
+    $('#arrive').addEventListener('input',e=>{ state.arrive=e.target.value; save(); });
+    $('#phone').addEventListener('input',e=>{ state.phone=e.target.value; save(); });
+    $('#notes').addEventListener('input',e=>{ state.notes=e.target.value; save(); });
+
+    // Footer nav
+    $('#nextBtn').addEventListener('click',()=>{
+      if(state.step<3){ state.step += 1; render(); scrollIntoView('#sec-'+state.step); }
+      else { alert('Proceeding to the next step of the listing flow… (prototype)'); }
+    });
+    $('#backBtn').addEventListener('click',()=>{ if(state.step>1){ state.step -= 1; render(); scrollIntoView('#sec-'+state.step); } });
+
+    // Toggle expand/collapse by clicking headers
+    $$('[data-toggle]').forEach(h=>h.addEventListener('click',()=>{ state.step = +h.dataset.toggle; render(); }));
+
+    // Seed with one point for guidance
+    addPoint();
+    render();
+
+    // Order chips visibility controller
+    const orderQ = $('#orderQ');
+    const observer = new MutationObserver(()=>{
+      orderQ.classList.toggle('hidden', state.points.length < 2);
+    });
+    observer.observe($('#points'), {childList:true});
+  </script>
+</body>
+</html>

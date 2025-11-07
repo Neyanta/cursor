@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>360 Listing Wizard</title>
+<style>
+  body {
+    font-family: "Inter", sans-serif;
+    background: #f7f8fa;
+    margin: 0;
+    color: #222;
+  }
+  .wizard-container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  header {
+    padding: 20px 30px;
+    background: #f0f4ff;
+    border-bottom: 1px solid #e0e6f2;
+  }
+  header h2 {
+    margin: 0;
+    font-size: 20px;
+  }
+  .progress-bar {
+    display: flex;
+    margin-top: 10px;
+    gap: 10px;
+  }
+  .step {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 13px;
+    background: #e5e9f2;
+    color: #555;
+  }
+  .step.active {
+    background: #4c6fff;
+    color: white;
+    font-weight: 600;
+  }
+  form {
+    padding: 30px;
+  }
+  .section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .section.active { display: block; }
+  .field {
+    margin-bottom: 20px;
+  }
+  .field label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  .status {
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  .prefilled { color: #2b9348; }
+  .missing { color: #d00000; }
+  .review { color: #ffb703; }
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  button {
+    background: #4c6fff;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wizard-container">
+  <header>
+    <h2>360 Listing Wizard</h2>
+    <div class="progress-bar">
+      <div class="step active" id="step1">Product</div>
+      <div class="step" id="step2">Experience</div>
+      <div class="step" id="step3">Options</div>
+      <div class="step" id="step4">Schedules</div>
+    </div>
+  </header>
+
+  <form id="wizardForm">
+
+    <!-- STEP 1 -->
+    <div class="section active" id="section1">
+      <h3>Product Code</h3>
+      <div class="field">
+        <label>Product Code <span class="status missing">Missing</span></label>
+        <input type="text" placeholder="Enter Product Code">
+      </div>
+      <div class="field">
+        <label>RMS <span class="status prefilled">Auto-detected</span></label>
+        <input type="text" value="Bokun" disabled>
+      </div>
+      <div class="field">
+        <label>Experience Preview <span class="status prefilled">Prefilled</span></label>
+        <input type="text" value="Eiffel Tower Guided Tour" disabled>
+      </div>
+      <div class="field">
+        <label>Commission % <span class="status review">Review</span></label>
+        <input type="number" value="20">
+      </div>
+      <div class="buttons">
+        <button type="button" onclick="nextSection(2)">Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="section" id="section2">
+      <h3>Experience Details</h3>
+      <div class="field">
+        <label>Name your experience <span class="status prefilled">Prefilled</span></label>
+        <input type="text" value="Eiffel Tower Guided Tour">
+      </div>
+      <div class="field">
+        <label>City <span class="status prefilled">Prefilled</span></label>
+        <input type="text" value="Paris">
+      </div>
+      <div class="field">
+        <label>Website Link <span class="status missing">Missing</span></label>
+        <input type="url" placeholder="Add link">
+      </div>
+      <div class="field">
+        <label>Description <span class="status review">Review</span></label>
+        <textarea rows="4">A memorable experience with a certified guide...</textarea>
+      </div>
+      <div class="buttons">
+        <button type="button" onclick="prevSection(1)">← Back</button>
+        <button type="button" onclick="nextSection(3)">Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="section" id="section3">
+      <h3>Option Details (Variant 1)</h3>
+      <div class="field">
+        <label>Option Name <span class="status prefilled">Prefilled</span></label>
+        <input type="text" value="Skip-the-line Guided Tour">
+      </div>
+      <div class="field">
+        <label>Inclusions <span class="status prefilled">Prefilled</span></label>
+        <textarea rows="3">Guided entry, elevator access, small group</textarea>
+      </div>
+      <div class="field">
+        <label>Exclusions <span class="status missing">Missing</span></label>
+        <textarea rows="3" placeholder="Add exclusions"></textarea>
+      </div>
+      <div class="buttons">
+        <button type="button" onclick="prevSection(2)">← Back</button>
+        <button type="button" onclick="nextSection(4)">Next →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="section" id="section4">
+      <h3>Schedules</h3>
+      <div class="field">
+        <label>Schedule Name <span class="status missing">Missing</span></label>
+        <input type="text" placeholder="Enter schedule name">
+      </div>
+      <div class="field">
+        <label>Date Range <span class="status review">Review</span></label>
+        <input type="text" value="Nov 1 - Dec 31, 2025">
+      </div>
+      <div class="field">
+        <label>Retail Price <span class="status prefilled">Prefilled</span></label>
+        <input type="number" value="45.00">
+      </div>
+      <div class="buttons">
+        <button type="button" onclick="prevSection(3)">← Back</button>
+        <button type="submit">Submit</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  function nextSection(n) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section' + n).classList.add('active');
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+  }
+  function prevSection(n) {
+    nextSection(n);
+  }
+</script>
+
+</body>
+</html>

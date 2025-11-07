@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Add Listing Wizard – Managed / Unmanaged Mock</title>
+<style>
+  body{font-family:Inter,Arial,sans-serif;background:#f9fafb;color:#222;margin:0;padding:0;}
+  .wizard-container{max-width:600px;margin:50px auto;background:#fff;border-radius:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.06);padding:30px;}
+  h2{margin-bottom:10px;font-size:22px;} p{color:#555;margin-top:0;margin-bottom:25px;}
+  .step{display:none;animation:fadeIn .3s ease-in-out;} .step.active{display:block;}
+  label{display:block;margin-bottom:6px;font-weight:500;}
+  input,select{width:100%;padding:10px 12px;border-radius:8px;border:1px solid #ccc;
+    margin-bottom:20px;font-size:15px;}
+  button{background:#0072ff;color:#fff;padding:10px 20px;border-radius:8px;border:none;
+    font-size:15px;cursor:pointer;}
+  button.secondary{background:transparent;color:#0072ff;border:1px solid #0072ff;}
+  .btn-row{display:flex;justify-content:flex-end;gap:12px;margin-top:10px;}
+  .result-box{background:#f1f5ff;border-left:3px solid #0072ff;padding:12px;margin-bottom:20px;
+    border-radius:6px;color:#333;}
+  .warn{border-left-color:#f59e0b;background:#fffbeb;}
+  .thumbnail{width:100%;max-height:180px;object-fit:cover;border-radius:8px;margin-bottom:10px;}
+  .loader{border:3px solid #f3f3f3;border-top:3px solid #0072ff;border-radius:50%;
+    width:24px;height:24px;animation:spin 1s linear infinite;margin:auto;}
+  .center{text-align:center;} .hidden{display:none!important;}
+  @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+<div class="wizard-container">
+<form id="wizardForm">
+  <!-- Step 1 -->
+  <div class="step active" id="step1">
+    <h2>Step 1 – Enter Product Code</h2>
+    <p>We’ll verify your product and fetch its details from your connected system.</p>
+    <label>Product Code</label>
+    <input type="text" id="productCode" placeholder="e.g., BOK12345" required/>
+    <div class="center hidden" id="loader1">
+      <div class="loader"></div>
+      <p>Checking our catalog to see if this product already exists on Headout…</p>
+    </div>
+    <div id="productPreview" class="hidden">
+      <img id="thumb" class="thumbnail" src="" alt="Product Thumbnail"/>
+      <div class="result-box">
+        <b>Product Name:</b> <span id="pName"></span><br/><br/>
+        <b>Options:</b>
+        <ul id="pOptions" style="margin:6px 0 0 18px;"></ul>
+      </div>
+    </div>
+    <div class="btn-row"><button type="button" id="continueToStep2">Continue</button></div>
+  </div>
+
+  <!-- Step 2 -->
+  <div class="step" id="step2">
+    <h2>Step 2 – Basic Details</h2>
+    <p>We’ve pre-filled what we could. Complete missing fields; we’ll link it automatically.</p>
+
+    <label>Product Name</label><input type="text" id="nameField" required/>
+    <label>City</label>
+    <select id="cityField" required>
+      <option value="">Select city</option><option>Paris</option><option>London</option><option>Rome</option>
+    </select>
+    <label>Sub-category (demo flows)</label>
+    <select id="subField">
+      <option value="">Select sub-category</option>
+      <option value="Landmarks">Landmarks – direct match</option>
+      <option value="Hop-On Hop-Off">Hop-On Hop-Off – multiple</option>
+      <option value="Transfers">Transfers – no match</option>
+    </select>
+
+    <div id="ceArea">
+      <div class="center hidden" id="ceLoader" style="margin-top:10px;">
+        <div class="loader"></div>
+        <p>Checking our catalog to see if there’s an existing match…</p>
+      </div>
+
+      <div id="ceMultiple" class="result-box warn hidden">
+        <div style="margin-bottom:8px;">
+          We found multiple existing experiences similar to your product.  
+          Please choose the most relevant one:
+        </div>
+        <select id="matchSelect" style="margin-bottom:0;">
+          <option>Eiffel Tower Tickets</option>
+          <option>Paris Landmarks Pass</option>
+          <option>City Highlights Combo Tour</option>
+        </select>
+      </div>
+
+      <div id="commissionBox" class="result-box hidden">
+        <label>Commission (%)</label>
+        <input type="number" id="commissionInput" placeholder="Enter commission rate" style="margin-bottom:0;"/>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="secondary" onclick="prevStep(1)">Back</button>
+      <button type="button" id="continueToStep3">Continue</button>
+    </div>
+  </div>
+
+  <!-- Step 3 -->
+  <div class="step" id="step3">
+    <h2>Step 3 – Creating Listing</h2>
+    <div id="dynamicMsg">
+      <p>Your listing is being set up using data from your connected system.</p>
+    </div>
+    <div class="center" style="margin:40px 0;">
+      <div class="loader" style="width:40px;height:40px;border-width:4px;"></div>
+      <p id="loaderMsg">Fetching details and pre-filling your listing…</p>
+    </div>
+    <div class="btn-row" style="justify-content:center;">
+      <button type="submit">Finish & View Listing</button>
+    </div>
+  </div>
+</form>
+</div>
+
+<script>
+function nextStep(n){document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');}
+function prevStep(n){nextStep(n);}
+function show(el){el.classList.remove('hidden');}
+function hide(el){el.classList.add('hidden');}
+
+// --- Step 1 ---
+document.getElementById('continueToStep2').addEventListener('click',()=>{
+  const code=document.getElementById('productCode').value.trim();
+  if(!code){alert('Please enter a product code');return;}
+  const loader1=document.getElementById('loader1');
+  const preview=document.getElementById('productPreview');
+  hide(preview);show(loader1);
+  setTimeout(()=>{
+    hide(loader1);
+    document.getElementById('thumb').src='https://source.unsplash.com/600x400/?landmark';
+    document.getElementById('pName').textContent='Eiffel Tower Guided Tour';
+    document.getElementById('pOptions').innerHTML='<li>Summit Access</li><li>2-hr Tour</li>';
+    show(preview);
+    document.getElementById('nameField').value='Eiffel Tower Guided Tour';
+    document.getElementById('cityField').value='Paris';
+  },900);
+  setTimeout(()=>nextStep(2),1300);
+});
+
+// --- Step 2 ---
+const cityField=document.getElementById('cityField');
+const subField=document.getElementById('subField');
+const ceLoader=document.getElementById('ceLoader');
+const ceMultiple=document.getElementById('ceMultiple');
+const commissionBox=document.getElementById('commissionBox');
+let ceType='none'; // direct, multiple, none
+let isManaged=true;
+
+function runCECheck(){
+  const city=cityField.value,sub=subField.value;
+  hide(ceMultiple);hide(commissionBox);
+  if(!city||!sub)return;
+
+  show(ceLoader);
+  setTimeout(()=>{
+    hide(ceLoader);
+    if(sub==='Landmarks'){ // direct
+      ceType='direct';
+      isManaged=Math.random()>0.5; // randomly mock
+      if(!isManaged){show(commissionBox);}
+    }else if(sub==='Hop-On Hop-Off'){ // multiple
+      ceType='multiple';isManaged=true;show(ceMultiple);
+    }else{ // no match
+      ceType='none';isManaged=false;show(commissionBox);
+    }
+  },1000);
+}
+cityField.addEventListener('change',runCECheck);
+subField.addEventListener('change',runCECheck);
+
+document.getElementById('continueToStep3').addEventListener('click',()=>{
+  nextStep(3);
+  const dynamic=document.getElementById('dynamicMsg');
+  const city=cityField.value,sub=subField.value;
+  if(ceType==='direct'){
+    dynamic.innerHTML=`<p>✅ We found a perfect match in our catalog: <b>${sub} – ${city}</b>.</p>`;
+  }else if(ceType==='multiple'){
+    dynamic.innerHTML=`<p>✅ Your product has been linked to the selected catalog entry on Headout.</p>`;
+  }else{
+    dynamic.innerHTML=`<p>🆕 We’re creating a new listing for <b>${sub} – ${city}</b> in our catalog.</p>`;
+  }
+});
+
+document.getElementById('wizardForm').addEventListener('submit',e=>{
+  e.preventDefault();alert('🎉 Listing created successfully!');
+});
+</script>
+</body>
+</html>

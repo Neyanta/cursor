@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Effective Date • TID Cards + Vendor Breakdown</title>
+<style>
+  :root{
+    --bg:#F8FAFC; --card:#FFFFFF; --muted:#6B7280; --text:#0F172A; --border:#E5E7EB;
+    --primary:#8000FF; --sp:#2563EB; --ho:#A855F7; --ok:#16A34A;
+    --chip:#F3F4F6; --cardSoft:#FBF7FF;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+       font-family:ui-sans-serif,-apple-system,Segoe UI,Roboto,Helvetica,Arial;line-height:1.5}
+  .container{max-width:1100px;margin:24px auto;padding:0 16px}
+  .topbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+  .title{font-weight:800;font-size:22px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .controls{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+  .select,.btn{border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:#fff;cursor:pointer}
+  /* Date slider */
+  .slider-wrap{display:flex;align-items:center;gap:8px;margin:10px 0 18px}
+  .arrow{border:1px solid var(--border);background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer}
+  .dates{display:flex;gap:8px;overflow:auto;scrollbar-width:none}
+  .dates::-webkit-scrollbar{display:none}
+  .chip{white-space:nowrap;border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 12px;cursor:pointer}
+  .chip.active{border-color:var(--primary);color:var(--primary);background:#F4EBFF}
+  /* Cards */
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.04)}
+  .tid-card{margin-bottom:12px;overflow:hidden}
+  .tid-head{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:14px 16px;cursor:pointer}
+  .tid-title{font-weight:800}
+  .tid-sub{color:var(--muted);font-size:13px}
+  .badge{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);padding:4px 8px;border-radius:999px;background:#fff;font-size:12px;font-weight:700}
+  .badge.sp{color:var(--sp);background:#EFF6FF;border-color:#DBEAFE}
+  .badge.ho{color:var(--ho);background:#F5F3FF;border-color:#E9D5FF}
+  .badge.tot{color:var(--primary);background:#F4EBFF;border-color:#E9D5FF}
+  .expand{display:none;border-top:1px dashed var(--border);background:var(--cardSoft)}
+  .expand-inner{padding:12px 16px}
+  table{width:100%;border-collapse:separate;border-spacing:0}
+  thead th{background:transparent;padding:10px 8px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left}
+  tbody td{padding:12px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono',monospace;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;border:1px solid var(--border);border-radius:999px;background:#fff;padding:4px 8px;font-weight:700;font-size:12px}
+  .id-link{display:block;text-decoration:none;font-size:11px;margin-top:4px}
+  .id-link.sp{color:var(--sp)}
+  .id-link.ho{color:var(--ho)}
+  .winner{display:inline-flex;align-items:center;gap:6px;border:1px solid #E9D5FF;background:#F4EBFF;color:var(--primary);padding:6px 10px;border-radius:999px;font-weight:800}
+  .hint{color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="topbar">
+    <div>
+      <div class="title">Effective Date View</div>
+      <!-- <div class="sub">Pick a booking date → see TIDs → expand a TID to compare vendors and the winning stack (SP + HO). </div> -->
+    </div>
+    <div class="controls">
+      <select id="experienceSelect" class="select"></select>
+      <button class="btn" id="goConfigs" style="padding: 15px; background-color: #8000FF; color: #fff;" onclick="window.location.href='file:///Users/neyantasharma/Downloads/internal-offers.html'">All offers</button>
+
+    </div>
+  </div>
+
+  <!-- Date slider -->
+  <div class="slider-wrap card" style="padding:10px 12px;">
+    <button class="arrow" id="prevBtn">◂</button>
+    <div class="dates" id="dateChips"></div>
+    <button class="arrow" id="nextBtn">▸</button>
+  </div>
+
+  <!-- TID cards -->
+  <div id="tidCards"></div>
+</div>
+
+<script>
+// ---------- MOCK DATA ----------
+const DATA = {
+  "Eiffel Tower Guided Tour": {
+    // booking date -> array of TIDs (parents)
+    "2025-10-15": ["TID-101","TID-102","TID-103"],
+    "2025-10-16": ["TID-101"],
+    "2025-10-17": ["TID-102"]
+  },
+  "Louvre Skip-the-Line": {
+    "2025-10-17": ["TID-209"]
+  }
+};
+
+// Vendor detail (lazy-expanded per TID + date)
+const VENDOR_DATA = {
+  "Eiffel Tower Guided Tour": {
+    "2025-10-15": {
+      "TID-101": [
+        { vendor:"Vendor A", slots:["10:00","11:00"], sp:5, ho:8, spOffer:"#101", hoOffer:"#205",
+          expDates:{ sp:"Oct 10–31", ho:"Oct 15–Nov 15" } },
+        { vendor:"Vendor B", slots:["10:00"], sp:6, ho:6, spOffer:"#555", hoOffer:"#342",
+          expDates:{ sp:"Oct 8–28", ho:"Oct 20–Nov 12" } },
+          { vendor:"Vendor C", slots:"all slots", sp:15, ho:6, spOffer:"#565", hoOffer:"#1122",
+          expDates:{ sp:"Oct 8–28", ho:"Oct 20–Nov 12" } }
+      ],
+      "TID-102": [
+        { vendor:"Vendor A", slots:["12:00"], sp:10, ho:5, spOffer:"#101", hoOffer:"#342",
+          expDates:{ sp:"Oct 10–31", ho:"Nov 1–30" } },
+        { vendor:"Vendor C", slots:["12:00","14:00"], sp:9, ho:3, spOffer:"#818", hoOffer:"#205",
+          expDates:{ sp:"Oct 9–30", ho:"Oct 15–Nov 15" } }
+      ],
+      "TID-103": [
+        { vendor:"Vendor D", slots:"All slots", sp:0, ho:5, spOffer:"—", hoOffer:"#205",
+          expDates:{ sp:"—", ho:"Oct 15–Nov 15" } }
+      ]
+    },
+    "2025-10-16": {
+      "TID-101": [
+        { vendor:"Vendor A", slots:"10:00", sp:0, ho:8, spOffer:"—", hoOffer:"#205",
+          expDates:{ sp:"—", ho:"Oct 15–Nov 15" } }
+      ]
+    },
+    "2025-10-17": {
+      "TID-102": [
+        { vendor:"Vendor Z", slots:["12:00"], sp:7, ho:4, spOffer:"#900", hoOffer:"#701",
+          expDates:{ sp:"Oct 8–31", ho:"Oct 15–Nov 15" } }
+      ]
+    }
+  }
+};
+
+// ---------- ELEMENTS ----------
+const expSel  = document.getElementById('experienceSelect');
+const dateChips = document.getElementById('dateChips');
+const tidCards  = document.getElementById('tidCards');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+// Populate experience selector
+Object.keys(DATA).forEach(exp=>{
+  const o=document.createElement('option'); o.value=exp; o.textContent=exp; expSel.appendChild(o);
+});
+let activeExp = expSel.value || Object.keys(DATA)[0];
+expSel.value = activeExp;
+
+let activeDate = null;
+const cache = {}; // cache[exp|date|tid] = vendorRows
+
+function fmtDate(iso){
+  return new Date(iso+'T00:00:00').toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short', year:'numeric'});
+}
+
+// ---------- DATE SLIDER ----------
+let datesList = [];
+function renderDateSlider(){
+  dateChips.innerHTML='';
+  datesList = Object.keys(DATA[activeExp]||{}).sort();
+  if(!activeDate) activeDate = datesList[0];
+
+  datesList.forEach(d=>{
+    const chip=document.createElement('button');
+    chip.className='chip'+(d===activeDate?' active':'');
+    chip.textContent = fmtDate(d);
+    chip.dataset.date = d;
+    chip.addEventListener('click', ()=>{ activeDate=d; renderDateSlider(); renderTIDs(); });
+    dateChips.appendChild(chip);
+  });
+}
+prevBtn.addEventListener('click', ()=>{
+  const idx = datesList.indexOf(activeDate);
+  if(idx>0){ activeDate=datesList[idx-1]; renderDateSlider(); renderTIDs(); }
+});
+nextBtn.addEventListener('click', ()=>{
+  const idx = datesList.indexOf(activeDate);
+  if(idx<datesList.length-1){ activeDate=datesList[idx+1]; renderDateSlider(); renderTIDs(); }
+});
+
+// ---------- TID CARDS ----------
+function renderTIDs(){
+  tidCards.innerHTML='';
+  const tids = DATA[activeExp]?.[activeDate] || [];
+  if(tids.length===0){
+    tidCards.innerHTML = `<div class="card" style="padding:16px;color:var(--muted)">No TIDs for this date.</div>`;
+    return;
+  }
+  tids.forEach(tid=>{
+    const id = `${activeExp}|${activeDate}|${tid}`;
+    const card = document.createElement('div');
+    card.className = 'card tid-card';
+    card.innerHTML = `
+      <div class="tid-head" data-toggle="${id}">
+        <div>
+          <div class="tid-title">${tid}</div>
+
+        </div>
+        <div><span class="badge">Expand ▾</span></div>
+      </div>
+      <div class="expand" data-for="${id}">
+        <div class="expand-inner">
+          <div class="hint" style="margin-bottom:8px">Loading vendor details…</div>
+          <div class="table-wrap"></div>
+        </div>
+      </div>
+    `;
+    tidCards.appendChild(card);
+  });
+
+  // expand handlers
+  document.querySelectorAll('.tid-head').forEach(h=>{
+    h.addEventListener('click', async ()=>{
+      const id = h.getAttribute('data-toggle');
+      const panel = document.querySelector(`.expand[data-for="${id}"]`);
+      const open = panel.style.display === 'block';
+      // Collapse others for cleanliness
+      document.querySelectorAll('.expand').forEach(p=>p.style.display='none');
+      document.querySelectorAll('.tid-head .badge').forEach(b=>b.textContent='Expand ▾');
+      if(open){ panel.style.display='none'; return; }
+      panel.style.display='block';
+      h.querySelector('.badge').textContent = 'Collapse ▴';
+      // lazy render
+      if(!cache[id]){
+        const [exp,date,tid]=id.split('|');
+        await loadVendors(exp,date,tid,panel.querySelector('.table-wrap'),panel.querySelector('.hint'));
+      }
+    });
+  });
+}
+
+// Async load for vendor details
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+async function loadVendors(exp,date,tid, mount, hintEl){
+  hintEl.textContent = `Fetching vendors for ${tid}…`;
+  await delay(250);
+  const vendors = (VENDOR_DATA[exp] && VENDOR_DATA[exp][date] && VENDOR_DATA[exp][date][tid]) || [];
+  if(vendors.length===0){ hintEl.textContent = 'No vendors found.'; return; }
+
+  // Winner = max (sp + ho)
+  let winner=null, max=-1;
+  vendors.forEach(v=>{ const tot=v.sp+v.ho; if(tot>max){max=tot; winner=v.vendor;} });
+
+  // Build table
+  const tbl = document.createElement('table');
+  tbl.innerHTML = `
+    <thead>
+      <tr>
+        <th>Vendor</th>
+        <th>Slots</th>
+        <th>SP % </th>
+        <th>HO % </th>
+        <th>Total</th>
+        <th>Experience Dates</th>
+        <th>Applied</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  `;
+  const tb = tbl.querySelector('tbody');
+
+  vendors.forEach(v=>{
+    const total = (v.sp + v.ho) + '%';
+    const slots = Array.isArray(v.slots) ? v.slots.join(', ') : (v.slots || '—');
+    const applied = (v.vendor===winner) ? `<span class="winner">Winner</span>` : '—';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${v.vendor}</td>
+      <td class="mono">${slots}</td>
+      <td>
+        <span class="pill">${v.sp}%</span>
+        <a href="#" class="id-link sp">${v.spOffer}</a>
+      </td>
+      <td>
+        <span class="pill">${v.ho}%</span>
+        <a href="#" class="id-link ho">${v.hoOffer}</a>
+      </td>
+      <td><span class="badge tot">${total}</span></td>
+      <td class="mono">SP: ${v.expDates.sp} <br/> HO: ${v.expDates.ho}</td>
+      <td>${applied}</td>
+    `;
+    tb.appendChild(tr);
+  });
+
+  mount.innerHTML = '';
+  mount.appendChild(tbl);
+
+  const note = document.createElement('div');
+  note.style.marginTop='10px';
+  note.innerHTML = `<strong>Winning vendor:</strong> ${winner}`;
+  mount.appendChild(note);
+
+  hintEl.remove();
+  cache[`${exp}|${date}|${tid}`] = vendors;
+}
+
+// ---------- init ----------
+function init(){
+  activeExp = expSel.value;
+  renderDateSlider();
+  renderTIDs();
+}
+expSel.addEventListener('change', ()=>{ activeDate=null; init(); });
+init();
+</script>
+</body>
+</html>

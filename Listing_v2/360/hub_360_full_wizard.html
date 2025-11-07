@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hub 360 – Full Wizard Flow (Subtle Violet)</title>
+<style>
+  :root{
+    --accent:#800FFF; --text:#222; --muted:#666; --line:#EDEAF8; --bg:#FFFFFF; --panel:#FFFFFF;
+    --prefill:#F6F6F8; --ok:#27AE60; --warn:#F2A007; --bad:#E74C3C;
+    --radius:12px; --shadow:0 10px 28px rgba(24,16,64,0.06); --maxw:960px;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui,-apple-system,Segoe UI,Roboto,Arial,"Helvetica Neue",sans-serif}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:28px 18px 96px}
+  h1{font-size:22px;margin:10px 0 6px}
+  h2{font-size:16px;margin:16px 0 8px}
+  h3{font-size:14px;margin:12px 0 6px}
+  p.sub{color:var(--muted);margin:0 0 14px}
+  a{color:var(--accent);text-decoration:none}
+  .card{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius);padding:18px;margin:12px 0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .full{grid-column:1/-1}
+  label{display:flex;justify-content:space-between;align-items:center;margin:6px 0 6px;font-weight:700;color:#2A2A2A}
+  .req{font-size:11px;color:var(--bad);font-weight:800}
+  .opt{font-size:11px;color:var(--muted);font-weight:700}
+  input,select,textarea{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #DDD;border-radius:10px;font:inherit;background:#fff;transition:border-color .15s, box-shadow .15s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(128,15,255,.08)}
+  textarea{min-height:96px;resize:vertical}
+  .prefilled{background:var(--prefill)}
+  .missing{border-color:var(--accent)}
+  .fetchnote{font-size:11px;color:#8a8a8a;margin-top:6px}
+  .footer{display:flex;justify-content:flex-end;gap:10px;margin:18px 0}
+  .btn{border:1px solid var(--accent);background:#fff;color:var(--accent);padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{border-color:#DDD;color:#444}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .statusline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#CFC8E8;display:inline-block}
+  .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)} .dot.violet{background:var(--accent)}
+  .meter{height:6px;background:#F2F1F7;border-radius:999px;position:relative;overflow:hidden}
+  .meter i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);opacity:.35;border-radius:999px}
+  .mini{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#FAF9FE;color:#4d3a86;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}
+  .topnav{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line);z-index:5}
+  .topnav .wrap{padding:10px 18px}
+  .crumb{color:#7b7597;font-weight:700;font-size:12px}
+  .crumb b{color:#493a84}
+  /* Horizontal stepper (Options) */
+  .stepper{display:flex;gap:26px;justify-content:center;margin:24px 0 12px}
+  .snode{display:flex;align-items:center;gap:10px;color:#9A94B8;font-weight:700}
+  .snode i{width:10px;height:10px;border-radius:50%;border:2px solid #D9D4EC;display:inline-block}
+  .snode.active{color:#2A2A2A}
+  .snode.active i{border-color:var(--accent);background:var(--accent)}
+  .snode.done i{border-color:#6DD39E;background:#6DD39E}
+  /* Wizard header */
+  .wiznav{position:sticky;top:48px;background:rgba(255,255,255,.96);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line);z-index:4}
+  .wizbar{max-width:var(--maxw);margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 18px}
+  .wizdot{width:8px;height:8px;border-radius:50%;background:#D8D2EE}
+  .wizdot.active{background:var(--accent)}
+  .wizdot.done{background:var(--ok)}
+  .wizstep{display:flex;align-items:center;gap:8px;color:#7d76a1;font-weight:700}
+  .wizstep.active{color:#2A2A2A}
+  .spacer{flex:1}
+  .ring{width:34px;height:34px;border-radius:50%;border:3px solid #eee;position:relative}
+  .ring::after{content:attr(data-pct) "%";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#4d3a86;font-weight:800}
+  /* Sticky bottom bar */
+  .sticky{position:sticky;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:saturate(180%) blur(8px);border-top:1px solid var(--line);padding:12px 0;margin-top:16px;z-index:3}
+  .bar{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:flex-end;gap:10px;padding:0 18px}
+  /* Thumbnails */
+  .thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+  .thumb{aspect-ratio:4/3;background:#F2F1F7;border:1px solid #E9E6F6;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#8e88ad;font-weight:800}
+  .thumb.pref{background:#f7f7fa;position:relative}
+  .thumb.pref::after{content:"Prefilled";position:absolute;left:6px;top:6px;background:#ffffffcc;border:1px solid #e8e4f7;border-radius:999px;padding:2px 6px;font-size:10px;color:#4d3a86;font-weight:800}
+  .uploader{border:1px dashed #D9D4EC;border-radius:10px;padding:14px;text-align:center;color:#7b739f;font-weight:700}
+  /* Review table */
+  table{width:100%;border-collapse:separate;border-spacing:0 8px}
+  th{text-align:left;color:#555;font-weight:800;font-size:12px;padding:0 10px}
+  td{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px}
+  .mute{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="crumb">Hub › <b>360 Listing</b> › New Experience</div>
+      <div class="mini"><span class="pill">Theme: Subtle Violet</span><span class="pill">Accent #800FFF</span></div>
+    </div>
+  </div>
+
+  <div class="wrap" id="app">
+
+    <!-- ====== 1) PRODUCT CODE ====== -->
+    <section class="card" data-stage="product">
+      <h1>Enter product code</h1>
+      <p class="sub">Paste the code from your RMS. We’ll fetch details and pre-fill your form.</p>
+      <div class="row">
+        <div>
+          <label>Product code <span class="req" id="pc-miss" hidden>⚠ Required</span></label>
+          <input id="productCode" class="missing" placeholder="e.g., PA8MY5"/>
+          <div class="fetchnote" id="pc-note" hidden>Looks good — fetching preview…</div>
+        </div>
+        <div>
+          <label class="opt">RMS (auto-detected)</label>
+          <input class="prefilled" value="Rezdy" disabled/>
+          <div class="fetchnote">Detected from your connected account</div>
+        </div>
+        <div class="full">
+          <label class="opt">Preview (after fetch)</label>
+          <input id="productPreview" class="prefilled" value="" placeholder="—" disabled/>
+          <div class="fetchnote" id="syncInfo" hidden>Fetched name • Last sync: just now</div>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn ghost" disabled>Back</button>
+        <button id="fetchBtn" class="btn primary">Fetch Listing</button>
+      </div>
+    </section>
+
+    <!-- ====== 2) COMMISSION (single input) ====== -->
+    <section class="card" data-stage="commission" hidden>
+      <h1>Set commission</h1>
+      <p class="sub">Enter the commission for this product. You can edit it later in the product card if needed.</p>
+      <div class="row">
+        <div>
+          <label>Commission % <span class="req" id="comm-miss" hidden>⚠ Required</span></label>
+          <input id="commission" class="missing" type="number" placeholder="e.g., 20" min="0" max="95" step="0.1"/>
+        </div>
+        <div>
+          <label class="opt">Note</label>
+          <input class="prefilled" value="Commission applies to fetched options by default" disabled/>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn" id="backToProduct">Back</button>
+        <button class="btn primary" id="toProductWizard">Continue</button>
+      </div>
+    </section>
+
+    <!-- ====== PRODUCT WIZARD NAV ====== -->
+    <div class="wiznav" data-stage="wiznav" hidden>
+      <div class="wizbar">
+        <div class="wizstep" id="wz-0"><span class="wizdot"></span>Get Started</div>
+        <div class="wizstep" id="wz-1"><span class="wizdot"></span>Guest Guidelines</div>
+        <div class="wizstep" id="wz-2"><span class="wizdot"></span>Media Gallery</div>
+        <div class="spacer"></div>
+        <div class="ring" id="wz-ring" data-pct="0" title="Wizard completion"></div>
+      </div>
+    </div>
+
+    <!-- ====== 3) PRODUCT WIZARD – Get Started ====== -->
+    <section class="card" data-stage="wiz-start" hidden>
+      <h1>Get Started</h1>
+      <p class="sub">Review fetched fields and complete the missing ones.</p>
+
+      <!-- Basic details -->
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Basic details</span><span class="mute" style="margin-left:auto" id="gs-basic-status">0/4 complete</span></div>
+        <div class="row">
+          <div>
+            <label>Name your experience <span class="opt">Fetched</span></label>
+            <input id="gs-name" class="prefilled" value="WET JET LEWISTON – Rack Rate – Rezdy US"/>
+          </div>
+          <div>
+            <label>Internal reference code <span class="opt">Optional</span></label>
+            <input id="gs-ref" class="prefilled" value="REZ-PA8MY5-01"/>
+          </div>
+          <div>
+            <label>City <span class="opt">Fetched</span></label>
+            <input id="gs-city" class="prefilled" value="Lewiston"/>
+          </div>
+          <div>
+            <label>Website / live link <span class="req" id="gs-link-miss">⚠ Required</span></label>
+            <input id="gs-link" class="missing" placeholder="https://…"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Category</span><span class="mute" style="margin-left:auto" id="gs-cat-status">0 selected</span></div>
+        <div class="mini" id="gs-cats">
+          <!-- category checkboxes -->
+          <label class="pill"><input type="checkbox" value="Museums"> Museums</label>
+          <label class="pill"><input type="checkbox" value="Theme Parks"> Theme Parks</label>
+          <label class="pill"><input type="checkbox" value="Zoos"> Zoos</label>
+          <label class="pill"><input type="checkbox" value="Parks"> Parks</label>
+          <label class="pill"><input type="checkbox" value="Water Parks"> Water Parks</label>
+          <label class="pill"><input type="checkbox" value="City Cards"> City Cards</label>
+          <label class="pill"><input type="checkbox" value="Religious Sites"> Religious Sites</label>
+          <label class="pill"><input type="checkbox" value="Landmarks"> Landmarks</label>
+          <label class="pill"><input type="checkbox" value="Observation Decks"> Observation Decks</label>
+          <label class="pill"><input type="checkbox" value="Aquariums"> Aquariums</label>
+          <label class="pill"><input type="checkbox" value="Immersive Experiences"> Immersive Experiences</label>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Description</span><span class="mute" style="margin-left:auto" id="gs-desc-status">Missing</span></div>
+        <div class="row">
+          <div class="full">
+            <label>Summary (≥150 chars) <span class="req" id="gs-sum-miss">⚠ Required</span></label>
+            <textarea id="gs-sum" class="missing" placeholder="Give a glimpse of what guests will experience…"></textarea>
+          </div>
+          <div class="full">
+            <label>Highlights (≥150 chars) <span class="opt">Fetched (editable)</span></label>
+            <textarea id="gs-high" class="prefilled">Experience a thrilling 45-minute guided day tour on the Niagara River aboard the WET JET BOAT. Enjoy the natural awe-inspiring scenery of the Niagara Gorge, including the excitement of Devil's Hole class 5 whitewater and the Whirlpool…</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Itinerary -->
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Itinerary</span><span class="mute" style="margin-left:auto" id="gs-iti-status">Optional</span></div>
+        <div class="row">
+          <div class="full">
+            <label>Itinerary (150–1000 chars) <span class="opt">Optional</span></label>
+            <textarea id="gs-iti" class="prefilled" placeholder="09:00 Meet → 09:15 Boarding → 10:00 Rapids…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky">
+        <div class="bar">
+          <button class="btn" id="wzBack1">Back</button>
+          <button class="btn primary" id="wzNext1">Save & Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 4) PRODUCT WIZARD – Guest Guidelines ====== -->
+    <section class="card" data-stage="wiz-guide" hidden>
+      <h1>Guest Guidelines</h1>
+      <p class="sub">Set how guests present tickets and note on-site accessibility.</p>
+
+      <!-- Instructions -->
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Instructions</span><span class="mute" style="margin-left:auto" id="gg-inst-status">Partially filled</span></div>
+        <div class="row">
+          <div>
+            <label>Voucher at entry <span class="opt">Prefilled</span></label>
+            <select id="gg-entry" class="prefilled"><option selected>Mobile</option><option>Printed</option></select>
+          </div>
+          <div>
+            <label>Voucher format <span class="req" id="gg-vfmt-miss">⚠ Required</span></label>
+            <select id="gg-vfmt" class="missing"><option value="">—</option><option>PDF</option><option>Web page</option><option>Text</option><option>Barcode</option><option>QR Code</option></select>
+          </div>
+          <div>
+            <label>Arrival buffer (HH) <span class="opt">Prefilled</span></label>
+            <input id="gg-h" type="number" class="prefilled" value="0"/>
+          </div>
+          <div>
+            <label>Arrival buffer (MM) <span class="req" id="gg-m-miss">⚠ Required</span></label>
+            <input id="gg-m" type="number" class="missing" placeholder="e.g., 15"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accessibility -->
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Accessibility</span><span class="mute" style="margin-left:auto" id="gg-acc-status">Optional</span></div>
+        <div class="mini" id="gg-acc">
+          <label class="pill"><input type="checkbox" value="Wheelchair accessible"> Wheelchair accessible</label>
+          <label class="pill"><input type="checkbox" value="Pram/Stroller accessible"> Pram/Stroller accessible</label>
+          <label class="pill"><input type="checkbox" value="Buggy on request"> Buggy (available on prior request)</label>
+          <label class="pill"><input type="checkbox" value="Pets allowed"> Pets allowed</label>
+          <label class="pill"><input type="checkbox" value="Guide dogs allowed"> Guide dogs allowed</label>
+        </div>
+      </div>
+
+      <div class="sticky">
+        <div class="bar">
+          <button class="btn" id="wzBack2">Back</button>
+          <button class="btn primary" id="wzNext2">Save & Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 5) PRODUCT WIZARD – Media Gallery ====== -->
+    <section class="card" data-stage="wiz-media" hidden>
+      <h1>Media Gallery</h1>
+      <p class="sub">Add photos & videos to showcase your experience.</p>
+
+      <div class="card">
+        <div class="statusline"><span class="dot violet"></span><span>Photos & videos</span><span class="mute" style="margin-left:auto" id="wm-status">2/5 photos • 0 videos</span></div>
+        <div class="thumbs" id="wm-grid">
+          <div class="thumb pref">IMG_01</div>
+          <div class="thumb pref">IMG_02</div>
+          <label class="uploader">
+            <input type="file" multiple accept="image/*,video/*" style="display:none" id="wm-upl">
+            + Add photos & videos
+          </label>
+          <div class="thumb">Empty</div>
+          <div class="thumb">Empty</div>
+        </div>
+      </div>
+
+      <div class="sticky">
+        <div class="bar">
+          <button class="btn" id="wzBack3">Back</button>
+          <button class="btn primary" id="toOptions">Continue to Options</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 6) OPTIONS OVERVIEW ====== -->
+    <section class="card" data-stage="options" hidden>
+      <h1>Options fetched from your RMS</h1>
+      <p class="sub">We detected 3 options. Review each — missing fields are clearly marked.</p>
+      <div class="grid3" id="optionsGrid"></div>
+      <div class="footer">
+        <button class="btn" id="backToMedia">Back</button>
+        <button class="btn primary" id="goMorning">Proceed to “Morning Jet Tour”</button>
+      </div>
+    </section>
+
+    <!-- ====== 7) OPTION DETAIL (STEPPER) ====== -->
+    <section data-stage="option" hidden>
+      <div class="stepper">
+        <div class="snode done" id="sn-setup"><i></i>Setup</div>
+        <div class="snode active" id="sn-guest"><i></i>Guest directions</div>
+        <div class="snode" id="sn-resv"><i></i>Reservation</div>
+      </div>
+      <h1>Option · <span id="optName" style="color:#4b3e8f">Morning Jet Tour</span></h1>
+      <p class="sub">Verify RMS data and complete missing fields.</p>
+
+      <!-- Setup -->
+      <div class="card">
+        <div class="statusline"><span class="dot ok" id="st-setup-dot"></span><span id="st-setup">Complete</span></div>
+        <h2>Setup</h2>
+        <div class="row">
+          <div>
+            <label>Option name <span class="opt">Fetched</span></label>
+            <input id="op-name" class="prefilled" value="Morning Jet Tour"/>
+          </div>
+          <div>
+            <label>Internal reference code <span class="opt">Optional</span></label>
+            <input id="op-ref" class="prefilled" value="JET-MORN-01"/>
+          </div>
+          <div class="full">
+            <label>Inclusions <span class="opt">Fetched</span></label>
+            <textarea id="op-inc" class="prefilled">• 45-minute jet boat ride
+• Safety orientation
+• English-speaking crew</textarea>
+          </div>
+          <div class="full">
+            <label>Exclusions <span class="req" id="miss-exc">⚠ Required</span></label>
+            <textarea id="op-exc" class="missing" placeholder="Add exclusions (e.g., hotel pickup, meals)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guest directions -->
+      <div class="card">
+        <div class="statusline"><span class="dot warn" id="st-guest-dot"></span><span id="st-guest">Partially filled</span></div>
+        <h2>Guest directions</h2>
+        <h3>Pickup details</h3>
+        <div class="row">
+          <div>
+            <label>Is pickup included? <span class="opt">Fetched</span></label>
+            <select id="gd-pick" class="prefilled"><option selected>Yes</option><option>No</option></select>
+          </div>
+          <div>
+            <label>Coverage <span class="opt">Prefilled</span></label>
+            <select id="gd-cov" class="prefilled">
+              <option selected>Upload list of supported hotels/locations</option>
+              <option>Any hotels or locations within the city</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Pickup locations (one per line) <span class="opt">Prefilled</span></label>
+            <textarea id="gd-locs" class="prefilled">Hotel Sunrise
+Downtown Pier</textarea>
+          </div>
+        </div>
+
+        <h3>Start location</h3>
+        <div class="row">
+          <div>
+            <label>Redemption method <span class="opt">Prefilled</span></label>
+            <select id="gd-redm" class="prefilled">
+              <option>Scan and enter</option>
+              <option selected>Guided tour</option>
+              <option>Hosted tour</option>
+              <option>Show the ticket and enter</option>
+              <option>Exchange for voucher</option>
+              <option>HOHO</option>
+              <option>Live entertainment</option>
+            </select>
+          </div>
+          <div>
+            <label>Arrival buffer <span class="req" id="miss-arr">⚠ Missing minutes</span></label>
+            <div class="row">
+              <input id="arr-h" type="number" placeholder="HH" value="0" class="prefilled"/>
+              <input id="arr-m" type="number" placeholder="MM" class="missing"/>
+            </div>
+          </div>
+          <div>
+            <label>Emergency phone <span class="opt">Prefilled</span></label>
+            <input id="gd-ph" class="prefilled" value="+1 202-555-0114"/>
+          </div>
+          <div>
+            <label>Photo ID required? <span class="opt">Prefilled</span></label>
+            <select id="gd-id" class="prefilled"><option selected>Yes</option><option>No</option></select>
+          </div>
+          <div class="full">
+            <label>Additional instructions <span class="req" id="miss-inst">⚠ Required</span></label>
+            <textarea id="gd-inst" class="missing" placeholder="Add clear, simple instructions for guests…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reservation -->
+      <div class="card">
+        <div class="statusline"><span class="dot warn" id="st-resv-dot"></span><span id="st-resv">Partially filled</span></div>
+        <h2>Reservation</h2>
+
+        <h3>Booking</h3>
+        <p class="sub">Selection preview: <b>Instant confirmation (Freesale)</b></p>
+        <div class="row">
+          <div>
+            <label>Receive intimation emails? <span class="opt">Prefilled</span></label>
+            <select id="rv-mail" class="prefilled"><option>Yes</option><option>No</option></select>
+          </div>
+          <div>
+            <label>Booking time limit <span class="opt">Prefilled</span></label>
+            <select id="rv-limit" class="prefilled"><option selected>Release period</option><option>Cutoff period</option><option>None</option></select>
+          </div>
+          <div class="row full">
+            <input id="rv-hr" type="number" class="prefilled" value="1"/>
+            <input id="rv-mn" type="number" class="prefilled" value="30"/>
+            <div class="fetchnote full">Release period is HH hours : MM mins before start</div>
+          </div>
+        </div>
+
+        <h3>Cancellation</h3>
+        <div class="row">
+          <div>
+            <label>Allow cancellations? <span class="opt">Prefilled</span></label>
+            <select id="rv-can" class="prefilled"><option selected>Yes</option><option>No</option></select>
+          </div>
+          <div>
+            <label>Cancellation window (hours) <span class="opt">Prefilled</span></label>
+            <input id="rv-canwin" class="prefilled" value="24"/>
+          </div>
+          <div>
+            <label>Allow rescheduling? <span class="req" id="miss-resch">⚠ Required</span></label>
+            <select id="rv-resch" class="missing"><option value="">—</option><option>No</option><option>Yes</option></select>
+          </div>
+          <div>
+            <label>Rescheduling window (hours) <span class="opt">Conditional</span></label>
+            <input id="rv-reschwin" class="prefilled" placeholder="e.g., 24"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky">
+        <div class="bar">
+          <button class="btn" id="optBack">Back</button>
+          <button class="btn primary" id="optNext">Save & Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 8) REVIEW & SUBMIT ====== -->
+    <section class="card" data-stage="review" hidden>
+      <h1>Review & submit</h1>
+      <p class="sub">Quick status of all options. Fix any blockers before submission.</p>
+      <table>
+        <thead>
+          <tr><th>Option</th><th>Setup</th><th>Guest directions</th><th>Reservation</th><th>Schedules</th><th>Overall</th></tr>
+        </thead>
+        <tbody id="reviewBody"></tbody>
+      </table>
+      <div class="footer">
+        <button class="btn" id="backToOption">Back</button>
+        <button class="btn primary" id="submitBtn">Submit for Review</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+/* ---------- Simple store / mock data ---------- */
+const state = {
+  product: { code:'', name:'', fetched:false },
+  commission: null,
+  wizard: { step: 0, // 0 Get Started, 1 Guidelines, 2 Media
+            gs: { name:true, ref:true, city:true, link:false, cats:0, sum:false, high:true, iti:true },
+            gg: { vfmt:false, m:false },
+            media: { photos:2, videos:0, target:5 }
+  },
+  options: [
+    { id:'morning', name:'Morning Jet Tour', pax:2, dur:'45 mins', type:'Fixed', completeness:0.92, status:'ok', schedule:true,
+      fields:{setup:{exclusions:''}, guest:{arrM:'', inst:''}, resv:{resch:''}} },
+    { id:'evening', name:'Evening Jet Tour', pax:2, dur:'45 mins', type:'Fixed', completeness:0.64, status:'warn', schedule:true,
+      fields:{setup:{exclusions:''}, guest:{arrM:'', inst:''}, resv:{resch:'No'}} },
+    { id:'charter', name:'Private Charter', pax:1, dur:'90 mins', type:'On request', completeness:0.58, status:'bad', schedule:false,
+      fields:{setup:{exclusions:'Fuel surcharge not included'}, guest:{arrM:'15', inst:'Arrive 15 mins early'}, resv:{resch:'Yes'}} },
+  ],
+  currentOption:'morning',
+  optionStepIndex:1 // 0 Setup, 1 Guest, 2 Reservation (start on Guest)
+};
+const $=sel=>document.querySelector(sel);
+const $$=sel=>document.querySelectorAll(sel);
+
+function showStage(key){
+  $$('section[data-stage], .wiznav[data-stage]').forEach(s=> s.hidden = (s.dataset.stage!==key && !(key==='wiz' && s.dataset.stage?.startsWith('wiz'))));
+}
+
+/* ---------- PRODUCT CODE ---------- */
+$('#fetchBtn').addEventListener('click', ()=>{
+  const code = $('#productCode').value.trim();
+  if(!code){ $('#pc-miss').hidden=false; return; }
+  $('#pc-miss').hidden=true; $('#pc-note').hidden=false;
+  setTimeout(()=>{
+    state.product = { code, name:'WET JET LEWISTON – Rack Rate – Rezdy US', fetched:true };
+    $('#productPreview').value = state.product.name;
+    $('#syncInfo').hidden=false; $('#pc-note').hidden=true;
+    showStage('commission');
+  }, 650);
+});
+$('#backToProduct').addEventListener('click', ()=> showStage('product'));
+
+/* ---------- COMMISSION ---------- */
+$('#toProductWizard').addEventListener('click', ()=>{
+  const val = $('#commission').value.trim();
+  if(val===''||isNaN(+val)){ $('#comm-miss').hidden=false; return; }
+  $('#comm-miss').hidden=true; state.commission=+val;
+  // init wizard nav
+  updateWizardHeader();
+  showStage('wiz-start'); $('.wiznav').hidden=false; $('.wiznav').dataset.stage='wiznav';
+});
+/* ---------- Wizard Header ---------- */
+function updateWizardHeader(){
+  const pct = calcWizardPct();
+  $('#wz-ring').setAttribute('data-pct', Math.round(pct));
+  for(let i=0;i<3;i++){
+    const stepEl = $('#wz-'+i);
+    stepEl.classList.toggle('active', i===state.wizard.step);
+    const dot = stepEl.querySelector('.wizdot');
+    dot.className='wizdot '+ (i<state.wizard.step? 'done' : i===state.wizard.step? 'active':'' );
+  }
+}
+function calcWizardPct(){
+  const w=state.wizard;
+  const bits = [
+    w.gs.link?1:0, w.gs.cats>0?1:0, w.gs.sum?1:0, // key Get Started requirements
+    w.gg.vfmt?1:0, w.gg.m?1:0,                   // key Guidelines req
+    (w.media.photos>=5?1: w.media.photos>=3?0.6:0.3) // media heuristic
+  ];
+  return (bits.reduce((a,b)=>a+b,0)/5)*100;
+}
+
+/* ---------- WIZ: GET STARTED ---------- */
+function updateGSStatus(){
+  const done = (state.wizard.gs.link?1:0) + (state.wizard.gs.city?1:0) + (state.wizard.gs.name?1:0) + (state.wizard.gs.ref?1:0);
+  $('#gs-basic-status').textContent = `${done}/4 complete`;
+  $('#gs-cat-status').textContent = `${state.wizard.gs.cats} selected`;
+  $('#gs-desc-status').textContent = state.wizard.gs.sum ? 'OK' : 'Missing';
+  updateWizardHeader();
+}
+$('#gs-link').addEventListener('input', e=>{
+  const ok = /^https?:\/\//i.test(e.target.value.trim());
+  state.wizard.gs.link = ok; e.target.classList.toggle('missing', !ok);
+  $('#gs-link-miss').hidden = ok;
+  updateGSStatus();
+});
+$('#gs-sum').addEventListener('input', e=>{
+  state.wizard.gs.sum = e.target.value.trim().length>=150;
+  e.target.classList.toggle('missing', !state.wizard.gs.sum);
+  $('#gs-sum-miss').hidden = state.wizard.gs.sum;
+  updateGSStatus();
+});
+$('#gs-cats').addEventListener('change', ()=>{
+  const sel = [...$('#gs-cats').querySelectorAll('input[type=checkbox]:checked')].length;
+  state.wizard.gs.cats = sel;
+  updateGSStatus();
+});
+$('#wzBack1').addEventListener('click', ()=> showStage('commission'));
+$('#wzNext1').addEventListener('click', ()=>{
+  state.wizard.step=1; updateWizardHeader(); showStage('wiz-guide');
+});
+
+/* ---------- WIZ: GUEST GUIDELINES ---------- */
+function updateGGStatus(){
+  const vfmt = $('#gg-vfmt').value !== '';
+  const mm = $('#gg-m').value.trim() !== '';
+  state.wizard.gg.vfmt = vfmt; state.wizard.gg.m = mm;
+  $('#gg-vfmt').classList.toggle('missing', !vfmt);
+  $('#gg-vfmt-miss').hidden = vfmt;
+  $('#gg-m').classList.toggle('missing', !mm);
+  $('#gg-m-miss').hidden = mm;
+  $('#gg-inst-status').textContent = (vfmt && mm) ? 'OK' : 'Partially filled';
+  updateWizardHeader();
+}
+$('#gg-vfmt').addEventListener('change', updateGGStatus);
+$('#gg-m').addEventListener('input', updateGGStatus);
+
+$('#wzBack2').addEventListener('click', ()=> { state.wizard.step=0; updateWizardHeader(); showStage('wiz-start'); });
+$('#wzNext2').addEventListener('click', ()=> { state.wizard.step=2; updateWizardHeader(); showStage('wiz-media'); });
+
+/* ---------- WIZ: MEDIA ---------- */
+function updateMediaStatus(){
+  $('#wm-status').textContent = `${state.wizard.media.photos}/5 photos • ${state.wizard.media.videos} videos`;
+  updateWizardHeader();
+}
+$('#wm-upl').addEventListener('change', (e)=>{
+  const files = [...e.target.files];
+  const photos = files.filter(f=>/^image\//.test(f.type)).length;
+  const videos = files.filter(f=>/^video\//.test(f.type)).length;
+  state.wizard.media.photos = Math.min(5, state.wizard.media.photos + photos);
+  state.wizard.media.videos += videos;
+  // add visual tiles
+  const grid = $('#wm-grid');
+  for(let i=0;i<photos;i++){
+    const d = document.createElement('div'); d.className='thumb pref'; d.textContent = 'IMG_NEW';
+    grid.appendChild(d);
+  }
+  for(let i=0;i<videos;i++){
+    const d = document.createElement('div'); d.className='thumb pref'; d.textContent = 'VID_NEW';
+    grid.appendChild(d);
+  }
+  updateMediaStatus();
+});
+$('#wzBack3').addEventListener('click', ()=> { state.wizard.step=1; updateWizardHeader(); showStage('wiz-guide'); });
+$('#toOptions').addEventListener('click', ()=> { renderOptions(); showStage('options'); });
+
+/* ---------- OPTIONS OVERVIEW ---------- */
+function badgeDotClass(status){ return status==='ok'?'ok':status==='warn'?'warn':'bad'; }
+function pct(p){ return Math.round(p*100); }
+function renderOptions(){
+  const grid=$('#optionsGrid'); grid.innerHTML='';
+  state.options.forEach(o=>{
+    const card=document.createElement('div'); card.className='card';
+    card.innerHTML=`
+      <h2>${o.name}</h2>
+      <div class="statusline">
+        <span class="dot ${badgeDotClass(o.status)}"></span>
+        <span>${o.pax} pax types • ${o.dur} • ${o.type}</span>
+        <span style="margin-left:auto" class="mute">${pct(o.completeness)}% ready</span>
+      </div>
+      <div class="meter" style="margin:8px 0 12px"><i style="width:${pct(o.completeness)}%"></i></div>
+      <div class="mini" style="margin-bottom:8px">
+        ${o.schedule? `<span class="pill">Schedule linked</span>`:`<span class="pill">No schedule</span>`}
+        ${o.fields.setup.exclusions? `<span class="pill">Exclusions ✓</span>`:`<span class="pill">Exclusions missing</span>`}
+      </div>
+      <div class="footer" style="justify-content:flex-start">
+        <button class="btn ${o.id==='morning'?'primary':''}" data-opt="${o.id}">Review</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+  grid.querySelectorAll('button[data-opt]').forEach(b=>{
+    b.addEventListener('click', e=>{ state.currentOption=e.currentTarget.dataset.opt; showStage('option'); renderOptionDetail(); });
+  });
+}
+$('#backToMedia').addEventListener('click', ()=> showStage('wiz-media'));
+$('#goMorning').addEventListener('click', ()=> { state.currentOption='morning'; showStage('option'); renderOptionDetail(); });
+
+/* ---------- OPTION DETAIL ---------- */
+function renderOptionDetail(){
+  state.optionStepIndex=1;
+  updateStepperDots();
+  const opt = state.options.find(o=>o.id===state.currentOption);
+  $('#optName').textContent=opt.name;
+  // Set initial field states
+  $('#op-exc').value = opt.fields.setup.exclusions||'';
+  toggleMissing($('#op-exc'), !$('#op-exc').value.trim(), '#miss-exc');
+  $('#arr-m').value = opt.fields.guest.arrM||'';
+  toggleMissing($('#arr-m'), !$('#arr-m').value.trim(), '#miss-arr');
+  $('#gd-inst').value = opt.fields.guest.inst||'';
+  toggleMissing($('#gd-inst'), !$('#gd-inst').value.trim(), '#miss-inst');
+  $('#rv-resch').value = opt.fields.resv.resch||'';
+  toggleMissing($('#rv-resch'), !$('#rv-resch').value.trim(), '#miss-resch');
+  evaluateSections();
+}
+function updateStepperDots(){
+  $('#sn-setup').className='snode '+(state.optionStepIndex>0?'done':'active');
+  $('#sn-guest').className='snode '+(state.optionStepIndex===1?'active':(state.optionStepIndex>1?'done':'' ));
+  $('#sn-resv').className='snode '+(state.optionStepIndex===2?'active':'');
+}
+function toggleMissing(el, miss, noteSel){
+  if(miss){ el.classList.add('missing'); $(noteSel)?.removeAttribute('hidden'); }
+  else{ el.classList.remove('missing'); $(noteSel)?.setAttribute('hidden',''); }
+}
+function setStatus(section, level, label){
+  $('#st-'+section).textContent = label;
+  const dot = $('#st-'+section+'-dot'); dot.classList.remove('ok','warn','bad'); dot.classList.add(level);
+}
+function evaluateSections(){
+  const setupMissing = !$('#op-exc').value.trim();
+  setStatus('setup', setupMissing?'warn':'ok', setupMissing?'Partially filled':'Complete');
+
+  const guestMissing = !$('#arr-m').value.trim() || !$('#gd-inst').value.trim();
+  setStatus('guest', guestMissing?'warn':'ok', guestMissing?'Partially filled':'Complete');
+
+  const resvMissing = !$('#rv-resch').value.trim();
+  setStatus('resv', resvMissing?'warn':'ok', resvMissing?'Partially filled':'Complete');
+
+  // bump completeness (rough heuristic)
+  const opt = state.options.find(o=>o.id===state.currentOption);
+  let base = opt.id==='morning'?0.85:opt.completeness;
+  if(!setupMissing) base+=.04; if(!guestMissing) base+=.06; if(!resvMissing) base+=.05;
+  opt.completeness = Math.min(1, base);
+}
+// inputs that affect completeness
+['op-exc','arr-m','gd-inst','rv-resch'].forEach(id=>{
+  $('#'+id).addEventListener('input', ()=>{
+    const opt = state.options.find(o=>o.id===state.currentOption);
+    if(id==='op-exc') opt.fields.setup.exclusions = $('#op-exc').value.trim();
+    if(id==='arr-m') opt.fields.guest.arrM = $('#arr-m').value.trim();
+    if(id==='gd-inst') opt.fields.guest.inst = $('#gd-inst').value.trim();
+    if(id==='rv-resch') opt.fields.resv.resch = $('#rv-resch').value.trim();
+    toggleMissing($('#'+id), !$('#'+id).value.trim(), (id==='op-exc')?'#miss-exc':(id==='arr-m')?'#miss-arr':(id==='gd-inst')?'#miss-inst':'#miss-resch');
+    evaluateSections();
+  });
+});
+$('#optNext').addEventListener('click', ()=>{
+  if(state.optionStepIndex<2){ state.optionStepIndex++; updateStepperDots(); window.scrollTo({top:0,behavior:'smooth'}); }
+  else{ renderReview(); showStage('review'); }
+});
+$('#optBack').addEventListener('click', ()=>{
+  if(state.optionStepIndex>0){ state.optionStepIndex--; updateStepperDots(); window.scrollTo({top:0,behavior:'smooth'}); }
+  else{ renderOptions(); showStage('options'); }
+});
+
+/* ---------- REVIEW ---------- */
+function renderReview(){
+  const tbody=$('#reviewBody'); tbody.innerHTML='';
+  state.options.forEach(o=>{
+    const setup = o.fields.setup.exclusions ? 'ok':'warn';
+    const guest = (o.fields.guest.arrM && o.fields.guest.inst) ? 'ok':'warn';
+    const resv  = o.fields.resv.resch ? 'ok':'warn';
+    const sched = o.schedule ? 'ok':'bad';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><b>${o.name}</b></td>
+      <td>${badgeText(setup)}</td>
+      <td>${badgeText(guest)}</td>
+      <td>${badgeText(resv)}</td>
+      <td>${badgeText(sched)}</td>
+      <td class="mute">${Math.round(o.completeness*100)}%</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function badgeText(level){
+  const map={ok:['#27AE60','Complete'],warn:['#F2A007','Needs review'],bad:['#E74C3C','Missing']};
+  const [c,t]=map[level]; return `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:700;color:${c}"><span class="dot" style="background:${c}"></span>${t}</span>`;
+}
+$('#backToOption').addEventListener('click', ()=> showStage('option'));
+$('#submitBtn').addEventListener('click', ()=> alert('Submitted for review ✅ (mock)'));
+
+/* ---------- INIT ---------- */
+showStage('product');
+</script>
+</body>
+</html>

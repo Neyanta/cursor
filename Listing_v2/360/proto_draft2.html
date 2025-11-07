@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub • 360 Listing (SP view)</title>
+  <style>
+    :root{
+      --bg:#0a0c12; --panel:#10141e; --ink:#e9ecf3; --muted:#9aa5b5; --brand:#50e3c2; --focus:#a5b4fc;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --line:#1e2433; --chip:#121a28; --chip-b:#24304a;
+      --radius:16px; --shadow:0 8px 32px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(1200px 600px at 10% -10%, #101629, transparent), var(--bg);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;color:var(--ink)}
+    .wrap{max-width:980px;margin:20px auto;padding:0 16px}
+    header{display:flex;justify-content:space-between;align-items:center;margin:8px 0 16px}
+    h1{font-size:18px;margin:0}
+    .badge{background:var(--chip);border:1px solid var(--chip-b);border-radius:999px;padding:6px 10px;color:var(--muted)}
+
+    .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:10px 0 16px}
+    .step{background:transparent;border:1px dashed var(--line);border-radius:12px;padding:10px;text-align:center;color:var(--muted)}
+    .step.on{border-style:solid;color:var(--ink)}
+
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin:12px 0}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .grow{flex:1}
+    label{display:block;color:var(--muted);margin-bottom:6px}
+    input[type=text], input[type=url], select, textarea{width:100%;background:#0e1324;border:1px solid #202a43;color:var(--ink);border-radius:12px;padding:12px}
+    textarea{min-height:90px}
+    button{appearance:none;border:none;background:#18243b;border:1px solid #2a3552;color:var(--ink);padding:10px 14px;border-radius:12px;cursor:pointer}
+    button.primary{background:linear-gradient(180deg,#60a5fa,#34d399);color:#061318;border:none}
+    button.ghost{background:transparent;border:1px dashed #2a3552}
+    button.clean{background:transparent;border:none;color:var(--muted);text-decoration:underline;}
+    .hint{color:var(--muted);font-size:12px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--chip-b);color:var(--muted)}
+
+    .grid{display:grid;gap:12px}
+    .cols-2{grid-template-columns:1fr 1fr}
+
+    .acc{border:1px solid var(--line);border-radius:14px;overflow:hidden}
+    .acc details{border-bottom:1px solid var(--line)}
+    .acc details:last-child{border-bottom:none}
+    .acc summary{user-select:none;cursor:pointer;padding:14px 16px;background:#0e1424}
+    .acc .pane{padding:16px;background:#0c1220}
+    .ok{color:var(--ok)} .warn{color:var(--warn)} .bad{color:var(--bad)}
+
+    .product-card{display:flex;gap:12px}
+    .product-card img{width:98px;height:98px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:#0c1220}
+    .product-card .meta{flex:1}
+
+    .gallery{display:flex;gap:8px;flex-wrap:wrap}
+    .ph{width:96px;height:72px;border-radius:10px;background:#0b1222;border:1px dashed #26324e;display:grid;place-items:center;color:var(--muted)}
+
+    .footer{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
+    .sheet{width:min(860px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px}
+    table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    th,td{padding:10px 12px;background:#0b1222;border:1px solid #1b2540}
+    th:first-child,td:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
+    th:last-child,td:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Connect & List from Rezdy</h1>
+      <span class="badge">Fast track • We fill most details for you</span>
+    </header>
+
+    <div class="steps">
+      <div class="step on" id="s1">1. Connect</div>
+      <div class="step" id="s2">2. Pick product</div>
+      <div class="step" id="s3">3. Quick check</div>
+      <div class="step" id="s4">4. Photos & price</div>
+      <div class="step" id="s5">5. Publish</div>
+    </div>
+
+    <!-- Step 1: Connect -->
+    <section class="card" id="step1">
+      <h3 style="margin:0 0 8px">1) Connect your Rezdy account</h3>
+      <p class="hint">Use your saved key or paste a new one. We’ll pull your products automatically.</p>
+      <div class="grid cols-2">
+        <div>
+          <label>Rezdy API key</label>
+          <input type="text" id="apiKey" placeholder="•••• saved in Hub Vault" value="••••••••" />
+          <p class="hint">We never share your key. You can revoke anytime in Settings.</p>
+        </div>
+        <div>
+          <label>Product code (optional)</label>
+          <input type="text" id="prodCode" placeholder="e.g., PA8MY5" />
+          <p class="hint">Tip: Skip this to fetch all your products.</p>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="ghost" id="btnMulti">Import multiple codes</button>
+        <button class="primary" id="btnConnect">Fetch products</button>
+      </div>
+    </section>
+
+    <!-- Step 2: Choose product(s) -->
+    <section class="card" id="step2" style="display:none">
+      <h3 style="margin:0 0 8px">2) Choose what to list</h3>
+      <div id="productList"></div>
+      <div class="footer">
+        <button class="ghost" id="back1">Back</button>
+        <button class="primary" id="proceedSelected" disabled>Continue</button>
+      </div>
+    </section>
+
+    <!-- Step 3: Quick Check (conversational, grouped) -->
+    <section class="card" id="step3" style="display:none">
+      <h3 style="margin:0 0 8px">3) Quick check</h3>
+      <p class="hint">We filled most details for you. Review only the few items marked with <span class="warn">needs your input</span>.</p>
+      <div class="acc" id="qc">
+        <details open>
+          <summary>About your experience <span class="pill" id="aboutStatus">Looks good</span></summary>
+          <div class="pane grid cols-2">
+            <div>
+              <label>Experience name</label>
+              <input type="text" id="name" />
+            </div>
+            <div>
+              <label>Short highlights</label>
+              <textarea id="highlights"></textarea>
+            </div>
+            <div class="grow">
+              <label>Full description</label>
+              <textarea id="description"></textarea>
+            </div>
+          </div>
+        </details>
+        <details open>
+          <summary>Meeting point & contact <span class="pill warn" id="mpStatus">Needs your input</span></summary>
+          <div class="pane grid cols-2">
+            <div>
+              <label>Address</label>
+              <input type="text" id="addr1" />
+              <input type="text" id="addr2" placeholder="Address line 2 (optional)" style="margin-top:8px" />
+              <div class="row">
+                <div class="grow"><label>City</label><input type="text" id="city" /></div>
+                <div><label>State</label><input type="text" id="state" style="width:120px" /></div>
+                <div><label>Postcode</label><input type="text" id="post" style="width:120px" /></div>
+              </div>
+            </div>
+            <div>
+              <label>Meeting instructions (for guests)</label>
+              <textarea id="meeting"></textarea>
+              <label style="margin-top:8px">On-ground contact (optional)</label>
+              <input type="text" id="contact" placeholder="Phone or email" />
+            </div>
+          </div>
+        </details>
+        <details open>
+          <summary>Schedule & price <span class="pill" id="priceStatus">Looks good</span></summary>
+          <div class="pane">
+            <div class="row">
+              <div class="pill">Adult: <span id="priceAdult">$0</span></div>
+              <div class="pill">Child: <span id="priceChild">$0</span></div>
+              <div class="pill">Duration: <span id="duration">–</span></div>
+              <div class="pill">Notice: <span id="notice">–</span></div>
+              <div class="pill">Tickets: Mobile / Direct entry</div>
+            </div>
+            <div class="row" style="margin-top:12px">
+              <label><input type="checkbox" id="syncPrices" checked> Keep prices & schedule synced with Rezdy</label>
+            </div>
+          </div>
+        </details>
+        <details open>
+          <summary>Guest info <span class="pill" id="guestStatus">Looks good</span></summary>
+          <div class="pane">
+            <p class="hint">We’ll collect the following during checkout:</p>
+            <div id="guestFields" class="row"></div>
+          </div>
+        </details>
+        <details open>
+          <summary>Policies <span class="pill" id="policyStatus">Looks good</span></summary>
+          <div class="pane grid cols-2">
+            <div>
+              <label>Cancellation</label>
+              <select id="cancellable">
+                <option value="no">Not cancellable</option>
+                <option value="24h">Free cancellation up to 24h</option>
+                <option value="48h">Free cancellation up to 48h</option>
+                <option value="custom">Custom…</option>
+              </select>
+            </div>
+            <div>
+              <label>Reschedule</label>
+              <select id="reschedulable">
+                <option value="no">Not reschedulable</option>
+                <option value="24h">Reschedule up to 24h</option>
+                <option value="48h">Reschedule up to 48h</option>
+                <option value="custom">Custom…</option>
+              </select>
+            </div>
+          </div>
+        </details>
+        <details open>
+          <summary>Photos & videos <span class="pill warn" id="mediaStatus">Add at least 1 photo</span></summary>
+          <div class="pane">
+            <div class="gallery" id="gallery"></div>
+            <div class="row" style="margin-top:8px">
+              <button class="ghost" id="btnUpload">Upload photos</button>
+              <span class="hint">PNG/JPG up to 10MB each</span>
+            </div>
+          </div>
+        </details>
+      </div>
+      <div class="footer">
+        <button class="ghost" id="back2">Back</button>
+        <button class="primary" id="toPublish">Continue</button>
+      </div>
+    </section>
+
+    <!-- Step 4/5: Publish -->
+    <section class="card" id="step4" style="display:none">
+      <h3 style="margin:0 0 8px">4) Ready to publish</h3>
+      <div class="product-card" id="reviewCard"></div>
+      <div class="row" style="margin-top:12px">
+        <label><input type="checkbox" id="agree"> I confirm details are accurate and I have the right to sell this experience.</label>
+      </div>
+      <div class="footer">
+        <button class="ghost" id="back3">Back</button>
+        <button class="primary" id="publish" disabled>Publish now</button>
+      </div>
+      <p class="hint">Prefer later? You can always save as draft from the listing dashboard.</p>
+    </section>
+  </div>
+
+  <!-- Multi-code import modal -->
+  <div class="modal" id="multiModal">
+    <div class="sheet">
+      <h3>Import multiple product codes</h3>
+      <p class="hint">Paste one code per line. We’ll import drafts in the background.</p>
+      <textarea id="codes" style="width:100%;min-height:120px;background:#0c1220;color:var(--ink);border:1px solid #24304a;border-radius:12px;padding:12px" placeholder="PA8MY5\nPX9Z77\nDM1234"></textarea>
+      <div class="footer">
+        <button id="multiCancel">Cancel</button>
+        <button class="primary" id="multiStart">Start import</button>
+      </div>
+      <div id="multiStatus" class="hint" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+<script>
+// --- Inject the sample payload you shared (trimmed to relevant parts) ----
+const sample = {
+  name: "WET JET LEWISTON - Rack Rate - Rezdy US",
+  cityName: "Lewiston, NY, USA",
+  linkToProduct: "https://WhirlpoolJetBoatToursUS.rezdy.com/view/PA8MY5",
+  content: {
+    highlights: "Experience a thrilling 45-minute guided day tour on the Niagara River aboard the WET JET BOAT...",
+    description: "Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR...",
+    inclusions: "- 45-minute guided jet boat tour...",
+    exclusions: "- Not specified"
+  },
+  tours: [{
+    rules:{ duration:45, releasePeriod:90 },
+    ticketDeliveryType:"MOBILE_TICKET", ticketRedemptionMethod:"DIRECT_ENTRY",
+    startPointAddress:{ addressLine1:"115 S Water St", addressLine2:"", postalCode:"14092", state:"NY", latitude:43.1726546, longitude:-79.0491269 },
+    schedules:[{ productPrices:[{label:"Adult", price:70.97},{label:"Child", price:42.35}], enablePriceSync:true }],
+    bookingAutomated:true, inventoryAutomated:true,
+    onGroundContact:"", meetingPointDetails:""
+  }],
+  userFields:[{label:"First Name"},{label:"Last Name"},{label:"Email"}],
+  media:{images:[],videos:[]}
+};
+
+// --- Helpers --------------------------------------------------------------
+const $ = s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+const steps=[$('#s1'),$('#s2'),$('#s3'),$('#s4'),$('#s5')];
+function goto(id){ steps.forEach((n,i)=>n.classList.toggle('on', i<=id)); ['step1','step2','step3','step4'].forEach((sid,idx)=>{ const el=$('#'+sid); if(el) el.style.display = (idx===id? 'block':'none'); }); }
+
+// Step 1
+$('#btnConnect').onclick=()=>{ goto(1); // show products list (using sample + related mocks)
+  const list=$('#productList'); list.innerHTML='';
+  const products=[sample, {...sample, name:'BURJ KHALIFA – SKY Level 148', cityName:'Dubai, UAE'}, {...sample, name:'Dubai Aquarium & Underwater Zoo', cityName:'Dubai, UAE'}];
+  products.forEach((p,idx)=>{
+    const card=document.createElement('div'); card.className='card';
+    card.innerHTML=`<label style='display:flex;align-items:flex-start;gap:12px'>
+      <input type='checkbox' data-idx='${idx}' ${idx===0?'checked':''}>
+      <div class='product-card'>
+        <img alt='' src='' onerror="this.style.background='#0c1220'"/>
+        <div class='meta'>
+          <div style='font-weight:600'>${p.name}</div>
+          <div class='hint'>${p.cityName || 'City unknown'}</div>
+          <div class='hint'><a href='${p.linkToProduct}' target='_blank'>Open on Rezdy</a></div>
+        </div>
+      </div>
+    </label>`;
+    list.appendChild(card);
+  });
+  $('#proceedSelected').disabled=false;
+}
+
+$('#back1').onclick=()=>goto(0);
+
+// Multi code modal
+const mm=$('#multiModal'); $('#btnMulti').onclick=()=>mm.style.display='flex'; $('#multiCancel').onclick=()=>mm.style.display='none';
+$('#multiStart').onclick=()=>{ const codes=$('#codes').value.trim().split(/\n+/).filter(Boolean); $('#multiStatus').textContent=`Importing ${codes.length} codes… drafts will appear in your dashboard.`; setTimeout(()=>{ mm.style.display='none'; }, 900); };
+
+// Step 2 → Step 3
+$('#proceedSelected').onclick=()=>{ goto(2);
+  // Prefill quick check from the first selected product for demo
+  const p=sample; const t=p.tours[0];
+  $('#name').value=p.name;
+  $('#highlights').value=p.content.highlights;
+  $('#description').value=p.content.description;
+  $('#addr1').value=t.startPointAddress.addressLine1; $('#addr2').value=t.startPointAddress.addressLine2||''; $('#city').value='Lewiston'; $('#state').value=t.startPointAddress.state; $('#post').value=t.startPointAddress.postalCode;
+  $('#meeting').value=t.meetingPointDetails||''; $('#contact').value=t.onGroundContact||'';
+  const priceAdult=t.schedules[0].productPrices.find(x=>x.label==='Adult')?.price || 0; const priceChild=t.schedules[0].productPrices.find(x=>x.label==='Child')?.price || 0;
+  $('#priceAdult').textContent=`$${priceAdult}`; $('#priceChild').textContent=`$${priceChild}`;
+  $('#duration').textContent=`${t.rules.duration} min`; $('#notice').textContent=`${t.rules.releasePeriod} min notice`;
+  $('#syncPrices').checked=!!t.schedules[0].enablePriceSync;
+  const gf=$('#guestFields'); gf.innerHTML=''; (sample.userFields||[{label:'First Name'},{label:'Last Name'},{label:'Email'}]).forEach(x=>{ const pill=document.createElement('span'); pill.className='pill'; pill.textContent=x.label; gf.appendChild(pill); });
+  // Media
+  const gal=$('#gallery'); gal.innerHTML=''; if((sample.media?.images||[]).length===0){ for(let i=0;i<3;i++){ const ph=document.createElement('div'); ph.className='ph'; ph.textContent='No image'; gal.appendChild(ph);} $('#mediaStatus').textContent='Add at least 1 photo'; } else { sample.media.images.forEach(src=>{ const img=document.createElement('img'); img.src=src; img.style.width='120px'; img.style.height='90px'; img.style.borderRadius='10px'; img.style.objectFit='cover'; gal.appendChild(img); }); $('#mediaStatus').textContent='Looks good'; $('#mediaStatus').classList.remove('warn'); }
+}
+
+$('#back2').onclick=()=>goto(1);
+
+$('#btnUpload').onclick=()=>{ $('#mediaStatus').textContent='Looks good'; $('#mediaStatus').classList.remove('warn'); const gal=$('#gallery'); const added=document.createElement('div'); added.className='ph'; added.textContent='photo.jpg'; gal.prepend(added); }
+
+$('#toPublish').onclick=()=>{ goto(3);
+  const card=$('#reviewCard'); card.innerHTML=`
+    <img src='' alt='' />
+    <div class='meta'>
+      <div style='font-weight:700'>${$('#name').value}</div>
+      <div class='hint'>${$('#addr1').value}, ${$('#city').value} ${$('#state').value}</div>
+      <div class='hint'>Adult ${$('#priceAdult').textContent} • Child ${$('#priceChild').textContent} • ${$('#duration').textContent}</div>
+    </div>`;
+}
+
+$('#back3').onclick=()=>goto(2);
+$('#agree').onchange=()=>{ $('#publish').disabled = !$('#agree').checked };
+$('#publish').onclick=()=>{ alert('Published! Prices & schedule will stay synced with Rezdy. You can adjust later from your listings.'); };
+
+// init
+goto(0);
+</script>
+</body>
+</html>

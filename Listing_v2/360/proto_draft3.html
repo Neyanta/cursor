@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hub • 360 Listing (Review‑First)</title>
+<style>
+:root{
+  --bg:#0a0e18; --panel:#0f1424; --ink:#e9ecf3; --muted:#a4aec0; --line:#1e2740; --brand:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+  --chip:#121a2a; --chip-b:#223152; --radius:16px; --shadow:0 8px 32px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(1200px 600px at 0% -10%, #0f1730, transparent), var(--bg);color:var(--ink);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto}
+.container{max-width:1100px;margin:18px auto;padding:0 16px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+h1{font-size:18px;margin:0}
+.badge{background:var(--chip);border:1px solid var(--chip-b);border-radius:999px;color:var(--muted);padding:6px 10px}
+
+/* deck */
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;display:flex;gap:12px}
+.card img{width:96px;height:96px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:#0b1222}
+.card .meta{flex:1}
+.card h4{margin:0 0 6px;font-size:15px}
+.pill{display:inline-block;background:var(--chip);border:1px solid var(--chip-b);color:var(--muted);padding:4px 8px;border-radius:999px;font-size:12px;margin-right:6px}
+.progress{height:8px;background:#0d1528;border-radius:999px;overflow:hidden}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#34d399);width:0}
+button{appearance:none;border:none;border-radius:12px;padding:10px 12px;cursor:pointer;color:var(--ink);background:#19233a;border:1px solid #2a3552}
+button.primary{background:linear-gradient(180deg,#60a5fa,#34d399);color:#07131a;border:none}
+button.ghost{background:transparent;border:1px dashed #2a3552;color:var(--muted)}
+
+/* review panel */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:16px;margin:12px 0}
+.breadcrumb{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:13px}
+.breadcrumb .sep{opacity:.4}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
+.topbar .right{display:flex;gap:10px;align-items:center}
+.completeness{display:flex;gap:8px;align-items:center}
+.completeness .ring{--s:46px; width:var(--s);height:var(--s);border-radius:50%;display:grid;place-items:center;background:conic-gradient(#34d399 var(--pct,0%), #20304a 0)}
+.completeness .ring span{font-size:12px}
+
+.group{border:1px solid var(--line);border-radius:14px;margin:10px 0;overflow:hidden}
+.group h3{margin:0;padding:12px 14px;background:#0c1426;display:flex;justify-content:space-between;align-items:center}
+.group .body{padding:12px 14px;background:#0c1220}
+.hint{color:var(--muted);font-size:12px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.col{flex:1 1 280px}
+label{display:block;color:var(--muted);margin:2px 0 6px}
+input[type=text], input[type=url], textarea, select{width:100%;background:#0c1220;border:1px solid #223153;border-radius:12px;color:var(--ink);padding:10px}
+textarea{min-height:90px}
+.gallery{display:flex;gap:8px;flex-wrap:wrap}
+.ph{width:110px;height:80px;border:1px dashed #2a3858;border-radius:10px;display:grid;place-items:center;color:var(--muted)}
+.table{width:100%;border-collapse:separate;border-spacing:0 8px}
+.table th{color:var(--muted);font-weight:600;text-align:left}
+.table td,.table th{padding:10px 12px;background:#0b1222;border:1px solid #1b2540}
+.table td:first-child,.table th:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
+.table td:last-child,.table th:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
+
+/* floating checklist */
+.float{position:fixed;right:20px;bottom:20px;background:#0f162a;border:1px solid #223153;border-radius:14px;box-shadow:var(--shadow);padding:10px 12px;display:none;min-width:260px}
+.float h4{margin:0 0 6px;font-size:14px}
+.float ul{list-style:none;margin:0;padding:0}
+.float li{display:flex;align-items:center;gap:8px;padding:6px 0}
+.ch{width:18px;height:18px;border-radius:50%;border:1px solid #2a3858;display:inline-grid;place-items:center;color:#16a34a}
+.ch.done{background:#102a1a;border-color:#1c4330}
+
+.footer{display:flex;gap:10px;justify-content:flex-end;margin-top:12px}
+.notice{background:#0b172a;border:1px solid #22406b;color:#c9defc;padding:8px 10px;border-radius:10px}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Rezdy → Create listings fast</h1>
+    <span class="badge">Review first • Fill only what’s missing</span>
+  </header>
+
+  <!-- Deck: fetched products (each becomes TGID + Option + Schedule) -->
+  <section id="deck" class="deck"></section>
+
+  <!-- Review panel -->
+  <section id="review" class="panel" style="display:none">
+    <div class="breadcrumb"><a href="#" id="backToDeck" style="color:var(--ink)">Products</a><span class="sep">›</span><span id="bcTitle">–</span></div>
+    <div class="topbar">
+      <div class="completeness">
+        <div class="ring" id="ring"><span id="ringText">0%</span></div>
+        <div class="hint"><strong id="compCount">0</strong> of <strong id="compTotal">0</strong> checks complete</div>
+      </div>
+      <div class="right">
+        <span class="pill" id="syncPill">Sync with Rezdy: On</span>
+        <button class="primary" id="goPublish">Review & publish</button>
+      </div>
+    </div>
+
+    <!-- TGID level -->
+    <div class="group" id="gAbout">
+      <h3>
+        About the experience
+        <span class="hint" id="stAbout">Looks good</span>
+      </h3>
+      <div class="body">
+        <div class="row">
+          <div class="col"><label>Name</label><input id="f_name" type="text"></div>
+          <div class="col"><label>City</label><input id="f_city" type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Highlights</label><textarea id="f_highlights"></textarea></div>
+          <div class="col"><label>Description</label><textarea id="f_description"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Option level -->
+    <div class="group" id="gOption">
+      <h3>
+        Option details
+        <span class="hint" id="stOption">Looks good</span>
+      </h3>
+      <div class="body">
+        <div class="row">
+          <div class="col"><label>Option name</label><input id="f_optionName" type="text"></div>
+          <div class="col"><label>Inclusions</label><textarea id="f_inclusions"></textarea></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Exclusions</label><textarea id="f_exclusions"></textarea></div>
+          <div class="col"><label>Languages</label><input id="f_lang" type="text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Location & contact -->
+    <div class="group" id="gLocation">
+      <h3>
+        Where guests go
+        <span class="hint" id="stLocation">Needs your input</span>
+      </h3>
+      <div class="body">
+        <div class="row">
+          <div class="col"><label>Address line 1</label><input id="f_addr1" type="text"></div>
+          <div class="col"><label>Address line 2 (optional)</label><input id="f_addr2" type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>City</label><input id="f_city2" type="text"></div>
+          <div class="col"><label>State</label><input id="f_state" type="text"></div>
+          <div class="col"><label>Postcode</label><input id="f_post" type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Meeting instructions (for guests)</label><textarea id="f_meeting"></textarea></div>
+          <div class="col"><label>On‑ground contact (optional)</label><input id="f_contact" type="text" placeholder="Phone or email"></div>
+        </div>
+        <p class="hint">We’ve prefilled what we found. Add short, clear directions guests will see on their voucher.</p>
+      </div>
+    </div>
+
+    <!-- Schedule & price (per option) -->
+    <div class="group" id="gSchedule">
+      <h3>
+        Schedule & price
+        <span class="hint" id="stSchedule">Looks good</span>
+      </h3>
+      <div class="body">
+        <div class="row">
+          <span class="pill">Duration: <span id="dur"></span></span>
+          <span class="pill">Notice: <span id="notice"></span></span>
+          <span class="pill">Ticket: Mobile / Direct entry</span>
+          <label style="margin-left:auto"><input type="checkbox" id="keepSync" checked> Keep prices & schedules synced with Rezdy</label>
+        </div>
+        <table class="table" style="margin-top:10px">
+          <thead><tr><th>Pax type</th><th>Price</th><th>Currency</th></tr></thead>
+          <tbody id="priceBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Guest info -->
+    <div class="group" id="gGuests">
+      <h3>
+        Guest info we’ll collect
+        <span class="hint" id="stGuests">Looks good</span>
+      </h3>
+      <div class="body" id="guestPills" class="row"></div>
+    </div>
+
+    <!-- Policies -->
+    <div class="group" id="gPolicies">
+      <h3>
+        Policies
+        <span class="hint" id="stPolicies">Looks good</span>
+      </h3>
+      <div class="body row">
+        <div class="col">
+          <label>Cancellation</label>
+          <select id="f_cancel">
+            <option value="no">Not cancellable</option>
+            <option value="24h">Free cancellation up to 24h</option>
+            <option value="48h">Free cancellation up to 48h</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </div>
+        <div class="col">
+          <label>Reschedule</label>
+          <select id="f_reschedule">
+            <option value="no">Not reschedulable</option>
+            <option value="24h">Reschedule up to 24h</option>
+            <option value="48h">Reschedule up to 48h</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Media -->
+    <div class="group" id="gMedia">
+      <h3>
+        Photos & videos
+        <span class="hint" id="stMedia">Add at least 1 photo</span>
+      </h3>
+      <div class="body">
+        <div class="gallery" id="gallery"></div>
+        <div class="row" style="margin-top:10px">
+          <button class="ghost" id="btnUpload">Upload photos</button>
+          <span class="hint">PNG/JPG up to 10MB each</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="notice">Heads‑up: If sync is on, price & schedules will update automatically from Rezdy. You can override later per option.</div>
+      <button id="saveDraft">Save draft</button>
+      <button class="primary" id="goPublish2">Review & publish</button>
+    </div>
+  </section>
+
+  <!-- Publish step -->
+  <section id="publish" class="panel" style="display:none">
+    <div class="breadcrumb"><a href="#" id="backToReview" style="color:var(--ink)">Review</a><span class="sep">›</span><span>Publish</span></div>
+    <h3 style="margin-top:8px">Final check</h3>
+    <p class="hint" id="pubSummary">–</p>
+    <div class="row" style="margin-top:10px">
+      <label><input type="checkbox" id="agree"> I confirm details are accurate and I have rights to sell this experience.</label>
+    </div>
+    <div class="footer">
+      <button id="backToReview2">Back</button>
+      <button class="primary" id="btnPublish" disabled>Publish now</button>
+    </div>
+  </section>
+</div>
+
+<!-- Floating checklist of remaining items -->
+<div class="float" id="float">
+  <h4>Fix remaining items</h4>
+  <ul id="todo"></ul>
+  <div class="footer"><button class="ghost" id="dismissFloat">Hide</button></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+
+// Sample payload derived from your real response (trimmed for UI)
+const payloads=[{
+  id:'PA8MY5',
+  name:'WET JET LEWISTON - Rack Rate - Rezdy US',
+  cityName:'Lewiston, NY, USA',
+  link:'https://WhirlpoolJetBoatToursUS.rezdy.com/view/PA8MY5',
+  content:{
+    highlights:'Experience a thrilling 45-minute guided day tour on the Niagara River aboard the WET JET BOAT...',
+    description:'Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery...'
+  },
+  option:{
+    name:'WET JET LEWISTON - Rack Rate - Rezdy US',
+    inclusions:'- 45-minute guided jet boat tour...\n- Safety orientation and wristband',
+    exclusions:'- Not specified',
+    languages:['EN'],
+    location:{
+      address1:'115 S Water St', address2:'', city:'Lewiston', state:'NY', post:'14092',
+      meetingPointDetails:'', contact:''
+    },
+    rules:{ durationMin:45, releaseMin:90 },
+    schedule:{ currency:'USD', prices:[{label:'Adult', price:70.97},{label:'Child', price:42.35}], sync:true },
+    guestFields:['First Name','Last Name','Email'],
+    policies:{ cancellable:false, reschedulable:false },
+    media:{ images:[], videos:[] }
+  }
+},
+// a couple of extra mocked cards for deck UX
+{ id:'BKH148', name:'BURJ KHALIFA – SKY Level 148', cityName:'Dubai, UAE', link:'#', content:{highlights:'Premium SKY access'}, option:{name:'SKY 148', inclusions:'Priority access', exclusions:'', languages:['EN'], location:{address1:'Sheikh Mohammed bin Rashid Blvd', address2:'', city:'Dubai', state:'', post:'', meetingPointDetails:'At the Top counter', contact:''}, rules:{durationMin:90, releaseMin:60}, schedule:{currency:'AED', prices:[{label:'Adult',price:399}], sync:true}, guestFields:['Name','Email'], policies:{cancellable:true,reschedulable:true}, media:{images:[''], videos:[]}} },
+{ id:'AQM-ZOO', name:'Dubai Aquarium & Underwater Zoo', cityName:'Dubai, UAE', link:'#', content:{highlights:'General admission'}, option:{name:'GA', inclusions:'Entry ticket', exclusions:'', languages:['EN'], location:{address1:'Dubai Mall', address2:'', city:'Dubai', state:'', post:'', meetingPointDetails:'', contact:''}, rules:{durationMin:120, releaseMin:30}, schedule:{currency:'AED', prices:[{label:'Adult',price:185},{label:'Child',price:150}], sync:true}, guestFields:['Name','Email'], policies:{cancellable:false,reschedulable:false}, media:{images:[''], videos:[]}} }
+];
+
+// ---- Deck rendering ------------------------------------------------------
+function completenessFor(p){
+  const opt=p.option; let total=8, done=0; // simple heuristic for UI demo
+  if(p.name) done++; if(p.content?.description) done++; if(opt?.name) done++; if(opt?.inclusions) done++; if(opt?.location?.address1) done++; if(opt?.schedule?.prices?.length) done++; if(opt?.guestFields?.length) done++; if((opt?.media?.images||[]).length>0) done++; 
+  return {done,total, pct:Math.round((done/total)*100)}
+}
+
+function renderDeck(){
+  const deck=$('#deck'); deck.innerHTML='';
+  payloads.forEach(p=>{
+    const comp=completenessFor(p);
+    const el=document.createElement('div'); el.className='card';
+    el.innerHTML=`
+      <img alt='' src='' onerror="this.style.background='#0c1220'"/>
+      <div class='meta'>
+        <h4>${p.name}</h4>
+        <div class='hint'>${p.cityName||'—'}</div>
+        <div class='progress' style='margin:8px 0 6px'><span style='width:${comp.pct}%'></span></div>
+        <div class='hint'>${comp.pct}% ready</div>
+      </div>
+      <div style='display:flex;flex-direction:column;gap:8px'>
+        <a class='pill' href='${p.link}' target='_blank'>Open on Rezdy</a>
+        <button class='primary' data-open='${p.id}'>Review & go live</button>
+      </div>`;
+    deck.appendChild(el);
+  });
+  $$('button[data-open]').forEach(b=>b.onclick=()=>openReview(b.dataset.open));
+}
+
+// ---- Review rendering ----------------------------------------------------
+let current=null; // current payload
+
+function openReview(id){
+  current = payloads.find(x=>x.id===id);
+  if(!current) return;
+  $('#deck').style.display='none'; $('#review').style.display='block'; $('#publish').style.display='none';
+  $('#bcTitle').textContent=current.name;
+
+  // Prefill fields
+  $('#f_name').value=current.name||'';
+  $('#f_city').value=current.cityName||'';
+  $('#f_highlights').value=current.content?.highlights||'';
+  $('#f_description').value=current.content?.description||'';
+
+  $('#f_optionName').value=current.option?.name||'';
+  $('#f_inclusions').value=current.option?.inclusions||'';
+  $('#f_exclusions').value=current.option?.exclusions||'';
+  $('#f_lang').value=(current.option?.languages||[]).join(', ');
+
+  $('#f_addr1').value=current.option?.location?.address1||'';
+  $('#f_addr2').value=current.option?.location?.address2||'';
+  $('#f_city2').value=current.option?.location?.city||'';
+  $('#f_state').value=current.option?.location?.state||'';
+  $('#f_post').value=current.option?.location?.post||'';
+  $('#f_meeting').value=current.option?.location?.meetingPointDetails||'';
+  $('#f_contact').value=current.option?.location?.contact||'';
+
+  $('#dur').textContent=(current.option?.rules?.durationMin||'–')+' min';
+  $('#notice').textContent=(current.option?.rules?.releaseMin||'–')+' min';
+  $('#keepSync').checked=!!current.option?.schedule?.sync;
+
+  const pb=$('#priceBody'); pb.innerHTML='';
+  (current.option?.schedule?.prices||[]).forEach(r=>{
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${r.label}</td><td>${r.price}</td><td>${current.option?.schedule?.currency||''}</td>`; pb.appendChild(tr);
+  });
+
+  const gp=$('#guestPills'); gp.innerHTML='';
+  (current.option?.guestFields||[]).forEach(g=>{ const s=document.createElement('span'); s.className='pill'; s.textContent=g; gp.appendChild(s); });
+
+  const gal=$('#gallery'); gal.innerHTML='';
+  const imgs=current.option?.media?.images||[]; if(imgs.length===0){ for(let i=0;i<3;i++){ const d=document.createElement('div'); d.className='ph'; d.textContent='No image'; gal.appendChild(d);} $('#stMedia').textContent='Add at least 1 photo'; } else { imgs.forEach(src=>{ const im=document.createElement('img'); im.src=src; im.style.width='120px'; im.style.height='90px'; im.style.borderRadius='10px'; im.style.objectFit='cover'; gal.appendChild(im);}); $('#stMedia').textContent='Looks good'; }
+
+  // sync pill
+  $('#syncPill').textContent='Sync with Rezdy: '+($('#keepSync').checked?'On':'Off');
+
+  recomputeCompleteness(); buildTodo();
+}
+
+$('#keepSync').onchange=()=>{ $('#syncPill').textContent='Sync with Rezdy: '+($('#keepSync').checked?'On':'Off'); };
+
+function recomputeCompleteness(){
+  // recompute on current field values
+  let total=10, done=0; const miss=[];
+  if($('#f_name').value.trim()) done++; else miss.push(['gAbout','Name']);
+  if($('#f_description').value.trim()) done++; else miss.push(['gAbout','Description']);
+  if($('#f_optionName').value.trim()) done++; else miss.push(['gOption','Option name']);
+  if($('#f_inclusions').value.trim()) done++; else miss.push(['gOption','Inclusions']);
+  if($('#f_addr1').value.trim()) done++; else miss.push(['gLocation','Address']);
+  if($('#f_meeting').value.trim()) done++; else miss.push(['gLocation','Meeting instructions']);
+  if($('#priceBody').children.length) done++; else miss.push(['gSchedule','Prices']);
+  if($('#guestPills').children.length) done++; else miss.push(['gGuests','Guest fields']);
+  // policies
+  if($('#f_cancel').value) done++; else miss.push(['gPolicies','Cancellation']);
+  // media
+  const hasImg = $('#gallery').querySelector('img'); if(hasImg) done++; else miss.push(['gMedia','Photos']);
+
+  const pct = Math.round((done/total)*100);
+  $('#ring').style.setProperty('--pct', pct+'%'); $('#ringText').textContent=pct+'%';
+  $('#compCount').textContent=done; $('#compTotal').textContent=total;
+
+  // statuses for group headers
+  $('#stAbout').textContent = ($('#f_name').value && $('#f_description').value) ? 'Looks good' : 'Needs your input';
+  $('#stOption').textContent = ($('#f_optionName').value && $('#f_inclusions').value) ? 'Looks good' : 'Needs your input';
+  $('#stLocation').textContent = ($('#f_addr1').value && $('#f_meeting').value) ? 'Looks good' : 'Needs your input';
+  $('#stSchedule').textContent = ($('#priceBody').children.length? 'Looks good':'Needs your input');
+  $('#stMedia').textContent = (hasImg? 'Looks good':'Add at least 1 photo');
+
+  return miss;
+}
+
+function buildTodo(){
+  const miss=recomputeCompleteness();
+  const box=$('#float'); const ul=$('#todo'); ul.innerHTML='';
+  if(miss.length===0){ box.style.display='none'; return; }
+  miss.forEach(([gid,label])=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class='ch'>•</span><a href='#' data-jump='${gid}' style='color:var(--ink)'>${label}</a>`;
+    ul.appendChild(li);
+  });
+  box.style.display='block';
+  $$('a[data-jump]').forEach(a=>a.onclick=(e)=>{ e.preventDefault(); const target=$('#'+a.dataset.jump); if(target){ target.scrollIntoView({behavior:'smooth',block:'start'});} });
+}
+
+$('#btnUpload').onclick=()=>{
+  // simulate upload
+  const gal=$('#gallery'); const ph=gal.querySelector('.ph'); if(ph) ph.remove();
+  const im=document.createElement('img'); im.src=''; im.style.width='120px'; im.style.height='90px'; im.style.borderRadius='10px'; im.style.objectFit='cover'; im.style.background='#123'; gal.appendChild(im);
+  buildTodo();
+};
+
+// Publish flow
+function openPublish(){
+  $('#review').style.display='none'; $('#publish').style.display='block';
+  const name=$('#f_name').value; const city=$('#f_city2').value||$('#f_city').value; const prices=[...$('#priceBody').children].map(tr=>tr.children[1].textContent).join(', ');
+  $('#pubSummary').textContent=`${name} • ${city} • Prices: ${prices}. Sync: ${$('#keepSync').checked? 'On':'Off'}.`;
+}
+$('#goPublish,#goPublish2').forEach?null:0; // avoid errors in some parsers
+$('#goPublish').onclick=openPublish; $('#goPublish2').onclick=openPublish;
+$('#backToReview').onclick=(e)=>{e.preventDefault(); $('#publish').style.display='none'; $('#review').style.display='block';};
+$('#backToReview2').onclick=()=>{ $('#publish').style.display='none'; $('#review').style.display='block'; };
+$('#agree').onchange=()=>{ $('#btnPublish').disabled = !$('#agree').checked };
+$('#btnPublish').onclick=()=>{ alert('Published! This experience is now live.'); window.scrollTo({top:0,behavior:'smooth'}); };
+
+$('#backToDeck').onclick=(e)=>{ e.preventDefault(); $('#review').style.display='none'; $('#deck').style.display='grid'; $('#publish').style.display='none'; };
+$('#dismissFloat').onclick=()=>$('#float').style.display='none';
+
+// init
+renderDeck();
+</script>
+</body>
+</html>

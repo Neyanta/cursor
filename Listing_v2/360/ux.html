@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flow Listing – Progressive Listing Experience</title>
+<style>
+  body {
+    font-family: "Inter", sans-serif;
+    background: #fafafa;
+    color: #222;
+    margin: 0;
+    padding: 48px 24px;
+    display: flex;
+    justify-content: center;
+  }
+  .flow-container {
+    width: 100%;
+    max-width: 600px;
+  }
+  .step {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    padding: 24px;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.6s ease;
+  }
+  .step.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .system-text {
+    color: #555;
+    margin-bottom: 16px;
+    animation: fadein 0.6s ease;
+  }
+  @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+  textarea, input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 8px;
+  }
+  .hidden { display: none; }
+  .review {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+</style>
+</head>
+<body>
+
+<div class="flow-container">
+
+  <!-- Step 1: Fetching -->
+  <div id="step1" class="step active">
+    <div class="system-text">Fetching product details from Rezdy…</div>
+  </div>
+
+  <!-- Step 2: Basic Info -->
+  <div id="step2" class="step hidden">
+    <div class="system-text">Got it! Found your product name and city.</div>
+    <p><b>WET JET LEWISTON - Rack Rate - Rezdy US</b><br>City: Abu Dhabi</p>
+  </div>
+
+  <!-- Step 3: Content -->
+  <div id="step3" class="step hidden">
+    <div class="system-text">
+      Highlights and description loaded.<br>
+      But we couldn’t find exclusions. Please add it below.
+    </div>
+    <textarea id="exclusions" rows="3" placeholder="- Not applicable or list here..."></textarea>
+  </div>
+
+  <!-- Step 4: Media -->
+  <div id="step4" class="step hidden">
+    <div class="system-text">
+      No media found. You can upload images later in the Media section.
+    </div>
+  </div>
+
+  <!-- Step 5: Policies -->
+  <div id="step5" class="step hidden">
+    <div class="system-text">
+      Pulled duration (45 mins), cancellation policy (not cancellable). Looks good.
+    </div>
+  </div>
+
+  <!-- Review -->
+  <div id="review" class="review hidden">
+    <h3>All Done 🎉</h3>
+    <p>Your listing has been created successfully.<br>You can now preview or publish.</p>
+  </div>
+
+</div>
+
+<script>
+setTimeout(()=>showStep('step2'), 2000);
+setTimeout(()=>showStep('step3'), 4000);
+
+function showStep(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.remove('hidden');
+    setTimeout(()=>el.classList.add('active'), 100);
+  }
+}
+
+document.getElementById('exclusions').addEventListener('blur', () => {
+  setTimeout(()=>showStep('step4'), 1000);
+  setTimeout(()=>showStep('step5'), 3000);
+  setTimeout(()=>showStep('review'), 5000);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub 360 Listing Flow</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Hayward", Arial, sans-serif;
+      background: #fff;
+      color: #222;
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+    }
+    section {
+      height: 100vh;
+      padding: 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      scroll-snap-align: start;
+      box-sizing: border-box;
+    }
+    h1 {
+      font-size: 24px;
+      color: #111;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    p.sub {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #800FFF;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #6f0ce0;
+    }
+    .footer-nav {
+      position: fixed;
+      bottom: 20px;
+      right: 80px;
+      display: flex;
+      gap: 10px;
+    }
+    .footer-nav button.secondary {
+      background: #fff;
+      color: #800FFF;
+      border: 1px solid #800FFF;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+      gap: 16px;
+    }
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .ring {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 4px solid #eee;
+      border-top-color: #800FFF;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {to {transform: rotate(360deg)}}
+  </style>
+</head>
+<body>
+
+<!-- SECTION 1: PRODUCT FETCH -->
+<section id="fetch">
+  <div class="progress">
+    <div class="ring"></div>
+    <span>Step 1 of 6 — Fetch Product</span>
+  </div>
+  <h1>Start your 360 Listing</h1>
+  <p class="sub">Fetch your product details from your RMS — just review what’s missing.</p>
+  <input type="text" placeholder="Enter Product Codes (comma separated)" />
+  <input type="number" placeholder="Enter Default Commission %" />
+  <button>Fetch Products</button>
+</section>
+
+<!-- SECTION 2: BASIC DETAILS -->
+<section id="basic">
+  <div class="progress">
+    <div class="ring"></div>
+    <span>Step 2 of 6 — Basic Details</span>
+  </div>
+  <h1>Basic Details</h1>
+  <input type="text" placeholder="Experience Name" />
+  <input type="text" placeholder="Internal Reference Code" />
+  <input type="url" placeholder="Website URL" />
+  <select>
+    <option>Category</option><option>Tours</option><option>Attractions</option>
+  </select>
+  <select>
+    <option>Sub-Category</option><option>Guided</option><option>Adventure</option>
+  </select>
+  <textarea placeholder="Description (min 150 characters)"></textarea>
+  <textarea placeholder="Highlights"></textarea>
+  <textarea placeholder="Itinerary (Optional)"></textarea>
+  <div class="footer-nav">
+    <button class="secondary">Back</button>
+    <button>Save & Continue</button>
+  </div>
+</section>
+
+<!-- SECTION 3: KNOW BEFORE YOU GO -->
+<section id="know">
+  <div class="progress">
+    <div class="ring"></div>
+    <span>Step 3 of 6 — Know Before You Go</span>
+  </div>
+  <h1>Know Before You Go</h1>
+  <select><option>Voucher Type</option><option>Mobile</option><option>Printed</option></select>
+  <select><option>Voucher Format Delivered</option><option>QR Code</option><option>PDF</option></select>
+  <input type="text" placeholder="Arrival / Reporting Time (mins before start)" />
+  <input type="text" placeholder="Dress Code (Optional)" />
+  <textarea placeholder="What is Allowed (e.g., Photography, Food)"></textarea>
+  <div class="footer-nav">
+    <button class="secondary">Back</button>
+    <button>Save & Continue</button>
+  </div>
+</section>
+
+<!-- SECTION 4: PHOTOS & VIDEOS -->
+<section id="media">
+  <div class="progress">
+    <div class="ring"></div>
+    <span>Step 4 of 6 — Photos & Videos</span>
+  </div>
+  <h1>Photos & Videos</h1>
+  <p class="sub">Upload at least 5 high-quality photos and one optional video.</p>
+  <input type="file" multiple />
+  <input type="file" accept="video/*" />
+  <div class="footer-nav">
+    <button class="secondary">Back</button>
+    <button>Save & Continue</button>
+  </div>
+</section>
+
+<!-- SECTION 5: OPTIONS OVERVIEW -->
+<section id="options">
+  <div class="progress">
+    <div class="ring"></div>
+    <span>Step 5 of 6 — Options Overview</span>
+  </div>
+  <h1>Options Fetched</h1>
+  <p class="sub">We detected 3 options from your RMS. Review each or add new ones if needed.</p>
+  <div class="grid">
+    <div class="card">
+      <h2>Option A – Morning Jet Tour</h2>
+      <p>2 pax types • 45 mins • Fixed schedule</p>
+      <button>Review Option</button>
+    </div>
+    <div class="card">
+      <h2>Option B – Evening Jet Tour</h2>
+      <p>2 pax types • 45 mins • Fixed schedule</p>
+      <button>Review Option</button>
+    </div>
+    <div class="card">
+      <h2>Option C – Private Charter</h2>
+      <p>1 pax type • 90 mins • On Request</p>
+      <button>Review Option</button>
+    </div>
+  </div>
+  <button style="margin-top:20px;background:#fff;color:#800FFF;border:1px solid #800FFF;">Add Another Option</button>
+  <div class="footer-nav">
+    <button class="secondary">Back</button>
+    <button>Save & Continue</button>
+  </div>
+</section>
+
+<!-- SECTION 6: OPTION DETAIL -->
+<section id="option-detail">
+  <div class="progress">
+    <div class="ring"></div>
+    <span>Step 6 of 6 — Option Details</span>
+  </div>
+  <h1>Option: Morning Jet Tour</h1>
+
+  <h2>Setup</h2>
+  <input type="text" placeholder="Option Name" />
+  <textarea placeholder="Inclusion & Exclusion"></textarea>
+
+  <h2>Guest Directions</h2>
+  <textarea placeholder="Pickup Details"></textarea>
+  <textarea placeholder="Start Location"></textarea>
+
+  <h2>Reservation Settings</h2>
+  <select><option>Booking Type</option><option>Freesale</option><option>API</option></select>
+  <select><option>Cancellation Policy</option><option>24h Free Cancel</option><option>Non-refundable</option></select>
+  <input type="text" placeholder="Guest Types (e.g., Adult, Child)" />
+  <textarea placeholder="Schedules, Closures & Campaigns"></textarea>
+
+  <div class="footer-nav">
+    <button class="secondary">Back</button>
+    <button>Save & Continue</button>
+  </div>
+</section>
+
+</body>
+</html>

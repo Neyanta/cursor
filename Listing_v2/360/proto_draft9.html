@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hub 360 – Clickable Prototype (Subtle Violet)</title>
+<style>
+  :root{
+    --accent:#800FFF; --text:#222; --muted:#666; --line:#EDEAF8; --bg:#FFFFFF; --panel:#FFFFFF;
+    --prefill:#F6F6F8; --ok:#27AE60; --warn:#F2A007; --bad:#E74C3C;
+    --radius:12px; --shadow:0 10px 28px rgba(24,16,64,0.06); --maxw:960px;
+  }
+  html,body{margin:0;background:var(--bg);color:var(--text);font:14px system-ui, -apple-system, Segoe UI, Roboto, Arial, "Helvetica Neue", sans-serif}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:28px 18px 80px}
+  h1{font-size:22px;margin:10px 0 6px}
+  h2{font-size:16px;margin:16px 0 8px}
+  p.sub{color:var(--muted);margin:0 0 14px}
+  a{color:var(--accent);text-decoration:none}
+  .card{background:var(--panel);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:var(--radius);padding:18px;margin:12px 0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .full{grid-column:1/-1}
+  label{display:flex;justify-content:space-between;align-items:center;margin:6px 0 6px;font-weight:700;color:#2A2A2A}
+  .req{font-size:11px;color:var(--bad);font-weight:800}
+  .opt{font-size:11px;color:var(--muted);font-weight:700}
+  input,select,textarea{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #DDD;border-radius:10px;font:inherit;background:#fff;transition:border-color .15s, box-shadow .15s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(128,15,255,.08)}
+  textarea{min-height:96px;resize:vertical}
+  .prefilled{background:var(--prefill)}
+  .missing{border-color:var(--accent)}
+  .missNote{font-size:11px;color:var(--accent);font-weight:800}
+  .fetchnote{font-size:11px;color:#8a8a8a;margin-top:6px}
+  .footer{display:flex;justify-content:flex-end;gap:10px;margin:18px 0}
+  .btn{border:1px solid var(--accent);background:#fff;color:var(--accent);padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{border-color:#DDD;color:#444}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .statusline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
+  .dot{width:8px;height:8px;border-radius:50%;background:#CFC8E8;display:inline-block}
+  .dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.bad{background:var(--bad)}
+  .meter{height:6px;background:#F2F1F7;border-radius:999px;position:relative;overflow:hidden}
+  .meter i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);opacity:.35;border-radius:999px}
+  .mini{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{border:1px solid var(--line);background:#FAF9FE;color:#4d3a86;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700}
+  .topnav{position:sticky;top:0;background:rgba(255,255,255,.92);backdrop-filter:saturate(180%) blur(8px);border-bottom:1px solid var(--line);z-index:5}
+  .topnav .wrap{padding:10px 18px}
+  .crumb{color:#7b7597;font-weight:700;font-size:12px}
+  .crumb b{color:#493a84}
+  /* Horizontal stepper */
+  .stepper{display:flex;gap:26px;justify-content:center;margin:24px 0 12px}
+  .snode{display:flex;align-items:center;gap:10px;color:#9A94B8;font-weight:700}
+  .snode i{width:10px;height:10px;border-radius:50%;border:2px solid #D9D4EC;display:inline-block}
+  .snode.active{color:#2A2A2A}
+  .snode.active i{border-color:var(--accent);background:var(--accent)}
+  .snode.done i{border-color:#6DD39E;background:#6DD39E}
+  /* Sticky bottom bar */
+  .sticky{position:sticky;bottom:0;background:rgba(255,255,255,.96);backdrop-filter:saturate(180%) blur(8px);border-top:1px solid var(--line);padding:12px 0;margin-top:16px}
+  .bar{max-width:var(--maxw);margin:0 auto;display:flex;justify-content:flex-end;gap:10px;padding:0 18px}
+  /* Review table */
+  table{width:100%;border-collapse:separate;border-spacing:0 8px}
+  th{text-align:left;color:#555;font-weight:800;font-size:12px;padding:0 10px}
+  td{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px}
+  .mute{color:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="topnav">
+    <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
+      <div class="crumb">Hub › <b>360 Listing</b> › New Experience</div>
+      <div class="mini"><span class="pill">Theme: Subtle Violet</span><span class="pill">Accent #800FFF</span></div>
+    </div>
+  </div>
+
+  <div class="wrap" id="app">
+
+    <!-- ====== 1) PRODUCT CODE ====== -->
+    <section class="card" data-stage="product">
+      <h1>Enter product code</h1>
+      <p class="sub">Paste the code from your RMS. We’ll fetch details and pre-fill your form.</p>
+      <div class="row">
+        <div>
+          <label>Product code <span class="req" id="pc-miss" hidden>⚠ Required</span></label>
+          <input id="productCode" class="missing" placeholder="e.g., PA8MY5"/>
+          <div class="fetchnote" id="pc-note" hidden>Looks good — fetching preview…</div>
+        </div>
+        <div>
+          <label class="opt">RMS (auto-detected)</label>
+          <input class="prefilled" value="Rezdy" disabled/>
+          <div class="fetchnote">Detected from your connected account</div>
+        </div>
+        <div class="full">
+          <label class="opt">Preview (after fetch)</label>
+          <input id="productPreview" class="prefilled" value="" placeholder="—" disabled/>
+          <div class="fetchnote" id="syncInfo" hidden>Fetched name • Last sync: just now</div>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn ghost" disabled>Back</button>
+        <button id="fetchBtn" class="btn primary">Fetch Listing</button>
+      </div>
+    </section>
+
+    <!-- ====== 2) COMMISSION (single input) ====== -->
+    <section class="card" data-stage="commission" hidden>
+      <h1>Set commission</h1>
+      <p class="sub">Enter the commission for this product. You can edit it later in the product card if needed.</p>
+      <div class="row">
+        <div>
+          <label>Commission % <span class="req" id="comm-miss" hidden>⚠ Required</span></label>
+          <input id="commission" class="missing" type="number" placeholder="e.g., 20" min="0" max="95" step="0.1"/>
+        </div>
+        <div>
+          <label class="opt">Note</label>
+          <input class="prefilled" value="Applies to the fetched options by default" disabled/>
+        </div>
+      </div>
+      <div class="footer">
+        <button class="btn" id="backToProduct">Back</button>
+        <button class="btn primary" id="toOptions">Continue</button>
+      </div>
+    </section>
+
+    <!-- ====== 3) OPTIONS OVERVIEW ====== -->
+    <section class="card" data-stage="options" hidden>
+      <h1>Options fetched from your RMS</h1>
+      <p class="sub">We detected 3 options. Review each — missing fields are clearly marked.</p>
+      <div class="grid3" id="optionsGrid"><!-- filled by JS --></div>
+      <div class="footer">
+        <button class="btn" id="backToCommission">Back</button>
+        <button class="btn primary" id="goMorning">Proceed to “Morning Jet Tour”</button>
+      </div>
+    </section>
+
+    <!-- ====== 4) OPTION DETAIL (with horizontal stepper) ====== -->
+    <section data-stage="option" hidden>
+      <div class="stepper">
+        <div class="snode done" id="sn-setup"><i></i>Setup</div>
+        <div class="snode active" id="sn-guest"><i></i>Guest directions</div>
+        <div class="snode" id="sn-resv"><i></i>Reservation</div>
+      </div>
+      <h1>Option · <span id="optName" style="color:#4b3e8f">Morning Jet Tour</span></h1>
+      <p class="sub">Verify RMS data and complete missing fields.</p>
+
+      <!-- Setup -->
+      <div class="card">
+        <div class="statusline"><span class="dot ok" id="st-setup-dot"></span><span id="st-setup">Complete</span></div>
+        <h2>Setup</h2>
+        <div class="row">
+          <div>
+            <label>Option name <span class="opt">Fetched</span></label>
+            <input id="op-name" class="prefilled" value="Morning Jet Tour"/>
+            <div class="fetchnote">RMS → Option Name</div>
+          </div>
+          <div>
+            <label>Internal reference code <span class="opt">Optional</span></label>
+            <input id="op-ref" class="prefilled" value="JET-MORN-01"/>
+          </div>
+          <div class="full">
+            <label>Inclusions <span class="opt">Fetched</span></label>
+            <textarea id="op-inc" class="prefilled">• 45-minute jet boat ride
+• Safety orientation
+• English-speaking crew</textarea>
+          </div>
+          <div class="full">
+            <label>Exclusions <span class="req" id="miss-exc">⚠ Required</span></label>
+            <textarea id="op-exc" class="missing" placeholder="Add exclusions (e.g., hotel pickup, meals)"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Guest directions -->
+      <div class="card">
+        <div class="statusline"><span class="dot warn" id="st-guest-dot"></span><span id="st-guest">Partially filled</span></div>
+        <h2>Guest directions</h2>
+        <h3 style="margin:6px 0 6px;font-size:14px">Pickup details</h3>
+        <div class="row">
+          <div>
+            <label>Is pickup included? <span class="opt">Fetched</span></label>
+            <select id="gd-pick" class="prefilled"><option selected>Yes</option><option>No</option></select>
+          </div>
+          <div>
+            <label>Coverage <span class="opt">Prefilled</span></label>
+            <select id="gd-cov" class="prefilled">
+              <option selected>Upload list of supported hotels/locations</option>
+              <option>Any hotels or locations within the city</option>
+            </select>
+          </div>
+          <div class="full">
+            <label>Pickup locations (one per line) <span class="opt">Prefilled</span></label>
+            <textarea id="gd-locs" class="prefilled">Hotel Sunrise
+Downtown Pier</textarea>
+          </div>
+        </div>
+
+        <h3 style="margin:14px 0 6px;font-size:14px">Start location</h3>
+        <div class="row">
+          <div>
+            <label>Redemption method <span class="opt">Prefilled</span></label>
+            <select id="gd-redm" class="prefilled">
+              <option>Scan and enter</option>
+              <option selected>Guided tour</option>
+              <option>Hosted tour</option>
+              <option>Show the ticket and enter</option>
+              <option>Exchange for voucher</option>
+              <option>HOHO</option>
+              <option>Live entertainment</option>
+            </select>
+          </div>
+          <div>
+            <label>Arrival buffer <span class="req" id="miss-arr">⚠ Missing minutes</span></label>
+            <div class="row">
+              <input id="arr-h" type="number" placeholder="HH" value="0" class="prefilled"/>
+              <input id="arr-m" type="number" placeholder="MM" class="missing"/>
+            </div>
+          </div>
+          <div>
+            <label>Emergency phone <span class="opt">Prefilled</span></label>
+            <input id="gd-ph" class="prefilled" value="+1 202-555-0114"/>
+          </div>
+          <div>
+            <label>Photo ID required? <span class="opt">Prefilled</span></label>
+            <select id="gd-id" class="prefilled"><option selected>Yes</option><option>No</option></select>
+          </div>
+          <div class="full">
+            <label>Additional instructions <span class="req" id="miss-inst">⚠ Required</span></label>
+            <textarea id="gd-inst" class="missing" placeholder="Add clear, simple instructions for guests…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reservation -->
+      <div class="card">
+        <div class="statusline"><span class="dot warn" id="st-resv-dot"></span><span id="st-resv">Partially filled</span></div>
+        <h2>Reservation</h2>
+
+        <h3 style="margin:6px 0 6px;font-size:14px">Booking</h3>
+        <p class="sub">Selection preview: <b>Instant confirmation (Freesale)</b></p>
+        <div class="row">
+          <div>
+            <label>Receive intimation emails? <span class="opt">Prefilled</span></label>
+            <select id="rv-mail" class="prefilled"><option>Yes</option><option>No</option></select>
+          </div>
+          <div>
+            <label>Booking time limit <span class="opt">Prefilled</span></label>
+            <select id="rv-limit" class="prefilled"><option selected>Release period</option><option>Cutoff period</option><option>None</option></select>
+          </div>
+          <div class="row full">
+            <input id="rv-hr" type="number" class="prefilled" value="1"/>
+            <input id="rv-mn" type="number" class="prefilled" value="30"/>
+            <div class="fetchnote full">Release period is HH hours : MM mins before start</div>
+          </div>
+        </div>
+
+        <h3 style="margin:14px 0 6px;font-size:14px">Cancellation</h3>
+        <div class="row">
+          <div>
+            <label>Allow cancellations? <span class="opt">Prefilled</span></label>
+            <select id="rv-can" class="prefilled"><option selected>Yes</option><option>No</option></select>
+          </div>
+          <div>
+            <label>Cancellation window (hours) <span class="opt">Prefilled</span></label>
+            <input id="rv-canwin" class="prefilled" value="24"/>
+          </div>
+          <div>
+            <label>Allow rescheduling? <span class="req" id="miss-resch">⚠ Required</span></label>
+            <select id="rv-resch" class="missing"><option value="">—</option><option>No</option><option>Yes</option></select>
+          </div>
+          <div>
+            <label>Rescheduling window (hours) <span class="opt">Conditional</span></label>
+            <input id="rv-reschwin" class="prefilled" placeholder="e.g., 24"/>
+          </div>
+        </div>
+
+        <h3 style="margin:14px 0 6px;font-size:14px">Guest types</h3>
+        <div class="card" style="padding:12px;border:1px solid var(--line)">
+          <div class="row">
+            <div><label>Type <span class="opt">Prefilled</span></label><select class="prefilled"><option>Adult</option></select></div>
+            <div><label>Min age <span class="opt">Prefilled</span></label><input class="prefilled" value="13"/></div>
+            <div><label>Max age <span class="opt">Prefilled</span></label><input class="prefilled" value="59"/></div>
+            <div><label>Notes <span class="opt">Optional</span></label><input class="prefilled"/></div>
+            <div><label>Free? <span class="opt">Prefilled</span></label><select class="prefilled"><option>No</option><option>Yes</option></select></div>
+          </div>
+          <hr style="border:none;border-top:1px solid #eee;margin:12px 0"/>
+          <div class="row">
+            <div><label>Type <span class="opt">Prefilled</span></label><select class="prefilled"><option>Child</option></select></div>
+            <div><label>Min age <span class="opt">Prefilled</span></label><input class="prefilled" value="0"/></div>
+            <div><label>Max age <span class="opt">Prefilled</span></label><input class="prefilled" value="12"/></div>
+            <div><label>Notes <span class="opt">Optional</span></label><input class="prefilled"/></div>
+            <div><label>Free? <span class="opt">Prefilled</span></label><select class="prefilled"><option>No</option><option>Yes</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sticky">
+        <div class="bar">
+          <button class="btn" id="optBack">Back</button>
+          <button class="btn primary" id="optNext">Save & Continue</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== 5) REVIEW & SUBMIT ====== -->
+    <section class="card" data-stage="review" hidden>
+      <h1>Review & submit</h1>
+      <p class="sub">Quick status of all options. Fix any blockers before submission.</p>
+      <table>
+        <thead>
+          <tr><th>Option</th><th>Setup</th><th>Guest directions</th><th>Reservation</th><th>Schedules</th><th>Overall</th></tr>
+        </thead>
+        <tbody id="reviewBody"><!-- populated by JS --></tbody>
+      </table>
+      <div class="footer">
+        <button class="btn" id="backToOption">Back</button>
+        <button class="btn primary" id="submitBtn">Submit for Review</button>
+      </div>
+    </section>
+  </div>
+
+<script>
+  // ------- Simple store / mock data -------
+  const state = {
+    product: { code: '', name: '', fetched: false },
+    commission: null,
+    options: [
+      { id:'morning', name:'Morning Jet Tour', pax:2, dur:'45 mins', type:'Fixed', completeness:0.92, status:'ok', schedule:true,
+        fields:{setup:{exclusions:''}, guest:{arrM:'', inst:''}, resv:{resch:''}} },
+      { id:'evening', name:'Evening Jet Tour', pax:2, dur:'45 mins', type:'Fixed', completeness:0.64, status:'warn', schedule:true,
+        fields:{setup:{exclusions:''}, guest:{arrM:'', inst:''}, resv:{resch:'No'}} },
+      { id:'charter', name:'Private Charter', pax:1, dur:'90 mins', type:'On request', completeness:0.58, status:'bad', schedule:false,
+        fields:{setup:{exclusions:'Fuel surcharge not included'}, guest:{arrM:'15', inst:'Arrive 15 mins early'}, resv:{resch:'Yes'}} },
+    ],
+    currentOption: 'morning',
+    step: 'product', // product -> commission -> options -> option -> review
+    optionStepIndex: 0 // 0 Setup, 1 Guest, 2 Reservation
+  };
+
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => document.querySelectorAll(sel);
+
+  // ------- Navigation helpers -------
+  function showStage(key){
+    $$('section[data-stage]').forEach(s=> s.hidden = (s.dataset.stage !== key));
+    state.step = key;
+    if(key==='options'){renderOptions();}
+    if(key==='option'){renderOptionStepper();}
+    if(key==='review'){renderReview();}
+  }
+
+  // ------- 1) Product code fetch -------
+  const productCode = $('#productCode');
+  const fetchBtn = $('#fetchBtn');
+  const pcMiss = $('#pc-miss');
+  const pcNote = $('#pc-note');
+  const productPreview = $('#productPreview');
+  const syncInfo = $('#syncInfo');
+
+  fetchBtn.addEventListener('click', () => {
+    if(!productCode.value.trim()){
+      pcMiss.hidden = false;
+      productCode.focus();
+      return;
+    }
+    pcMiss.hidden = true;
+    pcNote.hidden = false;
+    fetchBtn.disabled = true;
+    productCode.classList.remove('missing');
+
+    // mock fetch
+    setTimeout(()=>{
+      const name = 'WET JET LEWISTON – Rack Rate – Rezdy US';
+      state.product = { code: productCode.value.trim(), name, fetched:true };
+      productPreview.value = name;
+      syncInfo.hidden = false;
+      pcNote.hidden = true;
+      showStage('commission');
+      fetchBtn.disabled = false;
+    }, 650);
+  });
+
+  // Back from commission to product
+  $('#backToProduct').addEventListener('click', ()=> showStage('product'));
+
+  // ------- 2) Commission -------
+  const commission = $('#commission');
+  const commMiss = $('#comm-miss');
+  $('#toOptions').addEventListener('click', ()=>{
+    const val = commission.value.trim();
+    if(val==='' || isNaN(+val)){
+      commMiss.hidden = false; commission.focus();
+      return;
+    }
+    commMiss.hidden = true;
+    state.commission = +val;
+    showStage('options');
+  });
+
+  // ------- 3) Options overview -------
+  function badgeDotClass(status){
+    return status==='ok' ? 'ok' : status==='warn' ? 'warn' : 'bad';
+    }
+  function pct(p){ return Math.round(p*100); }
+
+  function renderOptions(){
+    const grid = $('#optionsGrid');
+    grid.innerHTML = '';
+    state.options.forEach(o=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <h2>${o.name}</h2>
+        <div class="statusline">
+          <span class="dot ${badgeDotClass(o.status)}"></span>
+          <span>${o.pax} pax types • ${o.dur} • ${o.type}</span>
+          <span style="margin-left:auto" class="mute">${pct(o.completeness)}% ready</span>
+        </div>
+        <div class="meter" style="margin:8px 0 12px"><i style="width:${pct(o.completeness)}%"></i></div>
+        <div class="mini" style="margin-bottom:8px">
+          ${o.schedule? `<span class="pill">Schedule linked</span>` : `<span class="pill">No schedule</span>`}
+          ${o.fields.setup.exclusions ? `<span class="pill">Exclusions ✓</span>`:`<span class="pill">Exclusions missing</span>`}
+        </div>
+        <div class="footer" style="justify-content:flex-start">
+          <button class="btn ${o.id==='morning'?'primary':''}" data-opt="${o.id}">Review</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+    grid.querySelectorAll('button[data-opt]').forEach(b=>{
+      b.addEventListener('click', (e)=>{
+        state.currentOption = e.currentTarget.dataset.opt;
+        showStage('option');
+      });
+    });
+  }
+  $('#backToCommission').addEventListener('click', ()=> showStage('commission'));
+  $('#goMorning').addEventListener('click', ()=> { state.currentOption='morning'; showStage('option'); });
+
+  // ------- 4) Option detail + stepper -------
+  function renderOptionStepper(){
+    // reset step to Guest for demo (Setup done)
+    state.optionStepIndex = 1;
+    updateStepperDots();
+    const opt = state.options.find(o=>o.id===state.currentOption);
+    $('#optName').textContent = opt.name;
+    syncOptionFields(opt);
+    evaluateSections();
+  }
+  function updateStepperDots(){
+    $('#sn-setup').className = 'snode '+(state.optionStepIndex>0?'done':'active');
+    $('#sn-guest').className  = 'snode '+(state.optionStepIndex===1?'active':(state.optionStepIndex>1?'done':'' ));
+    $('#sn-resv').className   = 'snode '+(state.optionStepIndex===2?'active':'' );
+  }
+
+  // load fields from state into UI (for current option)
+  function syncOptionFields(opt){
+    // Setup
+    $('#op-exc').value = opt.fields.setup.exclusions || '';
+    toggleMissing($('#op-exc'), !$('#op-exc').value.trim(), '#miss-exc');
+
+    // Guest
+    $('#arr-m').value = opt.fields.guest.arrM || '';
+    toggleMissing($('#arr-m'), !$('#arr-m').value.trim(), '#miss-arr');
+    $('#gd-inst').value = opt.fields.guest.inst || '';
+    toggleMissing($('#gd-inst'), !$('#gd-inst').value.trim(), '#miss-inst');
+
+    // Reservation
+    $('#rv-resch').value = opt.fields.resv.resch || '';
+    toggleMissing($('#rv-resch'), !$('#rv-resch').value.trim(), '#miss-resch');
+  }
+  function toggleMissing(inputEl, isMissing, noteSel){
+    if(isMissing){ inputEl.classList.add('missing'); $(noteSel)?.removeAttribute('hidden'); }
+    else{ inputEl.classList.remove('missing'); $(noteSel)?.setAttribute('hidden',''); }
+  }
+
+  // Evaluate section statuses -> small dot + text
+  function evaluateSections(){
+    const setupMissing = !$('#op-exc').value.trim();
+    setStatus('setup', setupMissing? 'warn':'ok', setupMissing? 'Partially filled':'Complete');
+
+    const guestMissing = !$('#arr-m').value.trim() || !$('#gd-inst').value.trim();
+    setStatus('guest', guestMissing? 'warn':'ok', guestMissing? 'Partially filled':'Complete');
+
+    const resvMissing = !$('#rv-resch').value.trim();
+    setStatus('resv', resvMissing? 'warn':'ok', resvMissing? 'Partially filled':'Complete');
+
+    // Update option completeness roughly
+    const opt = state.options.find(o=>o.id===state.currentOption);
+    let boost = 0;
+    if(!setupMissing) boost += .04;
+    if(!guestMissing) boost += .06;
+    if(!resvMissing)  boost += .05;
+    opt.completeness = Math.min(1, (opt.id==='morning'?0.85:opt.completeness) + boost);
+  }
+  function setStatus(section, level, label){
+    $('#st-'+section).textContent = label;
+    const dot = $('#st-'+section+'-dot');
+    dot.classList.remove('ok','warn','bad');
+    dot.classList.add(level);
+  }
+
+  // Persist changes on key input → evaluate
+  ['op-exc','arr-m','gd-inst','rv-resch'].forEach(id=>{
+    $('#'+id).addEventListener('input', ()=>{
+      const opt = state.options.find(o=>o.id===state.currentOption);
+      if(id==='op-exc') opt.fields.setup.exclusions = $('#op-exc').value.trim();
+      if(id==='arr-m') opt.fields.guest.arrM = $('#arr-m').value.trim();
+      if(id==='gd-inst') opt.fields.guest.inst = $('#gd-inst').value.trim();
+      if(id==='rv-resch') opt.fields.resv.resch = $('#rv-resch').value.trim();
+      // toggle missing visuals
+      if(id==='op-exc') toggleMissing($('#op-exc'), !$('#op-exc').value.trim(), '#miss-exc');
+      if(id==='arr-m') toggleMissing($('#arr-m'), !$('#arr-m').value.trim(), '#miss-arr');
+      if(id==='gd-inst') toggleMissing($('#gd-inst'), !$('#gd-inst').value.trim(), '#miss-inst');
+      if(id==='rv-resch') toggleMissing($('#rv-resch'), !$('#rv-resch').value.trim(), '#miss-resch');
+      evaluateSections();
+    });
+  });
+
+  // Next/back within option → cycle steps and/or go to review
+  $('#optNext').addEventListener('click', ()=>{
+    if(state.optionStepIndex<2){ state.optionStepIndex++; updateStepperDots(); window.scrollTo({top:0,behavior:'smooth'}); }
+    else{ showStage('review'); }
+  });
+  $('#optBack').addEventListener('click', ()=>{
+    if(state.optionStepIndex>0){ state.optionStepIndex--; updateStepperDots(); window.scrollTo({top:0,behavior:'smooth'}); }
+    else{ showStage('options'); }
+  });
+
+  // ------- 5) Review & submit -------
+  function renderReview(){
+    const tbody = $('#reviewBody');
+    tbody.innerHTML = '';
+    state.options.forEach(o=>{
+      // compute simple statuses based on stored fields
+      const setup = o.fields.setup.exclusions ? 'ok':'warn';
+      const guest = (o.fields.guest.arrM && o.fields.guest.inst) ? 'ok':'warn';
+      const resv  = o.fields.resv.resch ? 'ok':'warn';
+      const sched = o.schedule ? 'ok':'bad';
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><b>${o.name}</b></td>
+        <td>${badgeText(setup)}</td>
+        <td>${badgeText(guest)}</td>
+        <td>${badgeText(resv)}</td>
+        <td>${badgeText(sched)}</td>
+        <td class="mute">${pct(o.completeness)}%</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+  function badgeText(level){
+    const map = {ok:['#27AE60','Complete'], warn:['#F2A007','Needs review'], bad:['#E74C3C','Missing']};
+    const [c, t] = map[level];
+    return `<span style="display:inline-flex;align-items:center;gap:6px;font-weight:700;color:${c}"><span class="dot" style="background:${c}"></span>${t}</span>`;
+  }
+  $('#backToOption').addEventListener('click', ()=> showStage('option'));
+  $('#submitBtn').addEventListener('click', ()=>{
+    alert('Submitted for review ✅ (mock)');
+  });
+
+  // ------- Init -------
+  showStage('product');
+</script>
+</body>
+</html>

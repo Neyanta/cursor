@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub – 360 Listing (RMS) – Prototype v1</title>
+  <style>
+    :root{
+      --bg:#0b0c10; /* dark slate */
+      --panel:#12141a;
+      --muted:#1b1f2a;
+      --text:#e6e8ef;
+      --sub:#9aa3b2;
+      --brand:#6ee7ff; /* cyan */
+      --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444; --info:#60a5fa;
+      --chip:#222737; --chip-border:#2c3244; --input:#0f1220;
+      --shadow:0 8px 24px rgba(0,0,0,.35);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto;color:var(--text);background:linear-gradient(180deg,#0a0c12,#0b0c10);} 
+    a{color:var(--brand);text-decoration:none}
+    .app{display:grid;grid-template-columns:300px 1fr;gap:18px;max-width:1200px;margin:24px auto;padding:0 16px}
+    header{grid-column:1/-1;background:transparent;margin-bottom:6px}
+    .title{display:flex;gap:12px;align-items:center}
+    .badge{padding:4px 10px;border-radius:999px;background:var(--chip);border:1px solid var(--chip-border);color:var(--sub)}
+
+    .sidebar{background:var(--panel);border:1px solid #1e2230;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);position:sticky;top:16px;height:fit-content}
+    .step{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:12px;margin:6px 0;border:1px dashed transparent}
+    .step.active{background:rgba(110,231,255,.05);border-color:#1f2a3a}
+    .step small{color:var(--sub)}
+    .step .dot{width:24px;height:24px;border-radius:999px;display:inline-grid;place-items:center;background:#1a2333;border:1px solid #273149;color:#8fb6ff;font-size:12px;font-weight:700}
+
+    .panel{background:var(--panel);border:1px solid #1e2230;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;margin-bottom:16px}
+    .panel h3{margin:0 0 8px}
+    .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .grow{flex:1 1 240px}
+    label{display:block;margin:2px 0 6px;color:var(--sub)}
+    input[type=text], select, textarea{width:100%;background:var(--input);border:1px solid #232a44;border-radius:12px;color:var(--text);padding:12px 12px}
+    textarea{min-height:80px}
+    button{appearance:none;background:#1a2333;border:1px solid #2a3550;color:var(--text);padding:10px 14px;border-radius:12px;cursor:pointer}
+    button.primary{background:linear-gradient(180deg,#38bdf8,#06b6d4);color:#051016;border:none}
+    button.ghost{background:transparent;border:1px dashed #2a3550}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .right{margin-left:auto}
+
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{background:var(--chip);border:1px solid var(--chip-border);padding:6px 10px;border-radius:999px;color:var(--sub)}
+    .chip.ok{border-color:#1f5130;color:#9ae6b4;background:#0b1a12}
+    .chip.warn{border-color:#7a4a0b;color:#f8d48a;background:#1a1206}
+    .chip.bad{border-color:#6b1b1b;color:#feb2b2;background:#190b0b}
+    .chip.info{border-color:#24466b;color:#c1dbff;background:#0b1320}
+
+    .grid{display:grid;gap:12px}
+    .cols-2{grid-template-columns:1fr 1fr}
+    .cols-3{grid-template-columns:repeat(3,1fr)}
+
+    .table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .table th{color:var(--sub);text-align:left;font-weight:600}
+    .table td,.table th{padding:10px 12px;background:#0e1220;border-top:1px solid #20263c;border-bottom:1px solid #20263c}
+    .table td:first-child,.table th:first-child{border-top-left-radius:10px;border-bottom-left-radius:10px}
+    .table td:last-child,.table th:last-child{border-top-right-radius:10px;border-bottom-right-radius:10px}
+
+    .progress{height:8px;background:#12182a;border-radius:999px;overflow:hidden}
+    .progress > span{display:block;height:100%;background:linear-gradient(90deg,#60a5fa,#06b6d4);width:0}
+
+    .inline-note{font-size:12px;color:var(--sub)}
+    .pill-toggle{display:flex;background:#0f1526;border:1px solid #273149;border-radius:12px;overflow:hidden}
+    .pill-toggle button{flex:1;background:transparent;border:none;padding:10px;color:var(--sub)}
+    .pill-toggle button.on{background:#12233a;color:#cfe7ff}
+
+    .footer{display:flex;gap:12px;justify-content:flex-end;padding:12px 0}
+
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal .sheet{width:min(860px,100%);background:var(--panel);border:1px solid #1e2230;border-radius:16px;box-shadow:var(--shadow);padding:16px}
+
+    .kbd{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;color:#cbd5e1;background:#0d1426;border:1px solid #273149;border-radius:8px;padding:2px 6px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="title">
+        <h1 style="margin:0;font-size:20px">360 Listing (RMS Connect)</h1>
+        <span class="badge">Unmanaged by default</span>
+        <span class="badge">Auto‑maps → prompts for gaps</span>
+      </div>
+      <p style="margin:6px 0 0;color:var(--sub)">Prototype: single‑product or multi‑code import, field mapping preview, gap resolver, related product discovery, and publish settings.</p>
+    </header>
+
+    <aside class="sidebar">
+      <div class="step active"><span class="dot">1</span><div>
+        <strong>Connect & Fetch</strong><br><small>RMS + product code(s)</small>
+      </div></div>
+      <div class="step"><span class="dot">2</span><div>
+        <strong>Review Mapping</strong><br><small>What we fetched</small>
+      </div></div>
+      <div class="step"><span class="dot">3</span><div>
+        <strong>Resolve Gaps</strong><br><small>Only what’s missing</small>
+      </div></div>
+      <div class="step"><span class="dot">4</span><div>
+        <strong>Variants & Pricing</strong><br><small>Slots, pax, price</small>
+      </div></div>
+      <div class="step"><span class="dot">5</span><div>
+        <strong>Publish</strong><br><small>Mode & sync</small>
+      </div></div>
+    </aside>
+
+    <main>
+      <!-- Step 1: Connect & Fetch -->
+      <section class="panel" id="step1">
+        <h3>1) Connect to RMS & Fetch</h3>
+        <div class="grid cols-2">
+          <div class="grow">
+            <label for="rms">Select RMS</label>
+            <select id="rms">
+              <option value="bokun">Bókun</option>
+              <option value="rezdy">Rezdy</option>
+              <option value="fareharbor">FareHarbor</option>
+              <option value="regiondo">Regiondo</option>
+            </select>
+          </div>
+          <div class="grow">
+            <label for="apikey">API Key (stored securely)</label>
+            <input id="apikey" type="text" placeholder="••••-saved-vault-token" value="••••••••" />
+            <small class="inline-note">We use saved credentials; change only if needed.</small>
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="grid cols-2">
+          <div class="grow">
+            <label for="code">Product Code</label>
+            <input id="code" type="text" placeholder="e.g. BKN-12345" />
+          </div>
+          <div class="grow">
+            <label>&nbsp;</label>
+            <div class="row">
+              <button class="primary" id="btnFetch">Fetch product</button>
+              <button class="ghost" id="btnPasteUrl">Paste RMS URL</button>
+              <button id="btnMulti">Add multiple codes</button>
+              <span class="inline-note">Tip: press <span class="kbd">Enter</span> to fetch.</span>
+            </div>
+          </div>
+        </div>
+        <div style="height:12px"></div>
+        <div class="panel" style="background:#0e1220" id="progressWrap" hidden>
+          <div class="row"><strong>Fetching…</strong><span class="chip info" id="fetchStatus">Contacting RMS</span></div>
+          <div class="progress" style="margin-top:8px"><span id="progbar"></span></div>
+        </div>
+      </section>
+
+      <!-- Step 2: Mapping Preview -->
+      <section class="panel" id="step2" hidden>
+        <h3>2) Mapping Preview</h3>
+        <div class="chips" id="chips"></div>
+        <div style="height:8px"></div>
+        <table class="table" id="mapTable">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value (from RMS)</th>
+              <th>Mapped To</th>
+              <th>Confidence</th>
+              <th>Editable</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="footer">
+          <button id="btnDiscover">Discover related products</button>
+          <button class="primary" id="btnToGaps">Continue → Resolve gaps</button>
+        </div>
+      </section>
+
+      <!-- Step 3: Gap Resolver -->
+      <section class="panel" id="step3" hidden>
+        <h3>3) Resolve Missing / Low‑confidence Fields</h3>
+        <p class="inline-note">Only a handful of items need your input. Everything else is prefilled.</p>
+        <div id="gapsWrap" class="grid cols-2"></div>
+        <div class="footer">
+          <button class="ghost" id="btnBackToMap">Back</button>
+          <button class="primary" id="btnToVariants">Continue → Variants & Pricing</button>
+        </div>
+      </section>
+
+      <!-- Step 4: Variants & Pricing -->
+      <section class="panel" id="step4" hidden>
+        <h3>4) Variants & Pricing</h3>
+        <table class="table" id="variantTable">
+          <thead>
+            <tr><th>Variant</th><th>Pax Types</th><th>Base Price</th><th>Schedule</th><th>Inventory</th><th>Sync</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="footer">
+          <button class="ghost" id="btnBackToGaps">Back</button>
+          <button class="primary" id="btnToPublish">Continue → Publish</button>
+        </div>
+      </section>
+
+      <!-- Step 5: Publish -->
+      <section class="panel" id="step5" hidden>
+        <h3>5) Publish & Sync</h3>
+        <div class="grid cols-2">
+          <div>
+            <label>Publish Mode</label>
+            <div class="pill-toggle" id="pubToggle">
+              <button data-mode="now" class="on">Publish now</button>
+              <button data-mode="schedule">Schedule</button>
+              <button data-mode="moderation">Send to moderation</button>
+            </div>
+          </div>
+          <div>
+            <label>Sync Ownership</label>
+            <div class="pill-toggle" id="syncToggle">
+              <button class="on" data-sync="full">RMS owns all</button>
+              <button data-sync="partial">Partial (Hub overrides allowed)</button>
+            </div>
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="grid cols-2">
+          <div>
+            <label>Commission (from DSP)</label>
+            <input type="text" id="commission" value="12%" />
+            <small class="inline-note">Threshold guardrails apply before publishing.</small>
+          </div>
+          <div>
+            <label>Channels</label>
+            <div class="chips"><span class="chip ok">Headout.com</span><span class="chip">Affiliates</span><span class="chip">Meta</span></div>
+          </div>
+        </div>
+        <div class="footer">
+          <button class="ghost" id="btnBackToVariants">Back</button>
+          <button class="primary" id="btnPublish">Create & Publish</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Multi-code Modal -->
+  <div class="modal" id="multiModal">
+    <div class="sheet">
+      <h3>Import multiple product codes</h3>
+      <p class="inline-note">Paste one code per line • We’ll fetch in parallel and show progress</p>
+      <textarea id="codesArea" placeholder="BKN-12345\nBKN-22331\nBKN-77102"></textarea>
+      <div class="footer">
+        <button id="multiCancel">Cancel</button>
+        <button class="primary" id="multiStart">Start import</button>
+      </div>
+      <div id="multiProgress" hidden>
+        <table class="table" id="multiTable">
+          <thead><tr><th>Code</th><th>Status</th><th>Progress</th><th>Result</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discover Related Modal -->
+  <div class="modal" id="discoverModal">
+    <div class="sheet">
+      <h3>We found other products in your RMS</h3>
+      <p class="inline-note">Select any to import as drafts now (you can finish them later).</p>
+      <table class="table" id="discoverTable">
+        <thead><tr><th></th><th>Product</th><th>Variants</th><th>City</th><th>Health</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="footer">
+        <button id="discoverCancel">Not now</button>
+        <button class="primary" id="discoverImport">Import selected</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+// --- Minimal state & fake data -------------------------------------------
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+const fakeMap = {
+  title:{val:"Burj Khalifa At The Top – General Admission", to:"experience.title", conf:0.98, editable:false},
+  subtitle:{val:"Level 124/125 entry", to:"experience.subtitle", conf:0.95, editable:false},
+  description:{val:"Enjoy panoramic views from the world’s tallest tower.", to:"content.long_description", conf:0.92, editable:true},
+  meeting_point:{val:"At The Top entrance, Lower Ground Level, Dubai Mall", to:"location.meeting_point", conf:0.88, editable:true},
+  phone:{val:"+971-4-888-8899", to:"contact.phone", conf:0.82, editable:true},
+  images:{val:"8 media assets", to:"media.gallery", conf:0.99, editable:false},
+  inclusions:{val:"Observation deck access, high-speed elevator", to:"content.inclusions", conf:0.86, editable:true},
+  exclusions:{val:"Hotel pickup", to:"content.exclusions", conf:0.72, editable:true},
+  accessibility:{val:"Wheelchair accessible", to:"attributes.accessibility", conf:0.68, editable:true},
+  cancellation:{val:"Free cancel up to 24h", to:"policy.cancellation", conf:0.94, editable:false}
+};
+
+const fakeVariants=[
+ {name:"Prime Hours", pax:"Adult/Child", price:"AED 219", schedule:"Daily 16:00–18:00", inv:"Sync", sync:true},
+ {name:"Non‑Prime", pax:"Adult/Child", price:"AED 169", schedule:"Daily 10:00–15:00, 18:00–22:00", inv:"Sync", sync:true}
+];
+
+const related = [
+ {id:"BKN-77890", name:"Burj Khalifa – SKY Level 148", variants:2, city:"Dubai", health:"Good"},
+ {id:"BKN-11442", name:"Dubai Fountain Boardwalk", variants:1, city:"Dubai", health:"Fair"},
+ {id:"BKN-66321", name:"Dubai Aquarium & Underwater Zoo", variants:3, city:"Dubai", health:"Good"}
+];
+
+// --- Step 1: Fetch --------------------------------------------------------
+const prog = $('#progbar');
+const progressWrap = $('#progressWrap');
+const fetchStatus = $('#fetchStatus');
+
+function startProgress(){
+  progressWrap.hidden=false; prog.style.width='0%'; fetchStatus.textContent='Contacting RMS';
+  let p=0; const iv = setInterval(()=>{p+=6; if(p>100) p=100; prog.style.width=p+'%';
+    if(p>20) fetchStatus.textContent='Fetching product & assets';
+    if(p>70) fetchStatus.textContent='Mapping fields';
+    if(p===100){ clearInterval(iv); setTimeout(showMapping,300); }
+  },60);
+}
+
+$('#btnFetch').onclick = () => { startProgress(); }
+$('#code').addEventListener('keydown', e=>{ if(e.key==='Enter') { startProgress(); }});
+$('#btnPasteUrl').onclick = () => { $('#code').value='BKN-12345'; startProgress(); }
+
+// --- Step 2: Mapping preview --------------------------------------------
+function chip(label,cls){ const el=document.createElement('span'); el.className='chip '+(cls||''); el.textContent=label; return el; }
+
+function showMapping(){
+  // activate step 2
+  $('#step2').hidden=false; document.querySelector('.sidebar .step:nth-child(2)').classList.add('active');
+  // badges
+  const chips=$('#chips'); chips.innerHTML='';
+  chips.append(
+    chip('RMS connected','info'),
+    chip('Auto-mapped 10/12','ok'),
+    chip('2 fields need input','warn')
+  );
+  // table
+  const tbody = $('#mapTable tbody'); tbody.innerHTML='';
+  Object.entries(fakeMap).forEach(([k,v])=>{
+    const tr=document.createElement('tr');
+    const conf = v.conf;
+    tr.innerHTML=`<td>${k}</td>
+      <td>${v.val}</td>
+      <td><code class="kbd">${v.to}</code></td>
+      <td>${(conf*100).toFixed(0)}%</td>
+      <td>${v.editable?'<span class="chip">Editable</span>':'<span class="chip">RMS‑controlled</span>'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+$('#btnToGaps').onclick=()=>{
+  $('#step3').hidden=false; document.querySelector('.sidebar .step:nth-child(3)').classList.add('active');
+  const wrap=$('#gapsWrap'); wrap.innerHTML='';
+  const needs=[['accessibility','Accessibility details'],['exclusions','Exclusions (confirm)']];
+  needs.forEach(([id,labelTxt])=>{
+    const div=document.createElement('div');
+    div.innerHTML=`<label>${labelTxt}</label><textarea id="gap_${id}"></textarea>`;
+    wrap.appendChild(div);
+  });
+}
+$('#btnBackToMap').onclick=()=>{$('#step3').hidden=true;}
+
+// --- Step 4: Variants -----------------------------------------------------
+$('#btnToVariants').onclick=()=>{
+  $('#step4').hidden=false; document.querySelector('.sidebar .step:nth-child(4)').classList.add('active');
+  const tb=$('#variantTable tbody'); tb.innerHTML='';
+  fakeVariants.forEach(v=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${v.name}</td><td>${v.pax}</td><td contenteditable> ${v.price}</td><td>${v.schedule}</td><td>${v.inv}</td><td><input type="checkbox" ${v.sync?'checked':''}></td>`;
+    tb.appendChild(tr);
+  });
+}
+$('#btnBackToGaps').onclick=()=>{$('#step4').hidden=true;}
+
+// --- Step 5: Publish ------------------------------------------------------
+$('#btnToPublish').onclick=()=>{
+  $('#step5').hidden=false; document.querySelector('.sidebar .step:nth-child(5)').classList.add('active');
+}
+
+// Toggle helpers
+function pillToggle(id,cb){
+  $$('#'+id+' button').forEach(b=>b.onclick=()=>{
+    $$('#'+id+' button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); if(cb) cb(b.dataset);
+  });
+}
+pillToggle('pubToggle'); pillToggle('syncToggle');
+
+$('#btnPublish').onclick=()=>{
+  alert('Listing created and published (prototype). In real flow: commission & policy guardrails check, then push to Unmanaged path.');
+}
+
+// --- Multi-code modal -----------------------------------------------------
+const mm=$('#multiModal');
+$('#btnMulti').onclick=()=>{ mm.style.display='flex'; }
+$('#multiCancel').onclick=()=>{ mm.style.display='none'; }
+$('#multiStart').onclick=()=>{
+  $('#multiProgress').hidden=false;
+  const tbody=$('#multiTable tbody'); tbody.innerHTML='';
+  const codes = $('#codesArea').value.split(/\n+/).map(s=>s.trim()).filter(Boolean).slice(0,8);
+  if(!codes.length){ alert('Add at least one code'); return; }
+  codes.forEach((c,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${c}</td><td><span class='chip info'>Queued</span></td><td><div class='progress'><span style='width:0%'></span></div></td><td>–</td>`;
+    tbody.appendChild(tr);
+    const bar=tr.querySelector('.progress span'); const st=tr.querySelector('td:nth-child(2) span'); const res=tr.querySelector('td:last-child');
+    let p=0; const iv=setInterval(()=>{p+=Math.random()*25; if(p>100) p=100; bar.style.width=p+'%'; if(p>10) st.textContent='Fetching'; if(p>70) st.textContent='Mapping'; if(p===100){clearInterval(iv); st.className='chip ok'; st.textContent='Done'; res.textContent='Draft created'; if(i===codes.length-1) setTimeout(()=>{ mm.style.display='none'; },600);} }, 280);
+  });
+}
+
+// --- Discover related modal ----------------------------------------------
+const dm=$('#discoverModal');
+$('#btnDiscover').onclick=()=>{
+  dm.style.display='flex';
+  const tb=$('#discoverTable tbody'); tb.innerHTML='';
+  related.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><input type='checkbox' data-id='${r.id}'></td><td>${r.name}<div class='inline-note'>${r.id}</div></td><td>${r.variants}</td><td>${r.city}</td><td><span class='chip ${r.health==='Good'?'ok':'warn'}'>${r.health}</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+$('#discoverCancel').onclick=()=>{ dm.style.display='none'; }
+$('#discoverImport').onclick=()=>{
+  const selected = $$('#discoverTable input[type=checkbox]:checked').map(x=>x.dataset.id);
+  dm.style.display='none';
+  if(selected.length){ alert('Imported '+selected.length+' products as drafts. You will see them in your listing queue.'); }
+}
+</script>
+</body>
+</html>

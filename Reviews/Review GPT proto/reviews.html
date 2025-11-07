@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub Reviews Revamp Prototype</title>
+  <style>
+    body {
+      font-family: "Inter", Arial, sans-serif;
+      background-color: #fff;
+      color: #222;
+      margin: 0;
+      padding: 24px;
+      line-height: 1.5;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .search-bar {
+      width: 60%;
+      padding: 10px 14px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    select {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      cursor: pointer;
+    }
+
+    .summary {
+      margin-bottom: 32px;
+    }
+
+    .summary h2 {
+      margin: 0;
+      color: #8000ff;
+    }
+
+    .review-card {
+      border-bottom: 1px solid #eee;
+      padding: 24px 0;
+    }
+
+    .review-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .rating {
+      color: #ff007f;
+      font-size: 14px;
+    }
+
+    .review-body {
+      font-size: 15px;
+      margin: 8px 0;
+    }
+
+    .tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .tag {
+      background-color: #f3f0ff;
+      color: #8000ff;
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    .sentiment {
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .sentiment.positive {
+      color: #1ba673;
+    }
+    .sentiment.neutral {
+      color: #777;
+    }
+    .sentiment.negative {
+      color: #ff5a5a;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .actions button {
+      border: none;
+      background: none;
+      color: #8000ff;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .reply-box, .flag-box {
+      margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    .reply-input, .flag-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .status {
+      font-size: 13px;
+      margin-top: 6px;
+      color: #777;
+    }
+
+    .badge {
+      background: #f5f5f5;
+      border-radius: 10px;
+      padding: 2px 8px;
+      font-size: 12px;
+      margin-left: 8px;
+    }
+
+    .badge.unfair {
+      background-color: #fff3e6;
+      color: #e67e22;
+    }
+
+    .badge.excluded {
+      background-color: #eee;
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <input type="text" placeholder="Search for experience name, ID, or keyword eg. 'guide'" class="search-bar">
+    <div class="filters">
+      <select>
+        <option>All Ratings</option>
+        <option>5 Stars</option>
+        <option>4 Stars</option>
+        <option>3 Stars</option>
+        <option>2 Stars</option>
+        <option>1 Star</option>
+      </select>
+      <select>
+        <option>Last 30 days</option>
+        <option>Last 90 days</option>
+        <option>All Time</option>
+      </select>
+      <select>
+        <option>Most recent reviews</option>
+        <option>Highest rated</option>
+        <option>Lowest rated</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="summary">
+    <h2>4.5 ★</h2>
+    <p>19 Ratings and 5 Reviews</p>
+  </div>
+
+  <!-- Review Card 1 -->
+  <div class="review-card">
+    <div class="review-header">
+      <div class="reviewer">
+        <div class="avatar">IS</div>
+        <span>Iga Szamborska • Oct 15, 2025</span>
+      </div>
+      <div class="rating">★★★★★</div>
+    </div>
+    <div class="review-body">
+      Koniecznie z kolacją, robi wrażenie!
+    </div>
+    <div class="tags">
+      <div class="tag">performance</div>
+      <div class="tag">food</div>
+      <div class="tag">ambience</div>
+    </div>
+    <div class="sentiment positive">😊 Positive</div>
+    <div class="actions">
+      <button onclick="toggleReply(this)">💬 Reply</button>
+      <button onclick="toggleFlag(this)">🚩 Flag</button>
+    </div>
+    <div class="reply-box" style="display:none;">
+      <input class="reply-input" placeholder="Write a friendly reply (max 500 chars)">
+      <button>Submit Reply</button>
+      <p class="status">Status: Pending moderation</p>
+    </div>
+    <div class="flag-box" style="display:none;">
+      <select>
+        <option>Select reason</option>
+        <option>Inappropriate / Offensive</option>
+        <option>Unfair due to external cause</option>
+      </select>
+      <input class="flag-input" placeholder="Explain briefly (e.g., rain caused delay)">
+      <button>Submit Appeal</button>
+      <p class="status">Flag submitted. Under review ⚖️</p>
+    </div>
+  </div>
+
+  <!-- Review Card 2 -->
+  <div class="review-card">
+    <div class="review-header">
+      <div class="reviewer">
+        <div class="avatar">YT</div>
+        <span>Yuko Takashima • Oct 11, 2025</span>
+      </div>
+      <div class="rating">★★☆☆☆</div>
+    </div>
+    <div class="review-body">
+      The ticket was too expensive, and their support was terrible. There was no champagne or macarons.
+    </div>
+    <div class="tags">
+      <div class="tag">pricing</div>
+      <div class="tag">service</div>
+    </div>
+    <div class="sentiment negative">☹️ Negative</div>
+    <div class="actions">
+      <button onclick="toggleReply(this)">💬 Reply</button>
+      <button onclick="toggleFlag(this)">🚩 Flag</button>
+      <span class="badge unfair">Flagged Unfair</span>
+    </div>
+  </div>
+
+  <!-- Review Card 3 -->
+  <div class="review-card">
+    <div class="review-header">
+      <div class="reviewer">
+        <div class="avatar">GF</div>
+        <span>Giuseppe Ferraguto • Oct 9, 2025</span>
+      </div>
+      <div class="rating">★★★★★</div>
+    </div>
+    <div class="review-body">
+      Lo spettacolo non mi ha particolarmente impressionato, ma il servizio è stato eccezionale.
+    </div>
+    <div class="tags">
+      <div class="tag">service</div>
+      <div class="tag">staff</div>
+    </div>
+    <div class="sentiment neutral">😐 Neutral</div>
+    <div class="actions">
+      <button onclick="toggleReply(this)">💬 Reply</button>
+      <button onclick="toggleFlag(this)">🚩 Flag</button>
+      <span class="badge excluded">Excluded (Unfair)</span>
+    </div>
+  </div>
+
+  <script>
+    function toggleReply(btn) {
+      const replyBox = btn.parentElement.nextElementSibling;
+      replyBox.style.display = replyBox.style.display === "none" ? "block" : "none";
+    }
+
+    function toggleFlag(btn) {
+      const flagBox = btn.parentElement.nextElementSibling.nextElementSibling;
+      flagBox.style.display = flagBox.style.display === "none" ? "block" : "none";
+    }
+  </script>
+
+</body>
+</html>

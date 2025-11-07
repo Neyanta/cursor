@@ -1,0 +1,559 @@
+{
+    "product_listing_data": {
+      "hubManagedSchedules": false,
+      "vendorId": 3072,
+      "name": "WET JET LEWISTON - Rack Rate - Rezdy US",
+      "collectionId": 2562,
+      "subCategoryId": null,
+      "cityName": "ABU_DHABI",
+      "imagesUrl": null,
+      "languages": [
+        "EN"
+      ],
+      "tourType": "TOUR",
+      "linkToProduct": "https://WhirlpoolJetBoatToursUS.rezdy.com/view/PA8MY5",
+      "content": {
+        "highlights": "Experience a thrilling 45-minute guided day tour on the Niagara River aboard the WET JET BOAT. Enjoy the natural awe-inspiring scenery of the Niagara Gorge, including the excitement of Devil's Hole class 5 whitewater and the Whirlpool. This day tour offers an immersive adventure with a safety orientation and participation agreement required. The tour is conducted in English and includes mandatory safety briefings and wristband collection before departure.",
+        "description": "Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool.",
+        "inclusions": "- 45-minute guided jet boat tour on the Niagara River\n- Safety orientation and wristband\n- Participation agreement completion prior to arrival\n- Entry to Niagara Gorge and whitewater experience\n- Fuel surcharge included in price",
+        "exclusions": "- Not specified"
+      },
+      "tours": [
+        {
+          "name": "WET JET LEWISTON - Rack Rate - Rezdy US",
+          "fulfillmentType": "VENDOR_API",
+          "rules": {
+            "privateTour": false,
+            "duration": "PT45M",
+            "scheduleType": "FIXED",
+            "durationType": "FIXED",
+            "releasePeriod": "PT90M",
+            "isCancellable": false,
+            "cancellableUpto": "PT0M",
+            "isReschedulable": false,
+            "reschedulableUpto": "PT0M"
+          },
+          "startPointAddress": {
+            "addressLine1": "115 S Water St",
+            "addressLine2": "",
+            "postalCode": "14092",
+            "state": "NY",
+            "latitude": 43.1726546,
+            "longitude": -79.0491269
+          },
+          "holidays": [],
+          "schedules": [
+            {
+              "name": "360 Automated Listing",
+              "startDate": "2025-10-29",
+              "endDate": "2026-10-29",
+              "openingTime": null,
+              "closingTime": null,
+              "isSpecial": false,
+              "weeklySchedule": [],
+              "productPrices": [
+                {
+                  "paxType": "ADULT",
+                  "paxTypeIdentifierAtSource": "Adult",
+                  "ageFrom": 18,
+                  "ageTo": 100,
+                  "listingPrice": 0,
+                  "retailPrice": 70.97,
+                  "commission": 5.653
+                },
+                {
+                  "paxType": "CHILD",
+                  "paxTypeIdentifierAtSource": "Child",
+                  "ageFrom": 2,
+                  "ageTo": 17,
+                  "listingPrice": 0,
+                  "retailPrice": 42.35,
+                  "commission": 5.653
+                }
+              ],
+              "enablePriceSync": true
+            }
+          ],
+          "ticketDeliveryType": "MOBILE_TICKET",
+          "ticketRedemptionMethod": "DIRECT_ENTRY",
+          "scanCodeType": "QR_CODE",
+          "referenceCode": "WET JET LEWISTON - Rack Rate - Rezdy US",
+          "redemptionInstructions": "",
+          "onGroundContact": "",
+          "meetingPointDetails": "",
+          "apiCode": "{\"productId\": \"PA8MY5\", \"personTypeCodes\": {\"ADULT\": \"Adult\", \"CHILD\": \"Child\"}, \"bookingUserFieldMap\": {}}",
+          "isInventorySyncSupported": true,
+          "bookingInstructions": "",
+          "hotelTransferToExperience": null,
+          "bookingAutomated": true,
+          "inventoryAutomated": true
+        }
+      ],
+      "user_fields": {
+        "user_fields": [
+          {
+            "field_name": "NAME",
+            "field_name_at_source": "First Name",
+            "is_required": true,
+            "level": "PRIMARY_GUEST",
+            "field_options": null
+          },
+          {
+            "field_name": "NAME",
+            "field_name_at_source": "Last Name",
+            "is_required": true,
+            "level": "PRIMARY_GUEST",
+            "field_options": null
+          },
+          {
+            "field_name": "EMAIL",
+            "field_name_at_source": "Email",
+            "is_required": true,
+            "level": "PRIMARY_GUEST",
+            "field_options": null
+          }
+        ]
+      },
+      "media": {
+        "images": [],
+        "videos": []
+      },
+      "content_data_text_blob": "{\"name\":\"WET JET LEWISTON - Rack Rate - Rezdy US\",\"shortDescription\":\"Lewiston (US) Wet Jet Tour\",\"description\":\"Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool.\",\"terms\":\"\",\"generalTerms\":null,\"extras\":[],\"bookingFields\":[{\"label\":\"Email\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"Mobile\",\"fieldType\":\"Phone\",\"requiredPerParticipant\":false,\"requiredPerBooking\":false,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"First Name\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"Last Name\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null}],\"additionalInformation\":\"Thank you for booking with Whirlpool Jet Boat Tours! Please be sure to read all of the information in this email before you arrive. All guests are required to complete a participation agreement prior to arrival Please note: Completing waivers on-site may cause delays and could result in missing your scheduled departure time. Missing your trip will not result in a refund. CLICK HERE TO COMPLETE YOUR PARTICIPATION AGREEMENT Please ensure that you arrive 45 minutes in advance of your reservation time to check in, collect your wristbands and attend a mandatory safety orientation. If you miss the safety orientation, we will move you to the next available trip time without notice (which could be the next day), so it is important to arrive on time. Any cancellations/rescheduling/rainchecks within 24 hours of your booked trip departure will be subject to an additional 10% rebooking fee (this includes moving you to another trip time due to late arrival). We look forward to hosting you! Whirlpool Jet Boat Tours 115 South Water Street Lewiston, NY 14092 USA www.whirlpooljet.com 888 438 4444\",\"cancellationPolicyDays\":null,\"locationAddress\":{\"addressLine\":\"115 S Water St\",\"addressLine2\":null,\"postCode\":\"14092\",\"city\":\"Lewiston\",\"state\":\"NY\",\"countryCode\":\"us\",\"latitude\":43.1726546,\"longitude\":-79.0491269},\"languages\":[\"en_au\"],\"bookingMode\":\"INVENTORY\",\"charter\":false,\"unitLabel\":\"Participant\",\"unitLabelPlural\":\"Participants\",\"quantityRequired\":true,\"quantityRequiredMin\":1,\"quantityRequiredMax\":null,\"durationMinutes\":45,\"timezone\":\"America/Toronto\",\"currency\":\"USD\",\"priceOptions\":[{\"price\":70.97,\"label\":\"Adult\"},{\"price\":42.35,\"label\":\"Child\"}],\"commissionIncludesExtras\":true,\"confirmMode\":\"AUTOCONFIRM\",\"confirmModeMinParticipants\":0,\"minimumNoticeMinutes\":90,\"waitListingEnabled\":false,\"isApiBookingSupported\":true}}"
+    },
+    "metadata": {
+      "completed_sections": [
+        "ADDRESS",
+        "BASIC_PRODUCT_DETAILS",
+        "CONTENT_DATA",
+        "MEDIA",
+        "POLICIES",
+        "SCHEDULE_PRICES",
+        "RULES",
+        "USER_FIELDS"
+      ],
+      "failed_sections": [],
+      "sections": {
+        "ADDRESS": {
+          "section": "ADDRESS",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::ADDRESS",
+            "version": 8,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "addressLine1": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Extracted directly from product's locationAddress.addressLine field, which is mandatory and present.",
+              "value": "115 S Water St",
+              "value_at_source": "115 S Water St"
+            },
+            "addressLine2": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "No addressLine2 provided in locationAddress, so set to null as optional field.",
+              "value": null,
+              "value_at_source": null
+            },
+            "postalCode": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Extracted directly from product's locationAddress.postCode field, mandatory and present.",
+              "value": "14092",
+              "value_at_source": "14092"
+            },
+            "state": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Extracted from product's locationAddress.state field, present and valid.",
+              "value": "NY",
+              "value_at_source": "NY"
+            },
+            "latitude": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Extracted from product's locationAddress.latitude field, mandatory and present.",
+              "value": 43.1726546,
+              "value_at_source": "43.1726546"
+            },
+            "longitude": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Extracted from product's locationAddress.longitude field, mandatory and present.",
+              "value": -79.0491269,
+              "value_at_source": "-79.0491269"
+            }
+          }
+        },
+        "BASIC_PRODUCT_DETAILS": {
+          "section": "BASIC_PRODUCT_DETAILS",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::BASIC_PRODUCT_DETAILS",
+            "version": 2,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "linkToProduct": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Constructed using supplierAlias and productCode as per recipe",
+              "value": "https://WhirlpoolJetBoatToursUS.rezdy.com/view/PA8MY5",
+              "value_at_source": null
+            },
+            "name": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Mapped directly from product.name",
+              "value": "WET JET LEWISTON - Rack Rate - Rezdy US",
+              "value_at_source": "WET JET LEWISTON - Rack Rate - Rezdy US"
+            },
+            "content": {
+              "highlights": {
+                "source": "GET /v1/products/PA8MY5",
+                "reasoning": "Derived from shortDescription, bookingMode, productType, tags, and description to highlight key experience points and requirements",
+                "value": "Experience a thrilling 45-minute guided day tour on the Niagara River aboard the WET JET BOAT. Enjoy the natural awe-inspiring scenery of the Niagara Gorge, including the excitement of Devil's Hole class 5 whitewater and the Whirlpool. This day tour offers an immersive adventure with a safety orientation and participation agreement required. The tour is conducted in English and includes mandatory safety briefings and wristband collection before departure.",
+                "value_at_source": "Lewiston (US) Wet Jet Tour, bookingMode: INVENTORY, productType: DAYTOUR, tags: TYPE:Daytour, description: Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool."
+              },
+              "description": {
+                "source": "GET /v1/products/PA8MY5",
+                "reasoning": "Mapped directly from product.description",
+                "value": "Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool.",
+                "value_at_source": "Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool."
+              },
+              "inclusions": {
+                "source": "GET /v1/products/PA8MY5",
+                "reasoning": "Extracted from product details including duration, safety orientation, participation agreement, and included fuel surcharge",
+                "value": "- 45-minute guided jet boat tour on the Niagara River\n- Safety orientation and wristband\n- Participation agreement completion prior to arrival\n- Entry to Niagara Gorge and whitewater experience\n- Fuel surcharge included in price",
+                "value_at_source": "durationMinutes: 45, additionalInformation about safety orientation and participation agreement, taxes include Fuel Surcharge"
+              },
+              "exclusions": {
+                "source": null,
+                "reasoning": "No explicit exclusions specified in product data or terms",
+                "value": "- Not specified",
+                "value_at_source": null
+              }
+            }
+          }
+        },
+        "CONTENT_DATA": {
+          "section": "CONTENT_DATA",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::CONTENT_DATA",
+            "version": 6,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "text_blob": {
+              "source": "Rezdy API GET /v1/products/PA8MY5",
+              "reasoning": "Extracted all required fields from product details response, stripped HTML tags from text fields, excluded irrelevant fields as per recipe instructions, no pickupId present so no pickup locations included.",
+              "value": "{\"name\":\"WET JET LEWISTON - Rack Rate - Rezdy US\",\"shortDescription\":\"Lewiston (US) Wet Jet Tour\",\"description\":\"Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool.\",\"terms\":\"\",\"generalTerms\":null,\"extras\":[],\"bookingFields\":[{\"label\":\"Email\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"Mobile\",\"fieldType\":\"Phone\",\"requiredPerParticipant\":false,\"requiredPerBooking\":false,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"First Name\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"Last Name\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null}],\"additionalInformation\":\"Thank you for booking with Whirlpool Jet Boat Tours! Please be sure to read all of the information in this email before you arrive. All guests are required to complete a participation agreement prior to arrival Please note: Completing waivers on-site may cause delays and could result in missing your scheduled departure time. Missing your trip will not result in a refund. CLICK HERE TO COMPLETE YOUR PARTICIPATION AGREEMENT Please ensure that you arrive 45 minutes in advance of your reservation time to check in, collect your wristbands and attend a mandatory safety orientation. If you miss the safety orientation, we will move you to the next available trip time without notice (which could be the next day), so it is important to arrive on time. Any cancellations/rescheduling/rainchecks within 24 hours of your booked trip departure will be subject to an additional 10% rebooking fee (this includes moving you to another trip time due to late arrival). We look forward to hosting you! Whirlpool Jet Boat Tours 115 South Water Street Lewiston, NY 14092 USA www.whirlpooljet.com 888 438 4444\",\"cancellationPolicyDays\":null,\"locationAddress\":{\"addressLine\":\"115 S Water St\",\"addressLine2\":null,\"postCode\":\"14092\",\"city\":\"Lewiston\",\"state\":\"NY\",\"countryCode\":\"us\",\"latitude\":43.1726546,\"longitude\":-79.0491269},\"languages\":[\"en_au\"],\"bookingMode\":\"INVENTORY\",\"charter\":false,\"unitLabel\":\"Participant\",\"unitLabelPlural\":\"Participants\",\"quantityRequired\":true,\"quantityRequiredMin\":1,\"quantityRequiredMax\":null,\"durationMinutes\":45,\"timezone\":\"America/Toronto\",\"currency\":\"USD\",\"priceOptions\":[{\"price\":70.97,\"label\":\"Adult\"},{\"price\":42.35,\"label\":\"Child\"}],\"commissionIncludesExtras\":true,\"confirmMode\":\"AUTOCONFIRM\",\"confirmModeMinParticipants\":0,\"minimumNoticeMinutes\":90,\"waitListingEnabled\":false,\"isApiBookingSupported\":true}}",
+              "value_at_source": "{\"name\":\"WET JET LEWISTON - Rack Rate - Rezdy US\",\"shortDescription\":\"Lewiston (US) Wet Jet Tour\",\"description\":\"Take a 45-minute ride on the Niagara River aboard our WET JET BOAT TOUR and experience the natural awe-inspiring scenery of the Niagara Gorge. Learn about the river's historical significance and feel the thrill of Devil's Hole class 5 whitewater and the magnitude of the Whirlpool.\",\"terms\":\"\",\"generalTerms\":null,\"extras\":[],\"bookingFields\":[{\"label\":\"Email\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"Mobile\",\"fieldType\":\"Phone\",\"requiredPerParticipant\":false,\"requiredPerBooking\":false,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"First Name\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null},{\"label\":\"Last Name\",\"fieldType\":\"String\",\"requiredPerParticipant\":false,\"requiredPerBooking\":true,\"visiblePerParticipant\":false,\"visiblePerBooking\":true,\"listOptions\":null}],\"additionalInformation\":\"Thank you for booking with Whirlpool Jet Boat Tours! Please be sure to read all of the information in this email before you arrive. All guests are required to complete a participation agreement prior to arrival Please note: Completing waivers on-site may cause delays and could result in missing your scheduled departure time. Missing your trip will not result in a refund. CLICK HERE TO COMPLETE YOUR PARTICIPATION AGREEMENT Please ensure that you arrive 45 minutes in advance of your reservation time to check in, collect your wristbands and attend a mandatory safety orientation. If you miss the safety orientation, we will move you to the next available trip time without notice (which could be the next day), so it is important to arrive on time. Any cancellations/rescheduling/rainchecks within 24 hours of your booked trip departure will be subject to an additional 10% rebooking fee (this includes moving you to another trip time due to late arrival). We look forward to hosting you! Whirlpool Jet Boat Tours 115 South Water Street Lewiston, NY 14092 USA www.whirlpooljet.com 888 438 4444\",\"cancellationPolicyDays\":null,\"locationAddress\":{\"addressLine\":\"115 S Water St\",\"addressLine2\":null,\"postCode\":\"14092\",\"city\":\"Lewiston\",\"state\":\"NY\",\"countryCode\":\"us\",\"latitude\":43.1726546,\"longitude\":-79.0491269},\"languages\":[\"en_au\"],\"bookingMode\":\"INVENTORY\",\"charter\":false,\"unitLabel\":\"Participant\",\"unitLabelPlural\":\"Participants\",\"quantityRequired\":true,\"quantityRequiredMin\":1,\"quantityRequiredMax\":null,\"durationMinutes\":45,\"timezone\":\"America/Toronto\",\"currency\":\"USD\",\"priceOptions\":[{\"price\":70.97,\"label\":\"Adult\"},{\"price\":42.35,\"label\":\"Child\"}],\"commissionIncludesExtras\":true,\"confirmMode\":\"AUTOCONFIRM\",\"confirmModeMinParticipants\":0,\"minimumNoticeMinutes\":90,\"waitListingEnabled\":false,\"isApiBookingSupported\":true}"
+            }
+          }
+        },
+        "MEDIA": {
+          "section": "MEDIA",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::MEDIA",
+            "version": 4,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "images": {
+              "source": "GET /v1/products/PA8MY5 response",
+              "reasoning": "The product's images array is empty, so no images are available for this product.",
+              "value": [],
+              "value_at_source": "[]"
+            },
+            "videos": {
+              "source": null,
+              "reasoning": "No video data is provided or available for this product.",
+              "value": [],
+              "value_at_source": null
+            }
+          }
+        },
+        "POLICIES": {
+          "section": "POLICIES",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::POLICIES",
+            "version": 2,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "isCancellable": {
+              "source": "Rezdy API /v1/products/PA8MY5",
+              "reasoning": "No cancellationPolicyDays field present or zero, so product is not cancellable",
+              "value": false,
+              "value_at_source": null
+            },
+            "cancellableUpto": {
+              "source": "Rezdy API /v1/products/PA8MY5",
+              "reasoning": "No cancellationPolicyDays field present, so cancellableUpto is 0",
+              "value": {
+                "unit": "MINUTES",
+                "value": 0
+              },
+              "value_at_source": null
+            },
+            "isReschedulable": {
+              "source": "Assumed same as isCancellable due to no explicit reschedule policy",
+              "reasoning": "No explicit reschedule policy found, so same as isCancellable",
+              "value": false,
+              "value_at_source": null
+            },
+            "rescheduleableUpto": {
+              "source": "Assumed same as cancellableUpto due to no explicit reschedule policy",
+              "reasoning": "No explicit reschedule policy found, so same as cancellableUpto",
+              "value": {
+                "unit": "MINUTES",
+                "value": 0
+              },
+              "value_at_source": null
+            }
+          }
+        },
+        "SCHEDULE_PRICES": {
+          "section": "SCHEDULE_PRICES",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::SCHEDULE_PRICES",
+            "version": 2,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "productPrices": {
+              "source": "GET /v1/products/PA8MY5",
+              "reasoning": "Extracted priceOptions from product details; no explicit ageFrom or ageTo provided in the data.",
+              "value": [
+                {
+                  "paxType": {
+                    "source": "priceOptions.label",
+                    "reasoning": "Mapped directly from price option label 'Adult'",
+                    "value": "ADULT",
+                    "value_at_source": "Adult"
+                  },
+                  "ageFrom": {
+                    "source": null,
+                    "reasoning": "No explicit ageFrom provided in API response",
+                    "value": null,
+                    "value_at_source": null
+                  },
+                  "ageTo": {
+                    "source": null,
+                    "reasoning": "No explicit ageTo provided in API response",
+                    "value": null,
+                    "value_at_source": null
+                  },
+                  "retailPrice": {
+                    "source": "priceOptions.price",
+                    "reasoning": "Mapped directly from price option price 70.97",
+                    "value": 70.97,
+                    "value_at_source": "70.97"
+                  }
+                },
+                {
+                  "paxType": {
+                    "source": "priceOptions.label",
+                    "reasoning": "Mapped directly from price option label 'Child'",
+                    "value": "CHILD",
+                    "value_at_source": "Child"
+                  },
+                  "ageFrom": {
+                    "source": null,
+                    "reasoning": "No explicit ageFrom provided in API response",
+                    "value": null,
+                    "value_at_source": null
+                  },
+                  "ageTo": {
+                    "source": null,
+                    "reasoning": "No explicit ageTo provided in API response",
+                    "value": null,
+                    "value_at_source": null
+                  },
+                  "retailPrice": {
+                    "source": "priceOptions.price",
+                    "reasoning": "Mapped directly from price option price 42.35",
+                    "value": 42.35,
+                    "value_at_source": "42.35"
+                  }
+                }
+              ],
+              "value_at_source": "product.priceOptions"
+            }
+          }
+        },
+        "RULES": {
+          "section": "RULES",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::RULES",
+            "version": 16,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "duration": {
+              "source": "GET /v1/products/PA8MY5: durationMinutes",
+              "reasoning": "Extracted duration from product details; convert directly to minutes.",
+              "value": {
+                "unit": "MINUTES",
+                "value": 45
+              },
+              "value_at_source": "45"
+            },
+            "scheduleType": {
+              "source": "GET /v1/products/PA8MY5: bookingMode",
+              "reasoning": "Booking mode 'INVENTORY' maps to 'FIXED' scheduleType.",
+              "value": "FIXED",
+              "value_at_source": "INVENTORY"
+            },
+            "durationType": {
+              "source": "GET /v1/products/PA8MY5: durationMinutes",
+              "reasoning": "Duration less than 300 minutes yields 'FIXED' durationType.",
+              "value": "FIXED",
+              "value_at_source": "45"
+            },
+            "releasePeriod": {
+              "source": "GET /v1/products/PA8MY5: minimumNoticeMinutes",
+              "reasoning": "Minimum notice minutes directly indicates releasePeriod in minutes.",
+              "value": {
+                "unit": "MINUTES",
+                "value": 90
+              },
+              "value_at_source": "90"
+            },
+            "attractionTiming": {
+              "source": "",
+              "reasoning": "",
+              "value": {
+                "openingTime": {
+                  "source": "scheduleType is 'FIXED', so attractionTiming not applicable",
+                  "reasoning": "AttractionTiming only for FLEXIBLE scheduleType; scheduleType is FIXED",
+                  "value": null,
+                  "value_at_source": null
+                },
+                "closingTime": {
+                  "source": "scheduleType is 'FIXED', so attractionTiming not applicable",
+                  "reasoning": "AttractionTiming only for FLEXIBLE scheduleType; scheduleType is FIXED",
+                  "value": null,
+                  "value_at_source": null
+                }
+              },
+              "value_at_source": ""
+            }
+          }
+        },
+        "USER_FIELDS": {
+          "section": "USER_FIELDS",
+          "tool_calls_made": 1,
+          "failed": false,
+          "error": null,
+          "prompt_info": {
+            "name": "360_LISTING::RECIPE::REZDY::USER_FIELDS",
+            "version": 15,
+            "label": "baapuji-ode"
+          },
+          "data": {
+            "user_fields": {
+              "source": "Rezdy API v1/products/PA8MY5 bookingFields",
+              "reasoning": "Fields with requiredPerBooking=true and visiblePerBooking=true are mandatory for primary guest; no requiredPerParticipant fields found; mapping 'First Name' and 'Last Name' to NAME but output uses original labels; 'Email' mapped to EMAIL; no pickup required as no pickupId present.",
+              "value": [
+                {
+                  "field_name": {
+                    "source": "label 'First Name'",
+                    "reasoning": "Maps to personal name field, hence NAME",
+                    "value": "NAME",
+                    "value_at_source": "First Name"
+                  },
+                  "is_required": {
+                    "source": "requiredPerBooking flag",
+                    "reasoning": "Field is required per booking",
+                    "value": true,
+                    "value_at_source": "true"
+                  },
+                  "level": {
+                    "source": "requiredPerBooking flag",
+                    "reasoning": "Field applies to primary guest",
+                    "value": "PRIMARY_GUEST",
+                    "value_at_source": "true"
+                  },
+                  "field_options": {
+                    "source": null,
+                    "reasoning": null,
+                    "value": null,
+                    "value_at_source": null
+                  }
+                },
+                {
+                  "field_name": {
+                    "source": "label 'Last Name'",
+                    "reasoning": "Maps to personal name field, hence NAME",
+                    "value": "NAME",
+                    "value_at_source": "Last Name"
+                  },
+                  "is_required": {
+                    "source": "requiredPerBooking flag",
+                    "reasoning": "Field is required per booking",
+                    "value": true,
+                    "value_at_source": "true"
+                  },
+                  "level": {
+                    "source": "requiredPerBooking flag",
+                    "reasoning": "Field applies to primary guest",
+                    "value": "PRIMARY_GUEST",
+                    "value_at_source": "true"
+                  },
+                  "field_options": {
+                    "source": null,
+                    "reasoning": null,
+                    "value": null,
+                    "value_at_source": null
+                  }
+                },
+                {
+                  "field_name": {
+                    "source": "label 'Email'",
+                    "reasoning": "Maps to email field",
+                    "value": "EMAIL",
+                    "value_at_source": "Email"
+                  },
+                  "is_required": {
+                    "source": "requiredPerBooking flag",
+                    "reasoning": "Field is required per booking",
+                    "value": true,
+                    "value_at_source": "true"
+                  },
+                  "level": {
+                    "source": "requiredPerBooking flag",
+                    "reasoning": "Field applies to primary guest",
+                    "value": "PRIMARY_GUEST",
+                    "value_at_source": "true"
+                  },
+                  "field_options": {
+                    "source": null,
+                    "reasoning": null,
+                    "value": null,
+                    "value_at_source": null
+                  }
+                }
+              ],
+              "value_at_source": "bookingFields array from product details"
+            }
+          }
+        }
+      },
+      "coalesce_error": null,
+      "compilation_error": null
+    }
+  }

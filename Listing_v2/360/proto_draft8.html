@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hub 360 – End-to-End Flow (Horizontal Stepper)</title>
+<style>
+  /* ============ THEME ============ */
+  :root{
+    --accent:#800FFF; --text:#222; --muted:#6b6b6b; --line:#eee;
+    --ok:#35C759; --warn:#FFA500; --bad:#FF4C4C;
+    --card:#fff; --bg:#fff; --shadow:0 10px 26px rgba(0,0,0,.06);
+    --radius:14px; --maxw:960px;
+  }
+  html,body{background:var(--bg);color:var(--text);margin:0;font:14px "Hayward",system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:28px 18px 80px}
+  h1{font-size:22px;margin:10px 0 6px}
+  h2{font-size:16px;margin:16px 0 8px}
+  p.sub{color:var(--muted);margin:0 0 14px}
+  a{color:var(--accent);text-decoration:none}
+  .card{background:var(--card);box-shadow:var(--shadow);border-radius:var(--radius);padding:18px;margin:12px 0}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .full{grid-column:1/-1}
+  label{display:flex;justify-content:space-between;align-items:center;margin:8px 0 6px;font-weight:700}
+  .req{font-size:11px;color:var(--bad);font-weight:800;letter-spacing:.02em}
+  .opt{font-size:11px;color:var(--muted);font-weight:700}
+
+  input,select,textarea{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #ddd;border-radius:10px;font:inherit;background:#fff}
+  textarea{min-height:96px;resize:vertical}
+
+  .prefilled{background:#f7f7f7;color:#3b3b3b}
+  .fetchnote{font-size:11px;color:#7a7a7a;margin-top:6px}
+  .missing{border-color:var(--accent);box-shadow:0 0 0 2px rgba(128,15,255,.08)}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-weight:800;padding:6px 10px;border-radius:999px;font-size:12px}
+  .b-ok{background:#e9fbef;color:#116b2e;border:1px solid #c9f2d7}
+  .b-warn{background:#fff6e6;color:#6a4700;border:1px solid #ffe0a8}
+  .b-bad{background:#ffeaea;color:#7e0d0d;border:1px solid #ffcaca}
+  .b-muted{background:#f5ecff;color:#4b2a8f;border:1px solid #eadbff}
+
+  /* progress strip */
+  .prog{height:8px;background:#f2f2f7;border-radius:999px;position:relative;overflow:hidden}
+  .prog > i{position:absolute;left:0;top:0;bottom:0;border-radius:999px}
+  .p-ok{background:linear-gradient(90deg,#35C759,#8BE28B)}
+  .p-warn{background:linear-gradient(90deg,#FFA500,#ffd18a)}
+  .p-bad{background:linear-gradient(90deg,#FF4C4C,#ff9a9a)}
+  .p-acc{background:linear-gradient(90deg,#800FFF,#c3a3ff)}
+
+  /* top actions */
+  .footer{display:flex;justify-content:flex-end;gap:10px;margin:20px 0}
+  .btn{border:1px solid var(--accent);background:#fff;color:var(--accent);padding:10px 16px;border-radius:10px;cursor:default;font-weight:700}
+  .btn.primary{background:var(--accent);color:#fff}
+  .btn.ghost{border-color:#ddd;color:#444}
+
+  /* grids */
+  .grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#f5ecff;color:#4b2a8f;font-weight:700;font-size:12px}
+
+  /* section header */
+  .secHead{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:4px}
+  .secMeta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}
+  .secHead .badge{margin-left:auto}
+
+  /* stepper (horizontal dots) */
+  .stepper{display:flex;gap:28px;justify-content:center;margin:26px 0 12px}
+  .dot{display:flex;align-items:center;gap:10px;color:var(--muted)}
+  .dot i{width:12px;height:12px;border-radius:50%;border:2px solid #d4c8ff;display:inline-block}
+  .dot.active{color:var(--text);font-weight:800}
+  .dot.active i{border-color:var(--accent);background:var(--accent)}
+  .dot.done i{border-color:var(--ok);background:var(--ok)}
+
+  /* section anchors */
+  .anchor{position:relative;top:-20px}
+
+  /* sticky page nav */
+  .topnav{position:sticky;top:0;background:rgba(255,255,255,.9);backdrop-filter:saturate(180%) blur(8px);z-index:50;border-bottom:1px solid #f2efff}
+  .topnav .wrap{padding:10px 18px}
+
+  /* page titles inline breadcrumb */
+  .crumb{color:#6b6b6b;font-weight:700;font-size:12px}
+  .crumb b{color:#3b2477}
+
+  /* small helper rows */
+  .mini{display:flex;gap:8px;flex-wrap:wrap}
+  .mini .pill{padding:3px 8px}
+
+  /* review table */
+  table{width:100%;border-collapse:separate;border-spacing:0 8px}
+  th{text-align:left;color:#555;font-weight:800;font-size:12px;padding:0 10px}
+  td{background:#fff;border:1px solid #eee;border-radius:10px;padding:10px}
+  .t-badge{display:inline-flex;gap:6px;align-items:center;font-weight:800;font-size:12px}
+  .t-ok{color:#116b2e}.t-warn{color:#6a4700}.t-bad{color:#7e0d0d}
+
+  /* helper chips */
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px dashed #e7defc;border-radius:999px;color:#4b2a8f;background:#faf7ff;font-weight:700;font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- Sticky mini nav (just visual) -->
+<div class="topnav">
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="crumb">Hub › <b>360 Listing</b> › New Experience</div>
+    <div class="mini"><span class="chip">RMS: Rezdy</span><span class="chip">Theme: White • Accent #800FFF</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============== 1) PRODUCT CODE (LANDING) ============== -->
+  <span id="section-product" class="anchor"></span>
+  <h1>Enter product code</h1>
+  <p class="sub">Paste your product code from your RMS. We’ll fetch details and pre-fill your listing form.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Product code <span class="req">⚠ Required</span></label>
+        <input class="missing" placeholder="e.g., PA8MY5" />
+      </div>
+      <div>
+        <label class="opt">RMS (auto-detected)</label>
+        <input class="prefilled" value="Rezdy" />
+        <div class="fetchnote">Detected from connected account</div>
+      </div>
+      <div class="full">
+        <label class="opt">Preview (after fetch)</label>
+        <input class="prefilled" value="WET JET LEWISTON – Rack Rate – Rezdy US (sample)" />
+        <div class="fetchnote">Fetched name • Last sync: 2 mins ago</div>
+      </div>
+    </div>
+    <div class="footer">
+      <button class="btn ghost">Back</button>
+      <button class="btn primary">Fetch Listing</button>
+    </div>
+  </div>
+
+  <!-- ============== 2) COMMISSION ============== -->
+  <span id="section-commission" class="anchor"></span>
+  <h1>Set commission</h1>
+  <p class="sub">Enter the commission to apply for this product. You can change it later at option/schedule level if needed.</p>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <label>Commission % <span class="req">⚠ Required</span></label>
+        <input class="missing" placeholder="e.g., 20" />
+      </div>
+      <div>
+        <label class="opt">Applies to</label>
+        <select class="prefilled">
+          <option selected>All options (default)</option>
+          <option>Specific options only</option>
+        </select>
+        <div class="fetchnote">Can be overridden in schedules</div>
+      </div>
+    </div>
+    <div class="footer">
+      <button class="btn ghost">Back</button>
+      <button class="btn primary">Continue</button>
+    </div>
+  </div>
+
+  <!-- ============== 3) OPTIONS OVERVIEW (3 options) ============== -->
+  <span id="section-options" class="anchor"></span>
+  <h1>Options fetched from your RMS</h1>
+  <p class="sub">We detected 3 options. Review each. Missing fields are called out prominently.</p>
+
+  <div class="grid3">
+    <div class="card">
+      <h2>Morning Jet Tour</h2>
+      <div class="secHead">
+        <div class="secMeta">2 pax types • 45 mins • Fixed</div>
+        <span class="badge b-ok">✅ Ready • 92%</span>
+      </div>
+      <div class="prog" style="margin:8px 0 12px"><i class="p-ok" style="width:92%"></i></div>
+      <div class="mini">
+        <span class="pill">Prefilled</span>
+        <span class="pill">Schedule linked</span>
+      </div>
+      <div class="footer" style="justify-content:flex-start">
+        <button class="btn primary">Review this option</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Evening Jet Tour</h2>
+      <div class="secHead">
+        <div class="secMeta">2 pax types • 45 mins • Fixed</div>
+        <span class="badge b-warn">🟠 Missing 3 fields • 64%</span>
+      </div>
+      <div class="prog" style="margin:8px 0 12px"><i class="p-warn" style="width:64%"></i></div>
+      <div class="mini">
+        <span class="pill">Prefilled</span>
+        <span class="pill">Needs exclusions</span>
+        <span class="pill">Arrival buffer</span>
+      </div>
+      <div class="footer" style="justify-content:flex-start">
+        <button class="btn">Review</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Private Charter</h2>
+      <div class="secHead">
+        <div class="secMeta">1 pax type • 90 mins • On request</div>
+        <span class="badge b-bad">🔴 Incomplete • 58%</span>
+      </div>
+      <div class="prog" style="margin:8px 0 12px"><i class="p-bad" style="width:58%"></i></div>
+      <div class="mini">
+        <span class="pill">No schedule</span>
+        <span class="pill">Add pax notes</span>
+      </div>
+      <div class="footer" style="justify-content:flex-start">
+        <button class="btn">Review</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <button class="btn ghost">Back</button>
+    <button class="btn primary">Proceed to “Morning Jet Tour”</button>
+  </div>
+
+  <!-- ============== 4) OPTION REVIEW (HORIZONTAL STEPPER) ============== -->
+  <div class="stepper">
+    <div class="dot done"><i></i>Setup</div>
+    <div class="dot active"><i></i>Guest directions</div>
+    <div class="dot"><i></i>Reservation settings</div>
+  </div>
+  <h1>Option · <span style="color:#4b2a8f">Morning Jet Tour</span></h1>
+  <p class="sub">Verify RMS data and complete missing fields. Large badges + progress bar show status.</p>
+
+  <!-- Setup -->
+  <div class="card">
+    <div class="secHead">
+      <h2>Setup</h2>
+      <span class="badge b-ok">✅ Complete (5/5)</span>
+    </div>
+    <div class="prog" style="margin:6px 0 14px"><i class="p-ok" style="width:100%"></i></div>
+    <div class="row">
+      <div>
+        <label>Option name <span class="opt">Fetched from RMS</span></label>
+        <input class="prefilled" value="Morning Jet Tour" />
+        <div class="fetchnote">RMS → Option Name</div>
+      </div>
+      <div>
+        <label>Internal reference code <span class="opt">Optional</span></label>
+        <input class="prefilled" value="JET-MORN-01" />
+        <div class="fetchnote">You can change this anytime</div>
+      </div>
+      <div class="full">
+        <label>Inclusions <span class="opt">Fetched from RMS</span></label>
+        <textarea class="prefilled">• 45-minute jet boat ride
+• Safety orientation
+• English-speaking crew</textarea>
+      </div>
+      <div class="full">
+        <label>Exclusions <span class="req">⚠ Required</span></label>
+        <textarea class="missing" placeholder="Add exclusions (e.g., hotel pickup, meals)"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guest Directions -->
+  <div class="card">
+    <div class="secHead">
+      <h2>Guest directions</h2>
+      <span class="badge b-warn">🟠 Partially filled (2 missing)</span>
+    </div>
+    <div class="prog" style="margin:6px 0 14px"><i class="p-warn" style="width:70%"></i></div>
+
+    <h2 style="margin-top:0">Pickup details</h2>
+    <div class="row">
+      <div>
+        <label>Is pickup included? <span class="opt">Fetched</span></label>
+        <select class="prefilled"><option selected>Yes</option><option>No</option></select>
+      </div>
+      <div>
+        <label>Coverage <span class="opt">Prefilled</span></label>
+        <select class="prefilled">
+          <option selected>Upload list of supported hotels/locations</option>
+          <option>Any hotels or locations within the city</option>
+        </select>
+      </div>
+      <div class="full">
+        <label>Pickup locations (one per line) <span class="opt">Prefilled</span></label>
+        <textarea class="prefilled">Hotel Sunrise
+Downtown Pier</textarea>
+      </div>
+    </div>
+
+    <h2>Start location</h2>
+    <div class="row">
+      <div>
+        <label>Redemption method <span class="opt">Prefilled</span></label>
+        <select class="prefilled">
+          <option>Scan and enter</option>
+          <option selected>Guided tour</option>
+          <option>Hosted tour</option>
+          <option>Show the ticket and enter</option>
+          <option>Exchange for voucher</option>
+          <option>HOHO</option>
+          <option>Live entertainment</option>
+        </select>
+      </div>
+      <div>
+        <label>Arrival buffer <span class="req">⚠ Missing minutes</span></label>
+        <div class="row">
+          <input type="number" placeholder="HH" value="0" class="prefilled" />
+          <input type="number" placeholder="MM" class="missing" />
+        </div>
+      </div>
+      <div>
+        <label>Emergency phone <span class="opt">Prefilled</span></label>
+        <input class="prefilled" value="+1 202-555-0114" />
+      </div>
+      <div>
+        <label>Photo ID required? <span class="opt">Prefilled</span></label>
+        <select class="prefilled"><option selected>Yes</option><option>No</option></select>
+      </div>
+      <div class="full">
+        <label>Additional instructions <span class="req">⚠ Required</span></label>
+        <textarea class="missing" placeholder="Add clear, simple instructions for guests…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reservation Settings -->
+  <div class="card">
+    <div class="secHead">
+      <h2>Reservation settings</h2>
+      <span class="badge b-warn">🟠 Partially filled (1 missing)</span>
+    </div>
+    <div class="prog" style="margin:6px 0 14px"><i class="p-warn" style="width:80%"></i></div>
+
+    <h2 style="margin-top:0">Booking</h2>
+    <p class="sub">Selection preview: <b>Instant confirmation (Freesale)</b></p>
+    <div class="row">
+      <div>
+        <label>Receive intimation emails? <span class="opt">Prefilled</span></label>
+        <select class="prefilled"><option>Yes</option><option>No</option></select>
+      </div>
+      <div>
+        <label>Booking time limit <span class="opt">Prefilled</span></label>
+        <select class="prefilled"><option selected>Release period</option><option>Cutoff period</option><option>None</option></select>
+      </div>
+      <div class="row full">
+        <input type="number" class="prefilled" value="1" />
+        <input type="number" class="prefilled" value="30" />
+        <div class="fetchnote full">Release period is HH hours : MM mins before start</div>
+      </div>
+    </div>
+
+    <h2>Cancellation</h2>
+    <div class="row">
+      <div>
+        <label>Allow cancellations? <span class="opt">Prefilled</span></label>
+        <select class="prefilled"><option selected>Yes</option><option>No</option></select>
+      </div>
+      <div>
+        <label>Cancellation window (hours) <span class="opt">Prefilled</span></label>
+        <input class="prefilled" value="24" />
+      </div>
+      <div>
+        <label>Allow rescheduling? <span class="req">⚠ Required</span></label>
+        <select class="missing"><option>No</option><option>Yes</option></select>
+      </div>
+      <div>
+        <label>Rescheduling window (hours) <span class="opt">Conditional</span></label>
+        <input class="prefilled" value="" placeholder="e.g., 24" />
+      </div>
+    </div>
+
+    <h2>Guest types</h2>
+    <div class="card" style="padding:12px">
+      <div class="row">
+        <div><label>Type <span class="opt">Prefilled</span></label><select class="prefilled"><option>Adult</option></select></div>
+        <div><label>Min age <span class="opt">Prefilled</span></label><input class="prefilled" value="13" /></div>
+        <div><label>Max age <span class="opt">Prefilled</span></label><input class="prefilled" value="59" /></div>
+        <div><label>Notes <span class="opt">Optional</span></label><input class="prefilled" /></div>
+        <div><label>Free? <span class="opt">Prefilled</span></label><select class="prefilled"><option>No</option><option>Yes</option></select></div>
+      </div>
+      <hr style="border:none;border-top:1px solid #eee;margin:12px 0" />
+      <div class="row">
+        <div><label>Type <span class="opt">Prefilled</span></label><select class="prefilled"><option>Child</option></select></div>
+        <div><label>Min age <span class="opt">Prefilled</span></label><input class="prefilled" value="0" /></div>
+        <div><label>Max age <span class="opt">Prefilled</span></label><input class="prefilled" value="12" /></div>
+        <div><label>Notes <span class="opt">Optional</span></label><input class="prefilled" /></div>
+        <div><label>Free? <span class="opt">Prefilled</span></label><select class="prefilled"><option>No</option><option>Yes</option></select></div>
+      </div>
+    </div>
+
+    <h2>Schedules, Closures & Campaigns</h2>
+    <div class="card" style="padding:12px">
+      <div class="row">
+        <div class="full"><strong>Existing schedules</strong></div>
+        <div class="full card" style="padding:10px">
+          <div class="row">
+            <div><label>Name <span class="opt">Prefilled</span></label><input class="prefilled" value="Summer Weekday Mornings" /></div>
+            <div><label>Start <span class="opt">Prefilled</span></label><input type="date" class="prefilled" value="2025-06-01" /></div>
+            <div><label>End <span class="opt">Prefilled</span></label><input type="date" class="prefilled" value="2025-08-31" /></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:12px;margin-top:10px;border:1px dashed #e7defc">
+        <div class="mini" style="margin-bottom:8px">
+          <span class="pill">+ New</span><span class="pill">Schedule</span><span class="pill">Special Schedule</span><span class="pill">Closure</span>
+        </div>
+        <div class="row">
+          <div><label>Schedule name <span class="req">⚠ Required</span></label><input class="missing" placeholder="e.g., Festive Evenings" /></div>
+          <div><label>Start <span class="req">⚠ Required</span></label><input type="date" class="missing" /></div>
+          <div><label>End <span class="req">⚠ Required</span></label><input type="date" class="missing" /></div>
+        </div>
+        <div class="row">
+          <div><label>Duration type <span class="opt">Prefilled</span></label><select class="prefilled"><option selected>Fixed</option><option>Flexible</option></select></div>
+          <div><label>Entry type <span class="opt">Prefilled</span></label><select class="prefilled"><option selected>Fixed</option><option>Flexible</option></select></div>
+        </div>
+        <div class="row">
+          <div><label>Retail <span class="opt">Prefilled</span></label><input class="prefilled" value="100" /></div>
+          <div><label>Discount % <span class="opt">Prefilled</span></label><input class="prefilled" value="10" /></div>
+          <div><label>Commission % <span class="opt">Prefilled</span></label><input class="prefilled" value="20" /></div>
+          <div><label>Net <span class="opt">Auto-calc</span></label><input class="prefilled" value="72" /></div>
+        </div>
+        <div class="row">
+          <div><label>Qty <span class="opt">Prefilled</span></label><input class="prefilled" value="20" /></div>
+          <div><label>Min <span class="opt">Prefilled</span></label><input class="prefilled" value="1" /></div>
+          <div><label>Max <span class="opt">Prefilled</span></label><input class="prefilled" value="6" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============== 5) REVIEW & SUBMIT ============== -->
+  <span id="section-review" class="anchor"></span>
+  <h1>Review & submit</h1>
+  <p class="sub">Quick status of all 3 options. Fix any blockers before submission.</p>
+
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Setup</th>
+          <th>Guest directions</th>
+          <th>Reservation</th>
+          <th>Schedules</th>
+          <th>Overall</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Morning Jet Tour</b></td>
+          <td><span class="t-badge t-ok">✅ Complete</span></td>
+          <td><span class="t-badge t-warn">🟠 2 missing</span></td>
+          <td><span class="t-badge t-warn">🟠 1 missing</span></td>
+          <td><span class="t-badge t-ok">✅ Linked</span></td>
+          <td><span class="badge b-warn">🟠 85%</span></td>
+        </tr>
+        <tr>
+          <td><b>Evening Jet Tour</b></td>
+          <td><span class="t-badge t-ok">✅ Complete</span></td>
+          <td><span class="t-badge t-warn">🟠 2 missing</span></td>
+          <td><span class="t-badge t-ok">✅ OK</span></td>
+          <td><span class="t-badge t-ok">✅ Linked</span></td>
+          <td><span class="badge b-warn">🟠 64%</span></td>
+        </tr>
+        <tr>
+          <td><b>Private Charter</b></td>
+          <td><span class="t-badge t-ok">✅ Complete</span></td>
+          <td><span class="t-badge t-ok">✅ OK</span></td>
+          <td><span class="t-badge t-warn">🟠 Needs pax notes</span></td>
+          <td><span class="t-badge t-bad">🔴 Add schedule</span></td>
+          <td><span class="badge b-bad">🔴 58%</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      <button class="btn">Back</button>
+      <button class="btn primary">Submit for Review</button>
+    </div>
+  </div>
+
+  <!-- page end -->
+  <div class="footer">
+    <button class="btn ghost">Exit</button>
+    <button class="btn">Save Draft</button>
+    <button class="btn primary">Next</button>
+  </div>
+
+</div>
+</body>
+</html>

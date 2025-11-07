@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hub 360 – Options Overview + Option Edit (Horizontal)</title>
+<style>
+  :root{
+    --accent:#800FFF; --text:#222; --muted:#6b6b6b; --line:#eee; --ok:#35C759; --warn:#FF7A7A;
+    --card:#fff; --shadow:0 6px 18px rgba(0,0,0,.06); --radius:12px; --maxw:920px;
+  }
+  body{margin:0;background:#fff;color:var(--text);font:14px "Hayward",system-ui,Segoe UI,Roboto,Arial,sans-serif;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:28px 18px 60px;}
+  h1{font-size:22px;margin:6px 0}
+  h2{font-size:16px;margin:16px 0 8px}
+  p.sub{color:var(--muted);margin:0 0 16px}
+  .card{background:var(--card);box-shadow:var(--shadow);border-radius:var(--radius);padding:18px;margin:12px 0}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;background:#f5ecff;color:#4b2a8f;font-weight:600;font-size:12px}
+  .status{display:flex;align-items:center;gap:8px;font-size:12px}
+  .ok{color:var(--ok)} .warn{color:var(--warn)}
+  .footer{display:flex;justify-content:flex-end;gap:10px;margin:20px 0}
+  .btn{border:1px solid var(--accent);background:#fff;color:var(--accent);padding:10px 16px;border-radius:10px;cursor:default}
+  .btn.primary{background:var(--accent);color:#fff}
+  /* Inputs */
+  label{display:block;margin:8px 0 6px;font-weight:600}
+  input,select,textarea{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #ddd;border-radius:10px;font:inherit;background:#fff}
+  textarea{min-height:96px;resize:vertical}
+  .prefilled{background:#f7f7f7;color:#3b3b3b}
+  .missing{border-color:var(--accent);box-shadow:0 0 0 2px rgba(128,15,255,.06)}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .full{grid-column:1/-1}
+  /* Stepper (dots) */
+  .stepper{display:flex;gap:28px;justify-content:center;margin:22px 0 14px}
+  .dot{display:flex;align-items:center;gap:10px;color:var(--muted)}
+  .dot i{width:12px;height:12px;border-radius:50%;border:2px solid #d4c8ff;display:inline-block}
+  .dot.active{color:var(--text);font-weight:600}
+  .dot.active i{border-color:var(--accent);background:var(--accent)}
+  .dot.done i{border-color:var(--ok);background:var(--ok)}
+  /* Inline “New Schedule” form */
+  .new-schedule{border:1px dashed var(--line);border-radius:12px;padding:12px;margin-top:8px}
+  .steps{display:flex;gap:6px;margin:8px 0}
+  .steps .s{padding:6px 10px;border-radius:999px;background:#f5f5f7;font-weight:600;font-size:12px;color:#555}
+  .steps .s.active{background:#f0e6ff;color:#4b2a8f}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- OPTIONS OVERVIEW -->
+    <h1>Options fetched from your RMS</h1>
+    <p class="sub">We detected 3 options. Review each or add a new one if required.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Morning Jet Tour</h2>
+        <p class="sub">2 pax types • 45 mins • Fixed schedule</p>
+        <div class="status ok">✓ 92% complete</div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill">Prefilled</span><span class="pill">Schedule linked</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Evening Jet Tour</h2>
+        <p class="sub">2 pax types • 45 mins • Fixed schedule</p>
+        <div class="status warn">⚠ 64% complete — Missing exclusions, arrival buffer</div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill">Prefilled</span><span class="pill">Needs review</span>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Private Charter</h2>
+        <p class="sub">1 pax type • 90 mins • On request</p>
+        <div class="status warn">⚠ 58% complete — Add schedule</div>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="pill">Manual edit</span><span class="pill">No schedule</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn">Back</button>
+      <button class="btn primary">Review “Morning Jet Tour”</button>
+    </div>
+
+    <!-- OPTION EDIT (HORIZONTAL STEPPER) -->
+    <div class="stepper">
+      <div class="dot done"><i></i>Setup</div>
+      <div class="dot active"><i></i>Guest directions</div>
+      <div class="dot"><i></i>Reservation settings</div>
+    </div>
+    <h1>Option · <span style="color:#4b2a8f">Morning Jet Tour</span></h1>
+    <p class="sub">Most fields are pre-filled from your RMS. Verify and complete the missing pieces.</p>
+
+    <!-- Setup -->
+    <div class="card">
+      <div class="status ok">✓ Setup complete</div>
+      <h2>Setup → Option name</h2>
+      <div class="row">
+        <div>
+          <label>Option name</label>
+          <input class="prefilled" value="Morning Jet Tour" />
+          <div class="hint">Fetched from RMS</div>
+        </div>
+        <div>
+          <label>Internal reference code</label>
+          <input class="prefilled" value="JET-MORN-01" />
+          <div class="hint">Your internal code</div>
+        </div>
+      </div>
+
+      <h2>Setup → Inclusion &amp; exclusion</h2>
+      <div class="row">
+        <div>
+          <label>Inclusions</label>
+          <textarea class="prefilled">• 45-minute jet boat ride
+• Safety orientation
+• English-speaking crew</textarea>
+        </div>
+        <div>
+          <label>Exclusions</label>
+          <textarea class="missing" placeholder="Add exclusions (e.g., hotel pickup, meals)"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guest directions -->
+    <div class="card">
+      <div class="status warn">⚠ Guest directions missing items</div>
+      <h2>Guest directions → Pickup details</h2>
+      <p class="sub">Shown below because “Yes, pickup included” is selected.</p>
+      <div class="row">
+        <div>
+          <label>Coverage</label>
+          <select class="prefilled">
+            <option selected>Upload list of supported hotels/locations</option>
+            <option>Any hotels or locations within the city</option>
+          </select>
+        </div>
+        <div>
+          <label>Upload CSV of pickup points</label>
+          <input type="file" accept=".csv" />
+          <div class="hint">Or add locations manually</div>
+        </div>
+        <div class="full">
+          <label>Pickup locations (one per line)</label>
+          <textarea class="prefilled">Hotel Sunrise
+Downtown Pier</textarea>
+        </div>
+      </div>
+
+      <h2 style="margin-top:12px">Guest directions → Start location</h2>
+      <div class="row">
+        <div>
+          <label>Redemption method</label>
+          <select class="prefilled">
+            <option>Scan and enter</option>
+            <option selected>Guided tour</option>
+            <option>Hosted tour</option>
+            <option>Show the ticket and enter</option>
+            <option>Exchange for voucher</option>
+            <option>HOHO</option>
+            <option>Live entertainment</option>
+          </select>
+        </div>
+        <div>
+          <label>Arrival buffer</label>
+          <div class="row">
+            <input type="number" placeholder="HH" value="0" class="prefilled" />
+            <input type="number" placeholder="MM" class="missing" />
+          </div>
+          <div class="hint">How early should guests arrive?</div>
+        </div>
+        <div>
+          <label>Emergency phone</label>
+          <input class="prefilled" value="+1 202-555-0114" />
+        </div>
+        <div>
+          <label>Photo ID required?</label>
+          <select class="prefilled"><option selected>Yes</option><option>No</option></select>
+        </div>
+        <div class="full">
+          <label>Additional instructions</label>
+          <textarea class="missing" placeholder="Anything else guests should know…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reservation settings -->
+    <div class="card">
+      <div class="status warn">⚠ Reservation settings need review</div>
+      <h2>Reservation settings → Booking</h2>
+      <p class="sub">Choices shown (static visual): Instant confirmation (Freesale) selected.</p>
+      <div class="row">
+        <div>
+          <label>Receive intimation emails?</label>
+          <select class="prefilled"><option>Yes</option><option>No</option></select>
+        </div>
+        <div>
+          <label>Booking time limit</label>
+          <select class="prefilled">
+            <option selected>Release period</option>
+            <option>Cutoff period</option>
+            <option>None</option>
+          </select>
+        </div>
+        <div class="row full">
+          <input type="number" class="prefilled" value="1" />
+          <input type="number" class="prefilled" value="30" />
+          <div class="hint full">Release period is HH hours : MM mins before start</div>
+        </div>
+      </div>
+
+      <h2>Reservation settings → Cancellation</h2>
+      <div class="row">
+        <div>
+          <label>Allow cancellations?</label>
+          <select class="prefilled"><option selected>Yes</option><option>No</option></select>
+        </div>
+        <div>
+          <label>Cancellation window (hours)</label>
+          <input class="prefilled" value="24" />
+        </div>
+        <div>
+          <label>Allow rescheduling?</label>
+          <select class="missing"><option>No</option><option>Yes</option></select>
+        </div>
+        <div>
+          <label>Rescheduling window (hours)</label>
+          <input class="missing" placeholder="e.g., 24" />
+        </div>
+      </div>
+
+      <h2>Reservation settings → Guest types</h2>
+      <div class="card" style="padding:12px">
+        <div class="row">
+          <div><label>Type</label><select class="prefilled"><option>Adult</option></select></div>
+          <div><label>Min age</label><input class="prefilled" value="13" /></div>
+          <div><label>Max age</label><input class="prefilled" value="59" /></div>
+          <div><label>Notes</label><input class="prefilled" /></div>
+          <div><label>Free?</label><select class="prefilled"><option>No</option><option>Yes</option></select></div>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee;margin:12px 0" />
+        <div class="row">
+          <div><label>Type</label><select class="prefilled"><option>Child</option></select></div>
+          <div><label>Min age</label><input class="prefilled" value="0" /></div>
+          <div><label>Max age</label><input class="prefilled" value="12" /></div>
+          <div><label>Notes</label><input class="prefilled" /></div>
+          <div><label>Free?</label><select class="prefilled"><option>No</option><option>Yes</option></select></div>
+        </div>
+      </div>
+
+      <h2>Reservation settings → Schedules, Closures & Campaigns</h2>
+      <div class="card" style="padding:12px">
+        <div class="row">
+          <div class="full"><strong>Existing schedules</strong></div>
+          <div class="full card" style="padding:10px">
+            <div class="row">
+              <div><label>Name</label><input class="prefilled" value="Summer Weekday Mornings" /></div>
+              <div><label>Start</label><input type="date" class="prefilled" value="2025-06-01" /></div>
+              <div><label>End</label><input type="date" class="prefilled" value="2025-08-31" /></div>
+            </div>
+          </div>
+        </div>
+        <div class="new-schedule">
+          <strong>+ New</strong>
+          <div class="steps"><div class="s active">Schedule</div><div class="s">Special Schedule</div><div class="s">Closure</div></div>
+          <!-- Inline Add Schedule (visible for static visual) -->
+          <div class="row">
+            <div><label>Schedule name</label><input class="missing" placeholder="e.g., Festive Evenings" /></div>
+            <div><label>Start</label><input type="date" class="missing" /></div>
+            <div><label>End</label><input type="date" class="missing" /></div>
+          </div>
+          <div class="row">
+            <div><label>Duration type</label><select class="prefilled"><option selected>Fixed</option><option>Flexible</option></select></div>
+            <div><label>Entry type</label><select class="prefilled"><option selected>Fixed</option><option>Flexible</option></select></div>
+          </div>
+          <div class="row">
+            <div><label>Retail</label><input class="prefilled" value="100" /></div>
+            <div><label>Discount %</label><input class="prefilled" value="10" /></div>
+            <div><label>Commission %</label><input class="prefilled" value="20" /></div>
+            <div><label>Net</label><input class="prefilled" value="72" /></div>
+          </div>
+          <div class="row">
+            <div><label>Qty</label><input class="prefilled" value="20" /></div>
+            <div><label>Min</label><input class="prefilled" value="1" /></div>
+            <div><label>Max</label><input class="prefilled" value="6" /></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer actions for the page -->
+    <div class="footer">
+      <button class="btn">Back</button>
+      <button class="btn primary">Save & Continue</button>
+    </div>
+  </div>
+</body>
+</html>

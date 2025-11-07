@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hub — Guest Directions Guided Stepper Prototype</title>
+  <style>
+    :root{
+      --bg:#ffffff;--text:#1b1f24;--muted:#667085;--ink:#111827;--ink-2:#374151;--ink-3:#6b7280;
+      --brand:#7c3aed;--brand-600:#6d28d9;--brand-50:#f5f3ff;--brand-100:#ede9fe;--success:#16a34a;--danger:#ef4444;
+      --line:#e5e7eb;--card:#fafafa;--focus:#2563eb;--amber:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";background:var(--bg);color:var(--text)}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+    aside{border-right:1px solid var(--line);padding:20px 16px;background:#fcfcfd}
+    .logo{font-weight:700;font-size:14px;color:var(--ink-2);margin-bottom:12px}
+    .side-title{font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.08em;margin:16px 0 8px}
+    .nav-item{padding:10px 12px;border-radius:8px;display:flex;align-items:center;gap:8px;color:var(--ink-2);cursor:default}
+    .nav-item.active{background:var(--brand-50);color:var(--brand-600);font-weight:600;border:1px solid var(--brand-100)}
+    .crumb{color:var(--ink-3);font-size:12px;margin:2px 0 16px}
+
+    main{padding:24px 28px;position:relative}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    h1{margin:0;font-size:20px}
+    .save-indicator{font-size:12px;color:var(--ink-3)}
+
+    .layout{display:grid;grid-template-columns:240px 1fr;gap:20px}
+
+    /* Vertical stepper */
+    .stepper{position:sticky;top:16px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    .step{display:flex;gap:10px;padding:10px;border-radius:10px;align-items:flex-start;cursor:pointer}
+    .step + .step{margin-top:6px}
+    .step:hover{background:#fbfbff}
+    .step.active{background:var(--brand-50);border:1px solid var(--brand-100)}
+    .step .dot{height:22px;width:22px;border-radius:999px;border:2px solid var(--brand-600);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;background:var(--brand-600)}
+    .step.done .dot{background:var(--success);border-color:var(--success)}
+    .step .meta{display:flex;flex-direction:column}
+    .step .title{font-size:14px;font-weight:600}
+    .step .subtitle{font-size:12px;color:var(--ink-3)}
+
+    /* Cards */
+    .card{border:1px solid var(--line);border-radius:14px;background:#fff;overflow:hidden}
+    .card header{padding:16px 16px;border-bottom:1px solid var(--line)}
+    .card .content{padding:16px}
+    .section-title{font-size:16px;margin:0}
+    .section-sub{color:var(--ink-3);font-size:13px;margin-top:4px}
+
+    /* Form */
+    .field{margin:12px 0}
+    label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--ink-2)}
+    input[type="text"],input[type="url"],input[type="time"],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;background:#fff;color:var(--ink)}
+    input:focus,select:focus,textarea:focus{outline:3px solid #eef2ff;border-color:var(--focus)}
+    textarea{min-height:88px;resize:vertical}
+    .row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .help{font-size:12px;color:var(--ink-3);margin-top:6px}
+
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;border:1px dashed var(--line);background:#fcfcff;font-size:12px;color:var(--ink-3)}
+
+    .inline-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:10px;font-size:14px;cursor:pointer}
+    .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff}
+    .btn.ghost{border-color:transparent;background:transparent;color:var(--ink-2)}
+    .btn.icon{padding:6px 8px}
+    .btn:disabled{opacity:.55;cursor:not-allowed}
+
+    .radio-group{display:flex;gap:12px}
+    .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);padding:8px 12px;border-radius:999px;cursor:pointer}
+    .chip input{display:none}
+    .chip.active{border-color:var(--brand-600);background:var(--brand-50);color:var(--brand-600)}
+
+    .point{border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0;background:#fff}
+    .point header{display:flex;justify-content:space-between;align-items:center;border:none;padding:0;margin-bottom:8px}
+    .point-title{font-weight:600}
+
+    .order-list{border:1px dashed var(--line);border-radius:10px;padding:10px;background:#fafaff}
+    .order-item{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;margin-bottom:8px}
+
+    /* Preview */
+    .preview{border:1px solid var(--line);border-radius:12px;background:#fff;padding:16px}
+    .skeleton{height:10px;background:#f2f3f5;border-radius:6px;margin:8px 0}
+    .voucher-box{border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:8px}
+
+    /* Footer bar */
+    .footer{position:sticky;bottom:0;background:linear-gradient(180deg, rgba(255,255,255,.4), #fff 40%);border-top:1px solid var(--line);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+
+    /* Utility */
+    .hidden{display:none}
+    .muted{color:var(--ink-3)}
+    .check{color:var(--success);font-size:12px;margin-left:6px}
+    .tag{font-size:11px;color:var(--ink-3);background:#f8fafc;border:1px solid var(--line);padding:3px 8px;border-radius:999px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="logo">Hub • Supplier Portal</div>
+      <div class="side-title">Product details</div>
+      <div class="nav-item">Basic details ✓</div>
+      <div class="nav-item">Know Before You Go ✓</div>
+      <div class="nav-item">Media ✓</div>
+      <div class="side-title">Ticket option</div>
+      <div class="nav-item active">Guest directions</div>
+      <div class="nav-item">Start location</div>
+      <div class="nav-item">Reservation settings</div>
+    </aside>
+
+    <main>
+      <header>
+        <div>
+          <div class="crumb">Spanish Tour ▸ Setup ▸ <span class="muted">Guest directions</span></div>
+          <h1>Meeting point</h1>
+        </div>
+        <div class="save-indicator" id="saveState">All changes saved ✓</div>
+      </header>
+
+      <div class="layout">
+        <!-- Vertical Stepper -->
+        <nav class="stepper" id="stepper">
+          <div class="step active" data-step="1">
+            <div class="dot">1</div>
+            <div class="meta">
+              <div class="title">Location details</div>
+              <div class="subtitle">Add points & order</div>
+            </div>
+          </div>
+          <div class="step" data-step="2">
+            <div class="dot">2</div>
+            <div class="meta">
+              <div class="title">Guest requirements</div>
+              <div class="subtitle">ID, buffer & contact</div>
+            </div>
+          </div>
+          <div class="step" data-step="3">
+            <div class="dot">3</div>
+            <div class="meta">
+              <div class="title">Preview voucher</div>
+              <div class="subtitle">Review & confirm</div>
+            </div>
+          </div>
+        </nav>
+
+        <!-- Content Area -->
+        <section id="content">
+          <!-- STEP 1: Location details -->
+          <div class="card" id="step-1">
+            <header>
+              <div>
+                <div class="section-title">Step 1 of 3 — Location details</div>
+                <div class="section-sub">Help guests find your experience starting point.
+                </div>
+              </div>
+            </header>
+            <div class="content">
+              <div class="inline-actions">
+                <span class="pill">Add at least one point</span>
+                <span class="tag" id="pointCountTag">0 points</span>
+              </div>
+
+              <div id="points"></div>
+
+              <div class="field">
+                <button class="btn" id="addPointBtn">＋ Add another point</button>
+              </div>
+
+              <div class="field hidden" id="orderQuestion">
+                <label>Do guests need to visit the points in a specific order?</label>
+                <div class="radio-group">
+                  <label class="chip" data-order="yes"><input type="radio" name="orderReq" value="yes">Yes</label>
+                  <label class="chip" data-order="no"><input type="radio" name="orderReq" value="no">No</label>
+                </div>
+                <div class="help">Shown when you have 2 or more points.</div>
+              </div>
+
+              <div class="field hidden" id="orderBuilder">
+                <label>Reorder points</label>
+                <div class="order-list" id="orderList"></div>
+                <div class="help">Use ↑/↓ to set the correct visit sequence.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 2: Guest requirements -->
+          <div class="card hidden" id="step-2">
+            <header>
+              <div>
+                <div class="section-title">Step 2 of 3 — Guest requirements</div>
+                <div class="section-sub">Ask only what’s essential for a smooth start.</div>
+              </div>
+            </header>
+            <div class="content">
+              <div class="row-2">
+                <div class="field">
+                  <label>How early should guests arrive?</label>
+                  <div class="row">
+                    <div>
+                      <input id="arriveH" type="time" step="60" />
+                      <div class="help">Tip: 00:10 = 10 minutes before</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label>Do guests need a government ID?</label>
+                  <div class="radio-group">
+                    <label class="chip" data-idreq="yes"><input type="radio" name="idReq" value="yes">Yes</label>
+                    <label class="chip" data-idreq="no"><input type="radio" name="idReq" value="no">No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="field hidden" id="contactField">
+                <label>Enter contact information <span class="muted">(shared after booking only)</span></label>
+                <div class="row-2">
+                  <input type="text" id="country" placeholder="Country" />
+                  <input type="text" id="phone" placeholder="Phone number" />
+                </div>
+                <div class="help">This is used only for guest coordination.</div>
+              </div>
+
+              <div class="field">
+                <label>Anything else guests should know?</label>
+                <textarea id="notes" placeholder="e.g., Wear comfortable shoes; Moderate fitness level required"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: Preview voucher -->
+          <div class="card hidden" id="step-3">
+            <header>
+              <div>
+                <div class="section-title">Step 3 of 3 — Preview voucher</div>
+                <div class="section-sub">Review the auto-generated voucher. You can go back to edit.</div>
+              </div>
+            </header>
+            <div class="content">
+              <div class="preview">
+                <div><strong>Voucher preview</strong> <span class="tag" id="previewStatus">Draft</span></div>
+                <div class="voucher-box" id="voucherBox">
+                  <!-- dynamic -->
+                </div>
+                <div class="help">This is a prototype preview based on the data you entered above.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sticky footer navigation (single source of truth) -->
+          <div class="footer">
+            <div class="muted">Use “Next” to advance. Sections auto-save.</div>
+            <div>
+              <button class="btn" id="saveExit">Save & Exit</button>
+              <button class="btn primary" id="nextBtn" disabled>Next: Guest requirements</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // --- State ---
+    const state = {
+      step: 1,
+      points: [], // {id, address, address2, city, country, pincode, landmark, map, who, how, photos}
+      orderRequired: null, // true/false
+      arrivalBuffer: '',
+      idRequired: null,
+      contact: { country: '', phone: '' },
+      notes: ''
+    };
+
+    // --- Helpers ---
+    const el = (sel, root=document) => root.querySelector(sel);
+    const els = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const saveState = (debounceMs=600) => {
+      clearTimeout(window.__saveTimer);
+      el('#saveState').textContent = 'Saving…';
+      window.__saveTimer = setTimeout(()=>{
+        el('#saveState').textContent = 'All changes saved ✓';
+        render();
+      }, debounceMs);
+    };
+
+    function setStep(n){
+      state.step = n;
+      // update stepper active
+      els('.step').forEach(s=>{
+        s.classList.toggle('active', +s.dataset.step===n);
+      });
+      render();
+      scrollToCurrent();
+    }
+
+    function scrollToCurrent(){
+      const sec = el(`#step-${state.step}`);
+      if(sec){ sec.classList.remove('hidden'); sec.scrollIntoView({behavior:'smooth', block:'start'}); }
+    }
+
+    // --- Points CRUD ---
+    function addPoint(prefill={}){
+      const id = Date.now()+Math.random().toString(16).slice(2);
+      state.points.push({
+        id,
+        address: prefill.address||'',
+        address2: prefill.address2||'',
+        city: prefill.city||'',
+        country: prefill.country||'',
+        pincode: prefill.pincode||'',
+        landmark: prefill.landmark||'',
+        map: prefill.map||'',
+        who: prefill.who||'',
+        how: prefill.how||'',
+        photos: prefill.photos||false
+      });
+      saveState(350);
+    }
+
+    function removePoint(id){
+      state.points = state.points.filter(p=>p.id!==id);
+      if(state.points.length<2){
+        state.orderRequired = null;
+      }
+      saveState(0);
+    }
+
+    function movePoint(id, dir){
+      const idx = state.points.findIndex(p=>p.id===id);
+      const swap = idx + dir;
+      if(swap<0 || swap>=state.points.length) return;
+      const tmp = state.points[swap];
+      state.points[swap] = state.points[idx];
+      state.points[idx] = tmp;
+      saveState(0);
+    }
+
+    // --- Renderers ---
+    function renderPoints(){
+      const container = el('#points');
+      container.innerHTML = '';
+      state.points.forEach((p, i)=>{
+        const wrapper = document.createElement('div');
+        wrapper.className = 'point';
+        wrapper.innerHTML = `
+          <header>
+            <div class="point-title">Point ${i+1}</div>
+            <div class="inline-actions">
+              <button class="btn icon" title="Move up" ${i===0?'disabled':''} data-move-up>↑</button>
+              <button class="btn icon" title="Move down" ${i===state.points.length-1?'disabled':''} data-move-down>↓</button>
+              <button class="btn icon" title="Remove" data-remove>✕</button>
+            </div>
+          </header>
+          <div class="field"><label>Address *</label>
+            <input type="text" data-k="address" placeholder="Enter full address" value="${p.address}" />
+          </div>
+          <div class="field"><label>Address line 2</label>
+            <input type="text" data-k="address2" placeholder="e.g., near Central Park, main entrance of City Hall" value="${p.address2}" />
+          </div>
+          <div class="row">
+            <div class="field"><label>City</label><input data-k="city" type="text" value="${p.city}" /></div>
+            <div class="field"><label>Country</label><input data-k="country" type="text" value="${p.country}" /></div>
+            <div class="field"><label>Pincode</label><input data-k="pincode" type="text" value="${p.pincode}" /></div>
+          </div>
+          <div class="field"><label>Landmark or building</label>
+            <input data-k="landmark" type="text" placeholder="e.g., main gate, ticket counter" value="${p.landmark}" />
+          </div>
+          <div class="field"><label>Google map link</label>
+            <input data-k="map" type="url" placeholder="https://maps.app..." value="${p.map}" />
+          </div>
+          <div class="row-2">
+            <div class="field"><label>Who will guests meet here? *</label>
+              <select data-k="who">
+                <option ${p.who===''?'selected':''} value="">Select</option>
+                <option ${p.who==='Guide'?'selected':''}>Guide</option>
+                <option ${p.who==='Host'?'selected':''}>Host</option>
+                <option ${p.who==='Counter staff'?'selected':''}>Counter staff</option>
+              </select>
+            </div>
+            <div class="field"><label>How should guests identify or meet this person?</label>
+              <input data-k="how" type="text" placeholder="e.g., red jacket, black cap" value="${p.how}" />
+            </div>
+          </div>
+          <div class="field"><label>Photos of starting point</label>
+            <div class="radio-group">
+              <label class="chip ${p.photos? 'active':''}" data-photo="yes"><input type="radio" name="photos-${p.id}" ${p.photos? 'checked':''}>Yes</label>
+              <label class="chip ${!p.photos? 'active':''}" data-photo="no"><input type="radio" name="photos-${p.id}" ${!p.photos? 'checked':''}>No</label>
+            </div>
+          </div>
+        `;
+        // bind events
+        wrapper.querySelectorAll('input,select').forEach(inp=>{
+          const key = inp.getAttribute('data-k');
+          if(!key) return;
+          inp.addEventListener('input', ()=>{ p[key] = inp.value; saveState(); });
+        });
+        wrapper.querySelector('[data-remove]').addEventListener('click', ()=>removePoint(p.id));
+        wrapper.querySelector('[data-move-up]').addEventListener('click', ()=>movePoint(p.id,-1));
+        wrapper.querySelector('[data-move-down]').addEventListener('click', ()=>movePoint(p.id,1));
+        wrapper.querySelectorAll('[data-photo]').forEach(l=>{
+          l.addEventListener('click', ()=>{ p.photos = l.dataset.photo==='yes'; wrapper.querySelectorAll('[data-photo]').forEach(x=>x.classList.remove('active')); l.classList.add('active'); saveState(); });
+        });
+        container.appendChild(wrapper);
+      });
+      el('#pointCountTag').textContent = `${state.points.length} point${state.points.length!==1?'s':''}`;
+
+      // Conditional order question
+      el('#orderQuestion').classList.toggle('hidden', state.points.length < 2);
+      renderOrderList();
+      validateStep1();
+    }
+
+    function renderOrderList(){
+      const list = el('#orderList');
+      const builder = el('#orderBuilder');
+      const asked = state.points.length >= 2 && state.orderRequired === true;
+      builder.classList.toggle('hidden', !asked);
+      list.innerHTML = '';
+      if(!asked) return;
+      state.points.forEach((p,i)=>{
+        const row = document.createElement('div');
+        row.className = 'order-item';
+        row.innerHTML = `<div>${i+1}. ${p.address || 'Point ' + (i+1)}</div>
+                         <div class="inline-actions">
+                            <button class="btn icon" ${i===0?'disabled':''} data-up>↑</button>
+                            <button class="btn icon" ${i===state.points.length-1?'disabled':''} data-down>↓</button>
+                         </div>`;
+        row.querySelector('[data-up]')?.addEventListener('click',()=>movePoint(p.id,-1));
+        row.querySelector('[data-down]')?.addEventListener('click',()=>movePoint(p.id,1));
+        list.appendChild(row);
+      });
+    }
+
+    function validateStep1(){
+      // At least one point with required fields address + who
+      const ok = state.points.length>0 && state.points.every(p=>p.address.trim() && p.who);
+      // If 2+ points and order required is true/false selected
+      const orderOK = state.points.length<2 || state.orderRequired!==null;
+      const allOK = ok && orderOK;
+      el('#nextBtn').disabled = !allOK || state.step!==1;
+      // step done marker
+      markStepDone(1, allOK);
+      return allOK;
+    }
+
+    function validateStep2(){
+      const idOK = state.idRequired!==null;
+      const contactOK = state.idRequired===false || (state.contact.country && state.contact.phone);
+      const allOK = idOK && contactOK; // arrival buffer optional
+      el('#nextBtn').disabled = !allOK || state.step!==2;
+      markStepDone(2, allOK);
+      return allOK;
+    }
+
+    function markStepDone(n, done){
+      const stepEl = els('.step').find(s=>+s.dataset.step===n);
+      stepEl.classList.toggle('done', !!done);
+    }
+
+    function hydratePreview(){
+      const box = el('#voucherBox');
+      const pointsHTML = state.points.map((p,i)=>`
+        <div style="margin:8px 0;padding:8px;border:1px solid var(--line);border-radius:8px">
+          <div style="font-weight:600">Point ${i+1}</div>
+          <div>${p.address}${p.address2? ', '+p.address2:''}</div>
+          <div>${[p.city,p.country,p.pincode].filter(Boolean).join(', ')}</div>
+          ${p.landmark? `<div><em>Landmark:</em> ${p.landmark}</div>`:''}
+          ${p.map? `<div><em>Map:</em> ${p.map}</div>`:''}
+          <div><em>Meet:</em> ${p.who}${p.how? ' — '+p.how:''}</div>
+        </div>
+      `).join('');
+      const reqHTML = `
+        <div><strong>Arrive:</strong> ${state.arrivalBuffer||'—'}</div>
+        <div><strong>Govt ID:</strong> ${state.idRequired===null?'—':(state.idRequired? 'Required':'Not required')}</div>
+        <div><strong>Contact:</strong> ${(state.contact.country||'') + (state.contact.phone? ' '+state.contact.phone:'') || '—'}</div>
+        ${state.notes? `<div><strong>Notes:</strong> ${state.notes}</div>`:''}
+      `;
+      box.innerHTML = `
+        <div style="font-size:14px;color:var(--ink-3);margin-bottom:8px">Pompeii Guided Tour with Skip‑the‑Line</div>
+        <div><strong>Guest directions</strong></div>
+        ${pointsHTML}
+        <hr style="border:none;border-top:1px solid var(--line);margin:12px 0" />
+        <div><strong>Guest requirements</strong></div>
+        ${reqHTML}
+      `;
+      el('#previewStatus').textContent = 'Generated';
+    }
+
+    // --- Bootstrapping ---
+    function render(){
+      // Step visibility
+      for(let i=1;i<=3;i++){
+        el('#step-'+i).classList.toggle('hidden', state.step!==i);
+      }
+
+      // Footer CTA text
+      const next = el('#nextBtn');
+      if(state.step===1){ next.textContent = 'Next: Guest requirements'; validateStep1(); }
+      if(state.step===2){ next.textContent = 'Next: Preview voucher'; validateStep2(); }
+      if(state.step===3){ next.textContent = 'Publish changes'; next.disabled=false; hydratePreview(); markStepDone(3,true); }
+
+      // Stepper done states evaluated each time
+      if(state.step<=2) hydratePreview();
+
+      // Re-render points and order UIs
+      renderPoints();
+
+      // Update chips active states for order question
+      els('[data-order]').forEach(c=>{
+        c.classList.toggle('active', (state.orderRequired===true && c.dataset.order==='yes') || (state.orderRequired===false && c.dataset.order==='no'))
+      });
+
+      // Contact chips
+      els('[data-idreq]').forEach(c=>{
+        const val = c.dataset.idreq==='yes';
+        c.classList.toggle('active', state.idRequired===val);
+      });
+      el('#contactField').classList.toggle('hidden', state.idRequired!==true);
+
+      // Update footer Save label on step 3
+      el('#saveExit').textContent = state.step===3? 'Save draft & Exit' : 'Save & Exit';
+    }
+
+    // Event bindings
+    el('#addPointBtn').addEventListener('click', ()=>{ addPoint(); });
+
+    // Order question chips
+    els('[data-order]').forEach(c=>{
+      c.addEventListener('click', ()=>{ state.orderRequired = c.dataset.order==='yes'; saveState(); render(); });
+    });
+
+    // ID required chips
+    els('[data-idreq]').forEach(c=>{
+      c.addEventListener('click', ()=>{ state.idRequired = c.dataset.idreq==='yes'; saveState(); render(); });
+    });
+
+    // Arrival buffer
+    el('#arriveH').addEventListener('input', e=>{ state.arrivalBuffer = e.target.value; saveState(); });
+
+    // Contact fields
+    el('#country').addEventListener('input', e=>{ state.contact.country = e.target.value; saveState(); });
+    el('#phone').addEventListener('input', e=>{ state.contact.phone = e.target.value; saveState(); });
+
+    // Notes
+    el('#notes').addEventListener('input', e=>{ state.notes = e.target.value; saveState(); });
+
+    // Footer navigation
+    el('#nextBtn').addEventListener('click', ()=>{
+      if(state.step===1 && !validateStep1()) return;
+      if(state.step===2 && !validateStep2()) return;
+      if(state.step<3) setStep(state.step+1); else alert('Changes published (prototype)');
+    });
+
+    el('#saveExit').addEventListener('click', ()=>{
+      alert('Draft saved. (Prototype action)');
+    });
+
+    // Stepper clicks
+    els('.step').forEach(s=>s.addEventListener('click', ()=>setStep(+s.dataset.step)));
+
+    // Seed with a single empty point to guide users
+    addPoint({});
+    render();
+  </script>
+</body>
+</html>

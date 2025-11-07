@@ -1,0 +1,58 @@
+<!-- Multi-option tabs version -->
+<div class="group" id="gOptionsTabs">
+    <h3>Options & schedules</h3>
+  
+    <div class="tabs">
+      <button class="tab active" data-tab="opt1">Option A</button>
+      <button class="tab" data-tab="opt2">Option B</button>
+    </div>
+  
+    <div class="tab-content" id="opt1">
+      <div class="body">
+        <div class="row">
+          <div class="col"><label>Option name</label><input type="text" value="Morning Jet Boat Ride"></div>
+          <div class="col"><label>Languages</label><input type="text" value="English"></div>
+        </div>
+        <h4 style="margin-top:12px">Schedules</h4>
+        <table class="table">
+          <thead><tr><th>Start</th><th>End</th><th>Days</th><th>Pax type</th><th>Price</th><th>Currency</th></tr></thead>
+          <tbody><tr><td>Jan 1</td><td>Mar 31</td><td>Daily</td><td>Adult</td><td>70.97</td><td>USD</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  
+    <div class="tab-content" id="opt2" style="display:none">
+      <div class="body">
+        <div class="row">
+          <div class="col"><label>Option name</label><input type="text" value="Evening Jet Boat Ride"></div>
+          <div class="col"><label>Languages</label><input type="text" value="English, Spanish"></div>
+        </div>
+        <h4 style="margin-top:12px">Schedules</h4>
+        <table class="table">
+          <thead><tr><th>Start</th><th>End</th><th>Days</th><th>Pax type</th><th>Price</th><th>Currency</th></tr></thead>
+          <tbody><tr><td>May 1</td><td>Sep 30</td><td>Daily</td><td>Adult</td><td>80.00</td><td>USD</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <style>
+  .tabs {display:flex;gap:6px;margin:10px 0;}
+  .tab {
+    border:none;background:#0b1222;border-radius:10px;padding:8px 12px;
+    color:#a4aec0;cursor:pointer;border:1px solid #1e2740;
+  }
+  .tab.active {background:#182642;color:#e9ecf3;}
+  .tab-content {background:#0b1220;padding:12px 14px;border:1px solid #1e2740;border-radius:12px;}
+  </style>
+  
+  <script>
+  document.querySelectorAll('.tab').forEach(btn=>{
+    btn.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-content').forEach(c=>c.style.display='none');
+      document.getElementById(btn.dataset.tab).style.display='block';
+    }
+  });
+  </script>

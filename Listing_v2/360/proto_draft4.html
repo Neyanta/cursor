@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Hub • 360 Listing v5 (Compact)</title>
+<style>
+:root{
+  --bg:#0a0e18; --panel:#0f1424; --ink:#e9ecf3; --muted:#9aa5b5; --line:#1b2440; --brand:#7dd3fc; --ok:#22c55e; --warn:#f59e0b; --bad:#ef4444;
+  --chip:#0f172a; --chip-b:#223052; --radius:14px; --shadow:0 8px 28px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto}
+.wrap{max-width:1080px;margin:16px auto;padding:0 14px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+h1{font-size:16px;margin:0}
+.badge{background:var(--chip);border:1px solid var(--chip-b);border-radius:999px;color:var(--muted);padding:4px 8px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px;margin:10px 0}
+
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}
+.col{flex:1 1 260px}
+label{display:block;color:var(--muted);margin:2px 0 4px}
+input[type=text],input[type=number],textarea,select{width:100%;background:#0c1220;border:1px solid #223153;border-radius:10px;color:var(--ink);padding:8px}
+textarea{min-height:74px}
+button{appearance:none;border:none;border-radius:10px;padding:8px 10px;cursor:pointer;color:var(--ink);background:#172238;border:1px solid #263250}
+button.primary{background:linear-gradient(180deg,#60a5fa,#34d399);color:#061318;border:none}
+button.ghost{background:transparent;border:1px dashed #2a3552;color:var(--muted)}
+.hint{color:var(--muted);font-size:12px}
+
+/* deck */
+.deck{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px}
+.card{display:grid;grid-template-columns:72px 1fr auto;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px}
+.card img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:#0b1222}
+.card h4{margin:0 0 4px;font-size:14px}
+.small{font-size:12px;color:var(--muted)}
+.pill{display:inline-block;background:var(--chip);border:1px solid var(--chip-b);color:var(--muted);padding:2px 6px;border-radius:999px;font-size:11px;margin-right:6px}
+.inline{display:flex;gap:8px;align-items:center}
+
+/* review */
+.breadcrumb{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:12px;margin-bottom:6px}
+.breadcrumb .sep{opacity:.5}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin:4px 0 8px}
+.ring{--s:38px;width:var(--s);height:var(--s);border-radius:50%;display:grid;place-items:center;background:conic-gradient(#34d399 var(--pct,0%), #20304a 0)}
+.ring span{font-size:11px}
+
+.group{border:1px solid var(--line);border-radius:12px;margin:8px 0;overflow:hidden}
+.group h3{margin:0;padding:8px 10px;background:#0c1426;display:flex;justify-content:space-between;align-items:center;font-size:13px}
+.group .body{padding:10px;background:#0b1220}
+
+/* accordion options */
+.opt{border-top:1px solid #182244}
+.opt summary{cursor:pointer;list-style:none;padding:8px 10px;display:flex;justify-content:space-between;align-items:center;background:#0c162e}
+.opt summary::-webkit-details-marker{display:none}
+.opt[open] summary{background:#0c1736}
+.opt .opt-body{padding:10px;background:#0b1220;border-top:1px solid #1e2748}
+
+/* schedules */
+.table{width:100%;border-collapse:separate;border-spacing:0 6px}
+.table th{color:var(--muted);font-weight:600;text-align:left;font-size:12px}
+.table td,.table th{padding:8px 10px;background:#0b1222;border:1px solid #1b2540}
+.table td:first-child,.table th:first-child{border-top-left-radius:8px;border-bottom-left-radius:8px}
+.table td:last-child,.table th:last-child{border-top-right-radius:8px;border-bottom-right-radius:8px}
+
+/* floating checklist */
+.float{position:fixed;right:16px;bottom:16px;background:#0f162a;border:1px solid #223153;border-radius:12px;box-shadow:var(--shadow);padding:8px 10px;display:none;min-width:240px}
+.float h4{margin:0 0 6px;font-size:13px}
+.float ul{list-style:none;margin:0;padding:0}
+.float li{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:12px}
+.ch{width:16px;height:16px;border-radius:50%;border:1px solid #2a3858;display:inline-grid;place-items:center;color:#16a34a;font-size:12px}
+.ch.done{background:#102a1a;border-color:#1c4330}
+
+.footer{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.notice{background:#0b172a;border:1px solid #22406b;color:#c9defc;padding:6px 8px;border-radius:8px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>360 Listing</h1>
+    <span class="badge">RMS-connected</span>
+  </header>
+
+  <!-- Step 0: Product codes + default commission -->
+  <section id="start" class="panel">
+    <div class="row">
+      <div class="col">
+        <label>Product codes (comma or new line)</label>
+        <textarea id="codesInput" placeholder="PA8MY5, BKH148\nAQM-ZOO"></textarea>
+      </div>
+      <div class="col" style="max-width:220px">
+        <label>Default commission %</label>
+        <input id="commissionInput" type="number" min="0" max="100" step="0.1" placeholder="e.g., 15"/>
+        <p class="hint">You can edit per product later.</p>
+      </div>
+    </div>
+    <div class="footer">
+      <button class="primary" id="btnFetch">Fetch products</button>
+    </div>
+  </section>
+
+  <!-- Step 1: Deck of fetched products -->
+  <section id="deck" class="deck" style="display:none"></section>
+
+  <!-- Step 2: Review (per product) -->
+  <section id="review" class="panel" style="display:none">
+    <div class="breadcrumb"><a href="#" id="backToDeck" style="color:var(--ink)">Products</a><span class="sep">›</span><span id="bcTitle">–</span></div>
+    <div class="topbar">
+      <div class="inline">
+        <div class="ring" id="ring"><span id="ringText">0%</span></div>
+        <div class="small"><strong id="compCount">0</strong>/<strong id="compTotal">0</strong> checks</div>
+      </div>
+      <div class="inline">
+        <span class="pill" id="syncPill">Sync: On</span>
+        <button class="primary" id="goPublish">Review & publish</button>
+      </div>
+    </div>
+
+    <!-- TGID level -->
+    <div class="group" id="gAbout">
+      <h3>About <span class="small" id="stAbout">Looks good</span></h3>
+      <div class="body">
+        <div class="row">
+          <div class="col"><label>Name</label><input id="f_name" type="text"></div>
+          <div class="col"><label>City</label><input id="f_city" type="text"></div>
+        </div>
+        <div class="row">
+          <div class="col"><label>Highlights</label><textarea id="f_highlights"></textarea></div>
+          <div class="col"><label>Description</label><textarea id="f_description"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Options (Accordion) -->
+    <div class="group" id="gOptions">
+      <h3>Options & schedules <span class="small" id="stOptions">–</span></h3>
+      <div class="body" id="optionsWrap"></div>
+    </div>
+
+    <!-- Guest info -->
+    <div class="group" id="gGuests">
+      <h3>Guest info <span class="small" id="stGuests">Looks good</span></h3>
+      <div class="body" id="guestPills"></div>
+    </div>
+
+    <!-- Policies -->
+    <div class="group" id="gPolicies">
+      <h3>Policies <span class="small" id="stPolicies">Looks good</span></h3>
+      <div class="body row">
+        <div class="col">
+          <label>Cancellation</label>
+          <select id="f_cancel">
+            <option value="no">Not cancellable</option>
+            <option value="24h">Free cancellation up to 24h</option>
+            <option value="48h">Free cancellation up to 48h</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </div>
+        <div class="col">
+          <label>Reschedule</label>
+          <select id="f_reschedule">
+            <option value="no">Not reschedulable</option>
+            <option value="24h">Reschedule up to 24h</option>
+            <option value="48h">Reschedule up to 48h</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Media -->
+    <div class="group" id="gMedia">
+      <h3>Photos <span class="small" id="stMedia">Add 1+</span></h3>
+      <div class="body">
+        <div class="row" id="gallery"></div>
+        <div class="row" style="margin-top:6px">
+          <button class="ghost" id="btnUpload">Upload photos</button>
+          <span class="hint">PNG/JPG up to 10MB each</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="notice">If sync is on, price & schedules update from RMS automatically. Override later per option.</div>
+      <button id="saveDraft">Save draft</button>
+      <button class="primary" id="goPublish2">Review & publish</button>
+    </div>
+  </section>
+
+  <!-- Step 3: Publish -->
+  <section id="publish" class="panel" style="display:none">
+    <div class="breadcrumb"><a href="#" id="backToReview" style="color:var(--ink)">Review</a><span class="sep">›</span><span>Publish</span></div>
+    <div class="row">
+      <div class="col small" id="pubSummary">–</div>
+    </div>
+    <div class="row" style="margin-top:6px">
+      <label><input type="checkbox" id="agree"> I confirm details are accurate and I have rights to sell this experience.</label>
+    </div>
+    <div class="footer">
+      <button id="backToReview2">Back</button>
+      <button class="primary" id="btnPublish" disabled>Publish now</button>
+    </div>
+  </section>
+</div>
+
+<!-- Floating checklist -->
+<div class="float" id="float">
+  <h4>Fix remaining</h4>
+  <ul id="todo"></ul>
+  <div class="footer"><button class="ghost" id="dismissFloat">Hide</button></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s); const $$=s=>Array.from(document.querySelectorAll(s));
+
+// Mock fetch: create payloads with multiple options per product
+function mockFetchByCodes(codes, defaultCommission){
+  return codes.map((code,i)=>({
+    id: code,
+    name: i===0? 'WET JET LEWISTON - Rack Rate - Rezdy US' : (i===1? 'BURJ KHALIFA – SKY Level 148' : 'Dubai Aquarium & Underwater Zoo'),
+    cityName: i===0? 'Lewiston, NY, USA' : 'Dubai, UAE',
+    options: i===0 ? [
+      // Product 1 has 2 options
+      {
+        id: code+'-A', name: 'Morning Jet Boat Ride', languages:['EN'],
+        inclusions:'- 45-minute guided tour\n- Safety orientation', exclusions:'- Meals\n- Transfers',
+        location:{ address1:'115 S Water St', address2:'', city:'Lewiston', state:'NY', post:'14092', meetingPointDetails:'Arrive 45 min early; wristband at check-in', contact:'' },
+        schedules:[
+          { start:'2025-10-29', end:'2026-03-31', days:'Daily', currency:'USD', prices:[{label:'Adult',price:70.97},{label:'Child',price:42.35}] },
+          { start:'2026-04-01', end:'2026-10-29', days:'Weekends', currency:'USD', prices:[{label:'Adult',price:75.00},{label:'Child',price:45.00}] }
+        ],
+        durationMin:45, releaseMin:90, sync:true
+      },
+      {
+        id: code+'-B', name: 'Evening Jet Boat Ride', languages:['EN','ES'],
+        inclusions:'- 45-minute guided ride\n- Night lighting', exclusions:'- Meals',
+        location:{ address1:'115 S Water St', address2:'', city:'Lewiston', state:'NY', post:'14092', meetingPointDetails:'Arrive 30 min early', contact:'' },
+        schedules:[
+          { start:'2026-05-01', end:'2026-09-30', days:'Daily', currency:'USD', prices:[{label:'Adult',price:80.00}] }
+        ],
+        durationMin:45, releaseMin:60, sync:true
+      }
+    ] : [
+      // Other products: 1 option for brevity
+      {
+        id: code+'-A', name: i===1? 'SKY 148' : 'General Admission', languages:['EN'],
+        inclusions: i===1? 'Priority access' : 'Entry ticket', exclusions:'',
+        location:{ address1: i===1? 'Sheikh Mohammed bin Rashid Blvd' : 'Dubai Mall', address2:'', city:'Dubai', state:'', post:'', meetingPointDetails: i===1? 'At the Top counter' : '', contact:'' },
+        schedules:[ { start:'2025-11-01', end:'2026-11-01', days:'Daily', currency: i===1? 'AED':'AED', prices:[{label:'Adult',price: i===1?399:185}] } ],
+        durationMin: i===1? 90:120, releaseMin: i===1? 60:30, sync:true
+      }
+    ],
+    guestFields: ['First Name','Last Name','Email'],
+    description: i===0? '45-minute ride on the Niagara River with whitewater.' : (i===1? 'Premium SKY access to level 148.' : 'Dubai Aquarium & Underwater Zoo general admission.'),
+    highlights: i===0? 'Thrilling jet boat • Niagara Gorge • Safety briefing' : 'SKY lounge • Fast-track',
+    media: { images: [] },
+    commission: defaultCommission
+  }));
+}
+
+let payloads=[]; let current=null;
+
+// Step 0 → fetch
+$('#btnFetch').onclick=()=>{
+  const codes = $('#codesInput').value.split(/[\n,]+/).map(x=>x.trim()).filter(Boolean);
+  const comm = parseFloat($('#commissionInput').value)||0;
+  if(!codes.length){ alert('Enter at least one product code'); return; }
+  payloads = mockFetchByCodes(codes, comm);
+  renderDeck();
+  $('#start').style.display='none'; $('#deck').style.display='grid';
+  window.scrollTo({top:0,behavior:'smooth'});
+};
+
+// Deck render with editable commission per card
+function renderDeck(){
+  const deck=$('#deck'); deck.innerHTML='';
+  payloads.forEach(p=>{
+    const el=document.createElement('div'); el.className='card';
+    const optionsCount=p.options.length;
+    el.innerHTML=`
+      <img alt='' src='' onerror="this.style.background='#0c1220'"/>
+      <div>
+        <h4>${p.name}</h4>
+        <div class='small'>${p.cityName||''}</div>
+        <div class='small'><span class='pill'>${optionsCount} option${optionsCount>1?'s':''}</span></div>
+        <div class='inline' style='margin-top:6px'>
+          <label class='small' style='min-width:86px'>Commission %</label>
+          <input type='number' min='0' max='100' step='0.1' value='${p.commission||0}' data-comm='${p.id}' style='width:92px'>
+        </div>
+      </div>
+      <div class='inline' style='flex-direction:column;gap:6px'>
+        <button class='primary' data-open='${p.id}'>Review & go live</button>
+        <button class='ghost' data-applyall='${p.id}'>Apply % to all</button>
+      </div>`;
+    deck.appendChild(el);
+  });
+  $$('button[data-open]').forEach(b=>b.onclick=()=>openReview(b.dataset.open));
+  $$('input[data-comm]').forEach(inp=>{
+    inp.oninput=()=>{
+      const p = payloads.find(x=>x.id===inp.dataset.comm); if(p){ p.commission=parseFloat(inp.value)||0; }
+    };
+  });
+  $$('button[data-applyall]').forEach(btn=>{
+    btn.onclick=()=>{
+      const src = payloads.find(x=>x.id===btn.dataset.applyall); if(!src) return;
+      payloads.forEach(p=>p.commission=src.commission||0); renderDeck();
+    };
+  });
+}
+
+// Review view
+function openReview(id){
+  current = payloads.find(x=>x.id===id); if(!current) return;
+  $('#deck').style.display='none'; $('#review').style.display='block'; $('#publish').style.display='none';
+  $('#bcTitle').textContent=current.name;
+
+  // TGID
+  $('#f_name').value=current.name||'';
+  $('#f_city').value=current.cityName||'';
+  $('#f_highlights').value=current.highlights||'';
+  $('#f_description').value=current.description||'';
+
+  // Guest fields
+  const gp=$('#guestPills'); gp.innerHTML='';
+  (current.guestFields||[]).forEach(g=>{ const s=document.createElement('span'); s.className='pill'; s.textContent=g; gp.appendChild(s); });
+
+  // Options accordion
+  const wrap=$('#optionsWrap'); wrap.innerHTML='';
+  current.options.forEach((opt,optIdx)=>{
+    const optEl=document.createElement('details'); optEl.className='opt'; if(optIdx===0) optEl.open=true;
+    const completeness = optionCompleteness(opt);
+    optEl.innerHTML=`
+      <summary>
+        <div class='small' style='color:#e9ecf3'>${opt.name||('Option '+(optIdx+1))}</div>
+        <div class='small'>${Math.round(completeness*100)}% complete</div>
+      </summary>
+      <div class='opt-body'>
+        <div class='row'>
+          <div class='col'><label>Option name</label><input data-o="name-${optIdx}" type='text' value='${opt.name||''}'></div>
+          <div class='col'><label>Languages</label><input data-o="lang-${optIdx}" type='text' value='${(opt.languages||[]).join(', ')}'></div>
+        </div>
+        <div class='row'>
+          <div class='col'><label>Inclusions</label><textarea data-o="incl-${optIdx}">${opt.inclusions||''}</textarea></div>
+          <div class='col'><label>Exclusions</label><textarea data-o="excl-${optIdx}">${opt.exclusions||''}</textarea></div>
+        </div>
+        <div class='row'>
+          <div class='col'><label>Meeting point</label><input data-o="meet-${optIdx}" type='text' value='${opt.location?.meetingPointDetails||''}' placeholder='Where should guests go?'></div>
+          <div class='col'><label>Contact (optional)</label><input data-o="contact-${optIdx}" type='text' value='${opt.location?.contact||''}' placeholder='Phone or email'></div>
+        </div>
+        <div class='row'>
+          <div class='col'><label>Address line 1</label><input data-o="addr1-${optIdx}" type='text' value='${opt.location?.address1||''}'></div>
+          <div class='col'><label>City</label><input data-o="city-${optIdx}" type='text' value='${opt.location?.city||''}'></div>
+          <div class='col'><label>State</label><input data-o="state-${optIdx}" type='text' value='${opt.location?.state||''}'></div>
+          <div class='col'><label>Postcode</label><input data-o="post-${optIdx}" type='text' value='${opt.location?.post||''}'></div>
+        </div>
+        <div class='row' style='align-items:center'>
+          <span class='pill'>Duration: ${opt.durationMin||'–'} min</span>
+          <span class='pill'>Notice: ${opt.releaseMin||'–'} min</span>
+          <label style='margin-left:auto'><input type='checkbox' data-o="sync-${optIdx}" ${opt.sync?'checked':''}> Keep synced with RMS</label>
+        </div>
+
+        <table class='table' style='margin-top:6px'>
+          <thead><tr><th>Start</th><th>End</th><th>Days</th><th>Pax type</th><th>Price</th><th>Currency</th></tr></thead>
+          <tbody id='prices-${optIdx}'>${renderScheduleRows(opt)}</tbody>
+        </table>
+      </div>
+    `;
+    wrap.appendChild(optEl);
+  });
+
+  // Ensure only one accordion open for compactness
+  $$('#optionsWrap details').forEach(d=>{
+    d.addEventListener('toggle',()=>{
+      if(d.open){ $$('#optionsWrap details').forEach(x=>{ if(x!==d) x.open=false; }); }
+    });
+  });
+
+  // Media
+  const gal=$('#gallery'); gal.innerHTML='';
+  if((current.media?.images||[]).length===0){ const ph=document.createElement('div'); ph.textContent='No images'; ph.style.padding='10px'; ph.style.border='1px dashed #26324e'; ph.style.borderRadius='8px'; ph.style.color='#9aa5b5'; gal.appendChild(ph); $('#stMedia').textContent='Add 1+'; }
+  else { current.media.images.forEach(src=>{ const im=document.createElement('img'); im.src=src; im.style.width='110px'; im.style.height='80px'; im.style.objectFit='cover'; im.style.borderRadius='8px'; im.style.border='1px solid #1b2540'; gal.appendChild(im); }); $('#stMedia').textContent='Looks good'; }
+
+  // Sync pill (global hint mirrors first option)
+  const firstSync = current.options?.[0]?.sync!==false; $('#syncPill').textContent = 'Sync: ' + (firstSync? 'On':'Off');
+
+  recomputeCompleteness(); buildTodo();
+}
+
+function renderScheduleRows(opt){
+  return (opt.schedules||[]).map(s=>{
+    const pax = (s.prices||[]).map(p=>`${p.label}: ${p.price}`).join(' | ');
+    return `<tr><td>${s.start}</td><td>${s.end}</td><td>${s.days}</td><td>${pax?pax.split(':')[0]:'—'}</td><td>${pax?pax.split(':')[1]:'—'}</td><td>${s.currency||''}</td></tr>`;
+  }).join('');
+}
+
+function optionCompleteness(opt){
+  let total=6, done=0;
+  if(opt.name) done++;
+  if(opt.inclusions) done++;
+  if(opt.location?.address1) done++;
+  if(opt.location?.meetingPointDetails) done++;
+  if(opt.schedules && opt.schedules.length) done++;
+  // basic media is handled at TGID; counting guest fields at TGID
+  if(opt.durationMin) done++;
+  return done/total;
+}
+
+function recomputeCompleteness(){
+  let total=10, done=0; const miss=[];
+  if($('#f_name').value.trim()) done++; else miss.push(['gAbout','Name']);
+  if($('#f_description').value.trim()) done++; else miss.push(['gAbout','Description']);
+
+  // options: require at least one option with address + meeting + schedule
+  const optionEls = current.options || [];
+  let okAny=false; optionEls.forEach((o,idx)=>{
+    const addrOk = !!o.location?.address1; const meetOk = !!o.location?.meetingPointDetails; const schOk = !!(o.schedules&&o.schedules.length);
+    if(addrOk && meetOk && schOk) okAny=true;
+  });
+  if(okAny) done++; else miss.push(['gOptions','Complete at least one option']);
+
+  // guest fields
+  if($('#guestPills').children.length) done++; else miss.push(['gGuests','Guest fields']);
+  // policies
+  if($('#f_cancel').value) done++; else miss.push(['gPolicies','Cancellation']);
+  // media
+  const hasImg = $('#gallery').querySelector('img'); if(hasImg) done++; else miss.push(['gMedia','Photos']);
+
+  // count per-option basics
+  const perOptReq = ['name','inclusions'];
+  let optOk=true;
+  current.options.forEach((o,idx)=>{
+    if(!o.name||!o.inclusions) optOk=false;
+  });
+  if(optOk) done++; else miss.push(['gOptions','Fill option names & inclusions']);
+
+  const pct = Math.round((done/total)*100); $('#ring').style.setProperty('--pct', pct+'%'); $('#ringText').textContent=pct+'%';
+  $('#compCount').textContent=done; $('#compTotal').textContent=total;
+
+  // quick statuses
+  $('#stAbout').textContent = ($('#f_name').value && $('#f_description').value) ? 'Looks good' : 'Needs input';
+  $('#stOptions').textContent = okAny? 'At least one ready' : 'Incomplete';
+  $('#stMedia').textContent = (hasImg? 'Looks good':'Add 1+');
+
+  return miss;
+}
+
+function buildTodo(){
+  const miss=recomputeCompleteness();
+  const box=$('#float'); const ul=$('#todo'); ul.innerHTML='';
+  if(miss.length===0){ box.style.display='none'; return; }
+  miss.forEach(([gid,label])=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class='ch'>•</span><a href='#' data-jump='${gid}' style='color:var(--ink)'>${label}</a>`;
+    ul.appendChild(li);
+  });
+  box.style.display='block';
+  $$('a[data-jump]').forEach(a=>a.onclick=(e)=>{ e.preventDefault(); const target=$('#'+a.dataset.jump); if(target){ target.scrollIntoView({behavior:'smooth',block:'start'});} });
+}
+
+$('#btnUpload').onclick=()=>{
+  const gal=$('#gallery'); const img=document.createElement('img'); img.style.width='110px'; img.style.height='80px'; img.style.objectFit='cover'; img.style.border='1px solid #1b2540'; img.style.borderRadius='8px'; img.style.background='#123'; gal.appendChild(img); buildTodo();
+};
+
+function openPublish(){
+  $('#review').style.display='none'; $('#publish').style.display='block';
+  const name=$('#f_name').value; const city=$('#f_city').value; const totalOpt=(current.options||[]).length; const comm=current.commission||0;
+  $('#pubSummary').textContent = `${name} — ${city} • ${totalOpt} option${totalOpt>1?'s':''} • Commission ${comm}% • Sync ${(current.options?.[0]?.sync!==false)?'On':'Off'}`;
+}
+$('#goPublish').onclick=openPublish; $('#goPublish2').onclick=openPublish;
+$('#backToReview').onclick=(e)=>{e.preventDefault(); $('#publish').style.display='none'; $('#review').style.display='block';};
+$('#backToReview2').onclick=()=>{ $('#publish').style.display='none'; $('#review').style.display='block'; };
+$('#agree').onchange=()=>{ $('#btnPublish').disabled = !$('#agree').checked };
+$('#btnPublish').onclick=()=>{ alert('Published! Listing is live.'); window.scrollTo({top:0,behavior:'smooth'}); };
+$('#backToDeck').onclick=(e)=>{ e.preventDefault(); $('#review').style.display='none'; $('#deck').style.display='grid'; $('#publish').style.display='none'; };
+$('#dismissFloat').onclick=()=>$('#float').style.display='none';
+</script>
+</body>
+</html>
