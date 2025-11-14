@@ -114,6 +114,26 @@
       <button type="submit">Finish & View Listing</button>
     </div>
   </div>
+    <!-- Step 4 -->
+    <div class="step" id="step4">
+        <h2>Step 4 – Description & Highlights</h2>
+        <p>Tell guests what to expect. We’ve fetched some info from your system — review or edit below.</p>
+    
+        <label>Short Description (150 characters minimum)</label>
+        <textarea id="descField" rows="4"
+          style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;"></textarea>
+        <div id="descFeedback" class="result-box hidden"></div>
+    
+        <label>Key Highlights (3 to 5 points, one per line)</label>
+        <textarea id="highlightsField" rows="4"
+          style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;"></textarea>
+        <div id="highlightsFeedback" class="result-box hidden"></div>
+    
+        <div class="btn-row">
+          <button type="button" class="secondary" onclick="prevStep(3)">Back</button>
+          <button type="button" id="continueToStep5">Continue</button>
+        </div>
+      </div>
 </form>
 </div>
 
@@ -185,6 +205,44 @@ document.getElementById('continueToStep3').addEventListener('click',()=>{
   }else{
     dynamic.innerHTML=`<p>🆕 We’re creating a new listing for <b>${sub} – ${city}</b> in our catalog.</p>`;
   }
+});
+// --- Step 4: Description & Highlights ---
+const descField = document.getElementById('descField');
+const highlightsField = document.getElementById('highlightsField');
+const descFeedback = document.getElementById('descFeedback');
+const highlightsFeedback = document.getElementById('highlightsFeedback');
+
+function checkDesc() {
+  const text = descField.value.trim();
+  if (text.length < 150) {
+    descFeedback.innerHTML = "⚠️ Description too short (need 150 chars min).";
+    descFeedback.classList.remove('hidden');
+    return false;
+  }
+  descFeedback.innerHTML = "✅ Description looks good.";
+  descFeedback.classList.remove('hidden');
+  return true;
+}
+
+function checkHighlights() {
+  const list = highlightsField.value.trim().split('\n').filter(x=>x.trim());
+  if (list.length < 3) {
+    highlightsFeedback.innerHTML = "⚠️ Please add at least 3 highlights.";
+    highlightsFeedback.classList.remove('hidden');
+    return false;
+  }
+  highlightsFeedback.innerHTML = "✅ Highlights section looks complete.";
+  highlightsFeedback.classList.remove('hidden');
+  return true;
+}
+
+descField.addEventListener('blur', checkDesc);
+highlightsField.addEventListener('blur', checkHighlights);
+
+document.getElementById('continueToStep5').addEventListener('click', ()=>{
+  const valid = checkDesc() && checkHighlights();
+  if (valid) nextStep(5);
+  else alert("Please complete the missing fields before continuing.");
 });
 
 document.getElementById('wizardForm').addEventListener('submit',e=>{

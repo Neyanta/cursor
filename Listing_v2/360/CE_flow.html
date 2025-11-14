@@ -26,10 +26,274 @@
   .center{text-align:center;} .hidden{display:none!important;}
   @keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
   @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .field-group { margin-bottom:20px; }
+/* .prefilled select, .prefilled input, .prefilled textarea {
+  background:#f9fbff;
+  border-color:#d6e2ff;
+}
+.partial-prefill input {
+  background:#fefcf6;
+  border-color:#f1d27b;
+}
+.tag {
+  background:#eef4ff;
+  color:#3366ff;
+  font-size:12px;
+  padding:2px 6px;
+  border-radius:4px;
+  margin-left:6px;
+}
+.required {
+  color:#f87171;
+  margin-left:4px;
+}
+.hint {
+  display:block;
+  color:#888;
+  font-size:13px;
+  margin-top:4px;
+} */
+.form-row {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.form-row label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.form-row span {
+  color: #e53e3e;
+  margin-left: 3px;
+}
+.buffer-fields {
+  display: flex;
+  gap: 8px;
+}
+.buffer-fields input {
+  width: 80px;
+}
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 8px 16px;
+  align-items: center;
+}
+.checkbox-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+  font-size: 14px;
+}
+.required-field select:invalid,
+.required-field input:invalid,
+.required-field.missing select,
+.required-field.missing input {
+  border: 1px solid #e53e3e;
+  background: #fff5f5;
+}
+.error-msg {
+  display: none;
+  color: #e53e3e;
+  font-size: 13px;
+  margin-top: 4px;
+}
+.result-box {
+  background: #f8fafc;
+  border-left: 3px solid #0072ff;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #333;
+  font-size: 14px;
+}
+.media-grid {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:16px;
+}
+.media-thumb {
+  width:140px;
+  height:100px;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid #e2e8f0;
+}
+.media-thumb img {
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.media-add {
+  width:140px;
+  height:100px;
+  border:1px dashed #94a3b8;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:#555;
+  font-size:14px;
+  background:#fafafa;
+  transition:border-color .2s;
+}
+.media-add:hover { border-color:#0072ff; }
+.options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.option-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.option-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.option-title {
+  font-weight: 600;
+}
+.option-status {
+  font-size: 14px;
+  color: #a0aec0;
+}
+.option-card.complete .option-status {
+  color: #16a34a;
+}
+.option-body {
+  margin-top: 12px;
+  border-top: 1px solid #edf2f7;
+  padding-top: 12px;
+}
+.add-option-tile {
+  border: 1px dashed #94a3b8;
+  color: #555;
+  text-align: center;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fafafa;
+}
+.add-option-tile:hover {
+  border-color: #0072ff;
+  color: #0072ff;
+}
+details {
+  background:#fafafa;
+  border:1px solid #e2e8f0;
+  border-radius:6px;
+  padding:10px 12px;
+  margin-bottom:8px;
+}
+details summary {
+  font-weight:600;
+  cursor:pointer;
+  margin:-10px -12px 8px;
+  padding:10px 12px;
+  background:#f1f5f9;
+  border-radius:6px 6px 0 0;
+}
+details[open] summary { background:#e2e8f0; }
+.guest-type-row {
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-bottom:6px;
+}
+button.small { font-size:13px; padding:4px 8px; }
+.review-container {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin:16px 0;
+}
+.review-card {
+  border:1px solid #e2e8f0;
+  border-radius:8px;
+  padding:12px 16px;
+  background:#fff;
+}
+.review-header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  cursor:pointer;
+}
+.review-header h3 { margin:0; font-weight:600; }
+.review-body {
+  margin-top:10px;
+  border-top:1px solid #edf2f7;
+  padding-top:10px;
+  color:#374151;
+}
+.review-body p { margin:4px 0; font-size:14px; }
+  .review-summary {
+    background:#f8fafc;
+    border-left:3px solid #0072ff;
+    padding:12px;
+    border-radius:6px;
+    font-size:14px;
+  }
+  .wizard-nav {
+    display: flex;
+    overflow-x: auto;
+    white-space: nowrap;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 8px 6px;
+    border-radius: 12px 12px 0 0;
+  }
+  .step-nav-item {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    margin: 0 4px;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .step-nav-item:hover {
+    background: #f1f5f9;
+  }
+  .step-nav-item.active {
+    background: #0072ff;
+    color: #fff;
+    font-weight: 600;
+  }
+  .step-nav-item.completed {
+    border: 1px solid #0072ff;
+    color: #0072ff;
+    font-weight: 500;
+  }
 </style>
 </head>
 <body>
 <div class="wizard-container">
+<div class="wizard-nav" id="wizardNav">
+  <div class="step-nav-item active" data-step="1">1. Product Code</div>
+  <div class="step-nav-item" data-step="2">2. Basic Info</div>
+  <div class="step-nav-item" data-step="3">3. Listing Setup</div>
+  <div class="step-nav-item" data-step="4">4. Description</div>
+  <div class="step-nav-item" data-step="5">5. Itinerary</div>
+  <div class="step-nav-item" data-step="6">6. Guidelines</div>
+  <div class="step-nav-item" data-step="7">7. Media</div>
+  <div class="step-nav-item" data-step="8">8. Options</div>
+  <div class="step-nav-item" data-step="9">9. Review</div>
+</div>
 <form id="wizardForm">
   <!-- Step 1 -->
   <div class="step active" id="step1">
@@ -106,14 +370,310 @@
     <div id="dynamicMsg">
       <p>Your listing is being set up using data from your connected system.</p>
     </div>
-    <div class="center" style="margin:40px 0;">
-      <div class="loader" style="width:40px;height:40px;border-width:4px;"></div>
+    <div class="center" style="margin:40px 0;" id="loaderSection">
+      <div id="mainLoader" class="loader" style="width:40px;height:40px;border-width:4px;"></div>
       <p id="loaderMsg">Fetching details and pre-filling your listing…</p>
     </div>
+    
+    <div class="center hidden" id="readySection">
+      <p>✅ All set! Your listing details are now ready to review.</p>
+    </div>
+    
     <div class="btn-row" style="justify-content:center;">
-      <button type="submit">Finish & View Listing</button>
+      <button type="button" id="continueToStep4" disabled>Continue</button>
     </div>
   </div>
+    <!-- Step 4 -->
+    <div class="step" id="step4">
+      <h2>Step 4 – Description & Highlights</h2>
+      <p>Tell guests what to expect. We’ve fetched some info from your system — review or edit below.</p>
+  
+      <label>Short Description (150 characters minimum)</label>
+      <textarea id="descField" rows="4"
+        style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
+        "Discover the magic of Paris with this guided visit to the Eiffel Tower. " +
+        "Skip long lines, learn fascinating facts from your expert guide, " +
+        "and enjoy sweeping views of the city from its iconic summit.";
+      </textarea>
+      <div id="descFeedback" class="result-box hidden"></div>
+  
+      <label>Key Highlights (3 to 5 points, one per line)</label>
+      <textarea id="highlightsField" rows="4"
+        style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;">
+        Skip-the-line access to the Eiffel Tower",
+        "Live commentary by a professional guide",
+        "Panoramic views of Paris and the River Seine",
+        "Flexible start times throughout the day</textarea>
+      <div id="highlightsFeedback" class="result-box hidden"></div>
+  
+      <div class="btn-row">
+        <button type="button" class="secondary" onclick="prevStep(3)">Back</button>
+        <button type="button" id="continueToStep5">Continue</button>
+      </div>
+    </div>
+      <!-- Step 5 -->
+  <div class="step" id="step5">
+    <h2>Step 5 – Itinerary</h2>
+    <p>
+      Itinerary ItineraryItinerary
+    </p>
+
+    <!-- <div class="result-box" id="itineraryPrefillStatus">
+      🟢 70 % of your itinerary has been pre-filled automatically.  
+      ⚠️ Some sections are still missing — please fill them in below.
+    </div> -->
+
+    <label>Itinerary Details (150 – 1000 characters)</label>
+    <textarea id="itineraryField" rows="6"
+      placeholder="Start typing here or review what’s already fetched…"
+      style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;"></textarea>
+
+    <div id="itineraryFeedback" class="result-box hidden"></div>
+
+    <div class="btn-row">
+      <button type="button" class="secondary" onclick="prevStep(4)">Back</button>
+      <button type="button" id="continueToStep6">Continue</button>
+    </div>
+  </div>
+<!-- Step 6 -->
+<div class="step" id="step6">
+  <h2>Step 6 – Guest Guidelines & Accessibility</h2>
+  <p>Tell guests how to redeem their vouchers and highlight any accessibility support.</p>
+
+  <!-- Voucher presentation -->
+  <div class="form-row">
+    <label>How guests present voucher</label>
+    <select id="voucherType">
+      <option value="">Select one</option>
+      <option selected>Mobile</option>
+      <option>Printed</option>
+    </select>
+  </div>
+
+  <!-- Voucher format -->
+  <div class="form-row required-field">
+    <label>Voucher format shared with guest <span>*</span></label>
+    <select id="voucherFormat" required>
+      <option value="">Select format</option>
+      <option>PDF</option>
+      <option>Web Link</option>
+      <option>Barcode</option>
+      <option>QR Code</option>
+    </select>
+    <small class="error-msg">Required field</small>
+  </div>
+
+  <!-- Arrival buffer -->
+  <div class="form-row required-field">
+    <label>Arrival buffer before start <span>*</span></label>
+    <div class="buffer-fields">
+      <input id="bufferHours" type="number" min="0" max="5" placeholder="HH" value="1" />
+      <input id="bufferMinutes" type="number" min="0" max="59" placeholder="MM" />
+    </div>
+    <small class="error-msg">Please fill both hours and minutes</small>
+  </div>
+
+  <!-- Accessibility -->
+  <div class="form-row">
+    <label>Accessibility features</label>
+    <div id="accessibilityList" class="checkbox-group">
+      <label class="checkbox-item"><input type="checkbox" checked> Wheelchair accessible</label>
+      <label class="checkbox-item"><input type="checkbox"> Pram/Stroller accessible</label>
+      <label class="checkbox-item"><input type="checkbox"> Buggy on prior request</label>
+      <label class="checkbox-item"><input type="checkbox" checked> Guide dogs allowed</label>
+      <label class="checkbox-item"><input type="checkbox"> Pets allowed</label>
+    </div>
+  </div>
+
+  <div id="guidelinesFeedback" class="result-box hidden"></div>
+
+  <div class="btn-row">
+    <button type="button" class="secondary" onclick="prevStep(5)">Back</button>
+    <button type="button" id="continueToStep7">Continue</button>
+  </div>
+</div>
+<!-- Step 7 -->
+<div class="step" id="step7">
+  <h2>Step 7 – Media Gallery</h2>
+  <p>Add photos or videos that best represent your experience (2–5 required).</p>
+
+  <div id="mediaGrid" class="media-grid">
+    <div class="media-thumb"><img src="https://source.unsplash.com/240x160/?eiffel,tower" alt="prefilled 1"></div>
+    <div class="media-thumb"><img src="https://source.unsplash.com/240x160/?paris,city" alt="prefilled 2"></div>
+    <!-- Add-more tile -->
+    <label class="media-add">
+      <input type="file" id="mediaUpload" accept="image/*,video/*" multiple hidden>
+      <span>＋ Add More</span>
+    </label>
+  </div>
+
+  <small id="mediaError" class="error-msg" style="display:none;">At least 2 media items required (you can add up to 5).</small>
+
+  <div class="btn-row">
+    <button type="button" class="secondary" onclick="prevStep(6)">Back</button>
+    <button type="button" id="continueToStep8">Continue</button>
+  </div>
+</div>
+<!-- Step 8 -->
+<div class="step" id="step8">
+  <h2>Step 8 – Options Setup</h2>
+  <p>Each option represents a variant of your experience. Review or add options below.</p>
+
+  <div id="optionsList" class="options-list">
+    <!-- Option Card -->
+    <div class="option-card" data-complete="false">
+      <div class="option-header">
+        <div class="option-title">Option 1: Eiffel Tower Guided Tour</div>
+        <div class="option-status">⚠️ Incomplete</div>
+      </div>
+
+      <div class="option-body hidden">
+        <!-- 1. Setup -->
+        <details open>
+          <summary>Setup</summary>
+          <label>Option name <span>*</span></label>
+          <input type="text" class="opt-name" value="Eiffel Tower Guided Tour" />
+
+          <label>Internal reference code</label>
+          <input type="text" class="opt-code" placeholder="Optional" />
+
+          <label>Inclusions</label>
+          <textarea class="opt-inclusions" rows="3">Skip-the-line access
+Professional guide
+Summit entry ticket</textarea>
+
+          <label>Exclusions <span>*</span></label>
+          <textarea class="opt-exclusions" rows="3"></textarea>
+        </details>
+
+        <!-- 2. Guest Directions -->
+        <details>
+          <summary>Guest Directions</summary>
+          <label>Pickup included?</label>
+          <select class="pickup">
+            <option>No</option><option>Yes</option>
+          </select>
+
+          <label>Redemption method</label>
+          <select class="redemption">
+            <option>Scan & enter</option>
+            <option>Show ticket & enter</option>
+            <option>Exchange voucher</option>
+            <option>Guided / Hosted</option>
+          </select>
+
+          <label>Arrival buffer (HH:MM)</label>
+          <div class="buffer-fields">
+            <input type="number" min="0" max="5" placeholder="HH" />
+            <input type="number" min="0" max="59" placeholder="MM" />
+          </div>
+
+          <label>On-ground contact number</label>
+          <input type="tel" placeholder="+Country Code Number" />
+
+          <label>Government photo ID required?</label>
+          <select><option>No</option><option>Yes</option></select>
+
+          <label>Additional guest instructions <span>*</span></label>
+          <textarea rows="2"></textarea>
+        </details>
+
+        <!-- 3. Reservation Settings -->
+        <details>
+          <summary>Reservation Settings</summary>
+          <label>Booking confirmation type</label>
+          <select>
+            <option>Instant (Freesale)</option>
+            <option>RMS API</option>
+            <option>On request</option>
+            <option>B2B Portal</option>
+          </select>
+
+          <label>Booking limit rule</label>
+          <select>
+            <option>None</option>
+            <option>Release period</option>
+            <option>Cut-off period</option>
+          </select>
+
+          <label>Allow cancellations?</label>
+          <select><option>Yes</option><option>No</option></select>
+
+          <label>Cancellation window (hours before start)</label>
+          <input type="number" min="0" max="240" />
+
+          <label>Allow rescheduling?</label>
+          <select><option>Yes</option><option>No</option></select>
+        </details>
+
+        <!-- 4. Guest Types -->
+        <details>
+          <summary>Guest Types</summary>
+          <div class="guest-type-row">
+            <select class="guest-type">
+              <option>Adult</option>
+              <option>Child</option>
+              <option>Senior</option>
+            </select>
+            <input type="number" placeholder="Min age" />
+            <input type="number" placeholder="Max age" />
+            <label><input type="checkbox" /> Free</label>
+          </div>
+          <button type="button" class="secondary small addGuestType">＋ Add Guest Type</button>
+        </details>
+
+        <!-- 5. Schedules & Pricing -->
+        <details>
+          <summary>Schedules & Pricing</summary>
+          <label>Schedule name <span>*</span></label>
+          <input type="text" />
+
+          <label>Date range (start – end) <span>*</span></label>
+          <input type="date" /> to <input type="date" />
+
+          <label>Retail price</label>
+          <input type="number" placeholder="e.g. 100" />
+
+          <label>Discount %</label>
+          <input type="number" placeholder="e.g. 10" />
+
+          <label>Commission %</label>
+          <input type="number" placeholder="e.g. 15" />
+        </details>
+
+        <div class="btn-row">
+          <button type="button" class="secondary collapseBtn">Collapse</button>
+          <button type="button" class="saveOptionBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="addOptionBtn" class="add-option-tile">＋ Add Another Option</div>
+
+  <div class="btn-row">
+    <button type="button" class="secondary" onclick="prevStep(7)">Back</button>
+    <button type="button" id="continueToStep9">Continue</button>
+  </div>
+</div>
+<!-- Step 9 -->
+<div class="step" id="step9">
+  <h2>Step 9 – Review & Submit</h2>
+  <p>Review all options and key details before publishing your listing on Headout.</p>
+
+  <div id="reviewContainer" class="review-container">
+    <!-- Cards are injected dynamically -->
+  </div>
+
+  <div class="review-summary">
+    <label><input type="checkbox" id="agreeTerms"> I confirm all details are accurate and comply with Headout’s listing guidelines.</label>
+  </div>
+
+  <div class="btn-row">
+    <button type="button" class="secondary" onclick="prevStep(8)">Back</button>
+    <button type="button" id="publishListingBtn">Publish Listing</button>
+  </div>
+</div>
 </form>
 </div>
 
@@ -186,10 +746,379 @@ document.getElementById('continueToStep3').addEventListener('click',()=>{
     dynamic.innerHTML=`<p>🆕 We’re creating a new listing for <b>${sub} – ${city}</b> in our catalog.</p>`;
   }
 });
+// --- Step 4: Description & Highlights ---
+const descField = document.getElementById('descField');
+const highlightsField = document.getElementById('highlightsField');
+const descFeedback = document.getElementById('descFeedback');
+const highlightsFeedback = document.getElementById('highlightsFeedback');
 
-document.getElementById('wizardForm').addEventListener('submit',e=>{
-  e.preventDefault();alert('🎉 Listing created successfully!');
+function checkDesc() {
+  const text = descField.value.trim();
+  if (text.length < 150) {
+    descFeedback.innerHTML = "⚠️ Description too short (need 150 chars min).";
+    descFeedback.classList.remove('hidden');
+    return false;
+  }
+  descFeedback.innerHTML = "✅ Description looks good.";
+  descFeedback.classList.remove('hidden');
+  return true;
+}
+
+function checkHighlights() {
+  const list = highlightsField.value.trim().split('\n').filter(x=>x.trim());
+  if (list.length < 3) {
+    highlightsFeedback.innerHTML = "⚠️ Please add at least 3 highlights.";
+    highlightsFeedback.classList.remove('hidden');
+    return false;
+  }
+  highlightsFeedback.innerHTML = "✅ Highlights section looks complete.";
+  highlightsFeedback.classList.remove('hidden');
+  return true;
+}
+
+descField.addEventListener('blur', checkDesc);
+highlightsField.addEventListener('blur', checkHighlights);
+
+document.getElementById('continueToStep5').addEventListener('click', ()=>{
+  const valid = checkDesc() && checkHighlights();
+  if (valid) nextStep(5);
+  else alert("Please complete the missing fields before continuing.");
 });
+// --- Step 3 loader simulation ---
+function startPrefillLoader() {
+  const loaderSection = document.getElementById('loaderSection');
+  const readySection = document.getElementById('readySection');
+  const loaderMsg = document.getElementById('loaderMsg');
+  const continueBtn = document.getElementById('continueToStep4');
+
+  // initial state
+  continueBtn.disabled = true;
+  loaderSection.classList.remove('hidden');
+  readySection.classList.add('hidden');
+
+  // mock 2s fetch
+  setTimeout(()=>{
+    loaderMsg.textContent = "Almost done…";
+  },1200);
+
+  setTimeout(()=>{
+    loaderSection.classList.add('hidden');
+    readySection.classList.remove('hidden');
+    continueBtn.disabled = false;
+  },2000);
+}
+
+// trigger when arriving on Step 3 or Step 9
+// (call this right after nextStep(3) or nextStep(9))
+const oldNextStep = nextStep;
+nextStep = function(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  if(n===3) startPrefillLoader();
+  if(n===9) enterStep9();
+};
+
+// submit now moves forward
+document.getElementById('wizardForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  nextStep(4);
+});
+// --- Step 5: Itinerary ---
+const itineraryField = document.getElementById('itineraryField');
+const itineraryFeedback = document.getElementById('itineraryFeedback');
+const itineraryPrefillStatus = document.getElementById('itineraryPrefillStatus');
+
+// simulate pre-fill (70 % filled, 30 % missing)
+const prefilledItinerary =
+  "Arrive at the meeting point 15 minutes before start time. " +
+  "Your guide will greet you and hand over entry passes. " +
+  "Proceed through the priority line to begin your tour. " +
+  "Enjoy panoramic city views and spend up to 1 hour exploring the main level.";
+
+setTimeout(() => {
+  itineraryField.value = prefilledItinerary;
+}, 800);
+
+function checkItinerary() {
+  const text = itineraryField.value.trim();
+  const len = text.length;
+  if (len < 150) {
+    itineraryFeedback.innerHTML =
+      "⚠️ Your itinerary seems incomplete. Add more details to help guests know what to expect.";
+    itineraryFeedback.classList.remove("hidden");
+    return false;
+  }
+  if (len >= 150 && len < 400) {
+    itineraryFeedback.innerHTML =
+      "🟡 Looks okay, but you can add more details for a richer experience.";
+    itineraryFeedback.classList.remove("hidden");
+    return true;
+  }
+  itineraryFeedback.innerHTML = "✅ Itinerary looks complete.";
+  itineraryFeedback.classList.remove("hidden");
+  return true;
+}
+
+itineraryField.addEventListener("blur", checkItinerary);
+
+document.getElementById("continueToStep6").addEventListener("click", () => {
+  const ok = checkItinerary();
+  if (ok) {
+    nextStep(6);
+  } else {
+    alert("Please review and complete the itinerary before continuing.");
+  }
+});
+// --- Step 6: Guest Guidelines & Accessibility ---
+const voucherFormat = document.getElementById("voucherFormat");
+const bufferHours = document.getElementById("bufferHours");
+const bufferMinutes = document.getElementById("bufferMinutes");
+const guidelinesFeedback = document.getElementById("guidelinesFeedback");
+
+function validateGuidelines() {
+  let valid = true;
+
+  // Reset states
+  document.querySelectorAll(".required-field").forEach(el => el.classList.remove("missing"));
+  document.querySelectorAll(".error-msg").forEach(msg => (msg.style.display = "none"));
+
+  // Voucher format
+  if (!voucherFormat.value) {
+    valid = false;
+    const field = voucherFormat.closest(".required-field");
+    field.classList.add("missing");
+    field.querySelector(".error-msg").style.display = "block";
+  }
+
+  // Buffer check
+  if (!bufferHours.value || !bufferMinutes.value) {
+    valid = false;
+    const field = bufferMinutes.closest(".required-field");
+    field.classList.add("missing");
+    field.querySelector(".error-msg").style.display = "block";
+  }
+
+  if (valid) {
+    guidelinesFeedback.innerHTML = "✅ Guest guidelines look complete.";
+    guidelinesFeedback.classList.remove("hidden");
+  } else {
+    guidelinesFeedback.innerHTML = "⚠️ Please fill all required fields.";
+    guidelinesFeedback.classList.remove("hidden");
+  }
+
+  return valid;
+}
+
+document.getElementById("continueToStep7").addEventListener("click", () => {
+  if (validateGuidelines()) nextStep(7);
+});
+voucherFormat.addEventListener("change", () => {
+  const field = voucherFormat.closest(".required-field");
+  if (voucherFormat.value) field.classList.remove("missing");
+});
+bufferMinutes.addEventListener("input", () => {
+  const field = bufferMinutes.closest(".required-field");
+  if (bufferHours.value && bufferMinutes.value) field.classList.remove("missing");
+});
+// --- Step 7: Media Gallery ---
+const mediaGrid = document.getElementById('mediaGrid');
+const mediaUpload = document.getElementById('mediaUpload');
+const mediaError = document.getElementById('mediaError');
+
+function currentMediaCount() {
+  return mediaGrid.querySelectorAll('.media-thumb').length;
+}
+
+function validateMedia() {
+  const count = currentMediaCount();
+  if (count < 2) {
+    mediaError.style.display = 'block';
+    return false;
+  }
+  mediaError.style.display = 'none';
+  return true;
+}
+
+mediaUpload.addEventListener('change', (e) => {
+  const files = Array.from(e.target.files);
+  const total = currentMediaCount() + files.length;
+  if (total > 5) {
+    alert("You can upload up to 5 media items only.");
+    return;
+  }
+  files.forEach(file => {
+    const url = URL.createObjectURL(file);
+    const div = document.createElement('div');
+    div.className = 'media-thumb';
+    div.innerHTML = `<img src="${url}" alt="uploaded">`;
+    mediaGrid.insertBefore(div, mediaGrid.querySelector('.media-add'));
+  });
+  validateMedia();
+});
+
+document.getElementById('continueToStep8').addEventListener('click', () => {
+  if (validateMedia()) nextStep(8);
+});
+// --- Step 8: Options Setup ---
+const optionsList = document.getElementById("optionsList");
+const addOptionBtn = document.getElementById("addOptionBtn");
+
+function validateOption(card) {
+  const name = card.querySelector(".opt-name")?.value.trim();
+  const exclusions = card.querySelector(".opt-exclusions")?.value.trim();
+  const schedule = card.querySelector('details:nth-of-type(5) input[type="text"]')?.value.trim();
+  const status = card.querySelector(".option-status");
+
+  const valid = name && exclusions && schedule;
+  if (valid) {
+    status.textContent = "✅ Complete";
+    card.classList.add("complete");
+    card.dataset.complete = "true";
+  } else {
+    status.textContent = "⚠️ Incomplete";
+    card.classList.remove("complete");
+    card.dataset.complete = "false";
+  }
+  return valid;
+}
+
+// toggle + save handlers
+optionsList.addEventListener("click", (e) => {
+  if (e.target.closest(".option-header")) {
+    const card = e.target.closest(".option-card");
+    card.querySelector(".option-body").classList.toggle("hidden");
+  }
+  if (e.target.classList.contains("saveOptionBtn")) {
+    const card = e.target.closest(".option-card");
+    validateOption(card);
+    card.querySelector(".option-body").classList.add("hidden");
+  }
+  if (e.target.classList.contains("collapseBtn")) {
+    e.target.closest(".option-card").querySelector(".option-body").classList.add("hidden");
+  }
+});
+
+// add new option
+addOptionBtn.addEventListener("click", () => {
+  const count = optionsList.querySelectorAll(".option-card").length + 1;
+  const clone = optionsList.querySelector(".option-card").cloneNode(true);
+  clone.querySelector(".option-title").textContent = `Option ${count}: New Option`;
+  clone.dataset.complete = "false";
+  clone.classList.remove("complete");
+  clone.querySelectorAll("input, textarea").forEach(el => (el.value = ""));
+  clone.querySelector(".option-status").textContent = "⚠️ Incomplete";
+  clone.querySelector(".option-body").classList.add("hidden");
+  optionsList.appendChild(clone);
+});
+
+document.getElementById("continueToStep9").addEventListener("click", () => {
+  const cards = optionsList.querySelectorAll(".option-card");
+  const allValid = Array.from(cards).map(validateOption).every(Boolean);
+  if (allValid) nextStep(9);
+  else alert("Please complete all required fields before continuing.");
+});
+// --- Step 9: Review & Submit ---
+const reviewContainer = document.getElementById("reviewContainer");
+const publishListingBtn = document.getElementById("publishListingBtn");
+const agreeTerms = document.getElementById("agreeTerms");
+
+function buildReviewCards() {
+  reviewContainer.innerHTML = "";
+  const optionCards = document.querySelectorAll("#optionsList .option-card");
+  optionCards.forEach((card, idx) => {
+    const name = card.querySelector(".opt-name")?.value || `Option ${idx + 1}`;
+    const exclusions = card.querySelector(".opt-exclusions")?.value || "—";
+    const inclusions = card.querySelector(".opt-inclusions")?.value || "—";
+    const scheduleName = card.querySelector('details:nth-of-type(5) input[type="text"]')?.value || "—";
+    const retail = card.querySelector('details:nth-of-type(5) input[type="number"]')?.value || "—";
+
+    const div = document.createElement("div");
+    div.className = "review-card";
+    div.innerHTML = `
+      <div class="review-header">
+        <h3>${name}</h3>
+        <button type="button" class="secondary small editOptionBtn" data-index="${idx}">Edit</button>
+      </div>
+      <div class="review-body">
+        <p><strong>Schedule:</strong> ${scheduleName}</p>
+        <p><strong>Retail Price:</strong> ${retail}</p>
+        <p><strong>Inclusions:</strong> ${inclusions.replace(/\n/g, ", ")}</p>
+        <p><strong>Exclusions:</strong> ${exclusions.replace(/\n/g, ", ")}</p>
+      </div>
+    `;
+    reviewContainer.appendChild(div);
+  });
+}
+
+// open for editing
+reviewContainer.addEventListener("click", (e) => {
+  if (e.target.classList.contains("editOptionBtn")) {
+    const index = parseInt(e.target.dataset.index);
+    const cards = document.querySelectorAll("#optionsList .option-card");
+    cards.forEach(c => c.querySelector(".option-body")?.classList.add("hidden"));
+    nextStep(8);
+    cards[index].scrollIntoView({ behavior: "smooth", block: "center" });
+    cards[index].querySelector(".option-body").classList.remove("hidden");
+  }
+});
+
+// Step transition handler
+document.getElementById("publishListingBtn").addEventListener("click", () => {
+  if (!agreeTerms.checked) {
+    alert("Please confirm the listing details before publishing.");
+    return;
+  }
+  alert("🎉 Your listing has been submitted for review!");
+  // here you could trigger an API call
+});
+
+// when entering Step 9, build cards
+function enterStep9() { buildReviewCards(); }
+// --- Step 3 "Continue" action ---
+const continueToStep4 = document.getElementById('continueToStep4');
+if (continueToStep4) {
+  continueToStep4.addEventListener('click', () => {
+    nextStep(4);
+  });
+}
+// --- Global Wizard Navigation ---
+const navItems = document.querySelectorAll(".step-nav-item");
+let completedSteps = new Set([1]);
+
+function updateNav(currentStep) {
+  navItems.forEach(item => {
+    const step = parseInt(item.dataset.step);
+    item.classList.remove("active");
+    if (step === currentStep) item.classList.add("active");
+    else if (completedSteps.has(step)) item.classList.add("completed");
+    else item.classList.remove("completed");
+  });
+}
+
+navItems.forEach(item => {
+  item.addEventListener("click", () => {
+    const step = parseInt(item.dataset.step);
+    if (completedSteps.has(step) || step === 1) {
+      nextStep(step);
+    } else {
+      alert("Please complete earlier steps first!");
+    }
+  });
+});
+
+const originalNextStep = nextStep;
+nextStep = function(n) {
+  const active = document.querySelector(".step.active");
+  if (active) {
+    const prevStep = parseInt(active.id.replace("step", ""));
+    completedSteps.add(prevStep);
+  }
+  originalNextStep(n);
+  updateNav(n);
+  if (n === 9) enterStep9();
+};
+
+updateNav(1);
 </script>
 </body>
 </html>
