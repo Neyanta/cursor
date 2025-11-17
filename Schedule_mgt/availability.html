@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Interactive Schedule Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body {
+    font-family: Inter, sans-serif;
+    margin: 0;
+    padding: 32px;
+    background: #f3f4f6;
+  }
+  .container {
+    max-width: 1100px;
+    margin: auto;
+  }
+
+  /* Stepper */
+  .stepper {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 30px;
+  }
+  .step {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #e5e7eb;
+    color: #6b7280;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .step-number {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+  }
+  .step.active {
+    background: #e0e7ff;
+    color: #1d4ed8;
+  }
+  .step.active .step-number {
+    background: #1d4ed8;
+    color: white;
+  }
+
+  /* Panels */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .panel {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+  }
+  h3 { margin: 0 0 10px; }
+  .subtitle {
+    margin: 0 0 20px;
+    color: #6b7280;
+    font-size: 14px;
+  }
+
+  /* Day chips */
+  .day-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .chip {
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .chip.selected {
+    background: #e0e7ff;
+    color: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  /* Time slot pills */
+  .slot-pill {
+    background: #f3f4f6;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  /* Create slot row */
+  .slot-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  input[type=time] {
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+  }
+  .btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* Day cards */
+  .day-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .day-card {
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fafafa;
+    padding: 14px;
+  }
+  .day-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Stepper -->
+  <div class="stepper">
+    <div class="step completed"><div class="step-number">1</div>Basics</div>
+    <div class="step active"><div class="step-number">2</div>Days & Slots</div>
+    <div class="step"><div class="step-number">3</div>Review</div>
+  </div>
+
+  <!-- Layout -->
+  <div class="grid">
+
+    <!-- LEFT PANEL: SELECT DAYS + CREATE SLOTS -->
+    <div class="panel">
+      <h3>Select days</h3>
+      <p class="subtitle">Choose the days you want to add slots for.</p>
+
+      <div id="dayChips" class="day-chips">
+        <!-- JS will generate -->
+      </div>
+
+      <h3>Add a slot</h3>
+
+      <div class="slot-row">
+        <input type="time" id="start">
+        <input type="time" id="end">
+        <button class="btn" id="addSlot">Add</button>
+      </div>
+
+      <h4>Slots to add:</h4>
+      <div id="slotPreview"></div>
+
+      <button class="btn" id="applyToDays" style="margin-top:12px;">
+        Apply to selected days
+      </button>
+    </div>
+
+
+    <!-- RIGHT PANEL: DAY BY DAY VIEW -->
+    <div class="panel">
+      <h3>Your weekly schedule</h3>
+
+      <div id="dayCards" class="day-cards">
+        <!-- JS will render each day -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const daySelection = new Set();
+  const daySlots = {};  // Each day holds its custom list of slots
+  const newSlots = [];  // Slots user is adding in bulk
+
+  // Initialize empty slot arrays for each day
+  DAYS.forEach(day => daySlots[day] = []);
+
+  const dayChipsEl = document.getElementById("dayChips");
+  const dayCardsEl = document.getElementById("dayCards");
+  const slotPreviewEl = document.getElementById("slotPreview");
+
+  function renderDayChips() {
+    dayChipsEl.innerHTML = "";
+    DAYS.forEach(day => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.textContent = day;
+
+      if (daySelection.has(day)) chip.classList.add("selected");
+
+      chip.onclick = () => {
+        daySelection.has(day) ? daySelection.delete(day) : daySelection.add(day);
+        renderDayChips();
+      };
+      dayChipsEl.appendChild(chip);
+    });
+  }
+
+  function renderPreviewSlots() {
+    slotPreviewEl.innerHTML = "";
+    newSlots.forEach(slot => {
+      const pill = document.createElement("span");
+      pill.className = "slot-pill";
+      pill.textContent = `${slot.start} – ${slot.end}`;
+      slotPreviewEl.appendChild(pill);
+    });
+  }
+
+  function renderDayCards() {
+    dayCardsEl.innerHTML = "";
+    DAYS.forEach(day => {
+      const card = document.createElement("div");
+      card.className = "day-card";
+
+      const header = document.createElement("h4");
+      header.textContent = day;
+      card.appendChild(header);
+
+      // Slots
+      daySlots[day].forEach(s => {
+        const pill = document.createElement("span");
+        pill.className = "slot-pill";
+        pill.textContent = `${s.start} – ${s.end}`;
+        card.appendChild(pill);
+      });
+
+      // Add custom slot button
+      const addBtn = document.createElement("button");
+      addBtn.textContent = "Add slot";
+      addBtn.className = "btn";
+      addBtn.style.marginTop = "10px";
+      addBtn.onclick = () => {
+        const start = prompt("Start time (HH:MM)");
+        const end = prompt("End time (HH:MM)");
+        if (start && end) {
+          daySlots[day].push({start, end});
+          renderDayCards();
+        }
+      };
+
+      card.appendChild(addBtn);
+      dayCardsEl.appendChild(card);
+    });
+  }
+
+  document.getElementById("addSlot").onclick = () => {
+    const start = document.getElementById("start").value;
+    const end = document.getElementById("end").value;
+    if (!start || !end) return;
+    newSlots.push({ start, end });
+    renderPreviewSlots();
+  };
+
+  document.getElementById("applyToDays").onclick = () => {
+    daySelection.forEach(day => {
+      daySlots[day] = [...daySlots[day], ...newSlots];
+    });
+    newSlots.length = 0;
+    renderPreviewSlots();
+    renderDayCards();
+  };
+
+  // Initial renders
+  renderDayChips();
+  renderDayCards();
+</script>
+
+</body>
+</html>
