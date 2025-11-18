@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hub – Create Experience (AI Listing Prototype)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #f5f5f7;
+      color: #111827;
+    }
+
+    .app {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #111827;
+      color: #f9fafb;
+      padding: 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .sidebar-header {
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    .sidebar-sub {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      padding: 8px 6px;
+      border-radius: 8px;
+    }
+
+    .step.active {
+      background: rgba(55, 65, 81, 0.7);
+    }
+
+    .step-index {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 1px solid #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .step.active .step-index {
+      background: #8000FF;
+      border-color: #8000ff;
+      color: #022c22;
+      font-weight: 600;
+    }
+
+    .step-label-main {
+      font-weight: 500;
+    }
+
+    .step-label-sub {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 24px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .topbar-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .topbar-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 11px;
+      background: #ecfdf3;
+      color: #8000FF;
+      border: 1px solid #bbf7d0;
+    }
+
+    .content-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px 20px 16px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .content-card.active {
+      display: flex;
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    /* Funnel selection */
+    .funnel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+
+    .funnel-card {
+      border-radius: 14px;
+      border: 1px solid #e5e7eb;
+      padding: 14px 14px 12px;
+      background: #f9fafb;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      position: relative;
+    }
+
+    .funnel-card.selected {
+      border-color: #8000FF;
+      background: #d8c4e3;
+      box-shadow: 0 10px 20px rgba(147, 47, 229, 0.18);
+    }
+
+    .funnel-card.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .funnel-label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .funnel-chip {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: black;
+    }
+
+    .funnel-body {
+      font-size: 12px;
+      color: black;
+    }
+
+    .funnel-footer {
+      font-size: 11px;
+      color: #111827;
+      margin-top: 4px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: black;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .form-field {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    label {
+      font-size: 12px;
+      color: #4b5563;
+      font-weight: 500;
+    }
+
+    input[type="text"],
+    input[type="url"],
+    select,
+    textarea {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      background: #fff;
+    }
+
+    input[type="file"] {
+      font-size: 12px;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #8000FF;
+      box-shadow: 0 0 0 1px rgba(144, 120, 241, 0.25);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 70px;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .radio-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 12px;
+      cursor: pointer;
+      background: #f9fafb;
+    }
+
+    .radio-pill.active {
+      border-color: #8000FF;
+      background: #ecfdf3;
+      color: #111827;
+      ;
+    }
+
+    .info-banner {
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #111827;
+      margin-top: 4px;
+    }
+
+    .info-banner strong {
+      font-weight: 600;
+    }
+
+    .info-icon {
+      font-size: 14px;
+      margin-top: 1px;
+    }
+
+    .warning-banner {
+      border-radius: 10px;
+      padding: 10px 11px;
+      font-size: 12px;
+      background: #fef3c7;
+      border: 1px solid #facc15;
+      color: #92400e;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .section-header {
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .muted-note {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .footer-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: #8000FF;
+      color: white;
+      font-weight: 600;
+    }
+
+    .btn-secondary {
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: #6b7280;
+      border: none;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .pill-tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+
+    .link {
+      color: #2563eb;
+      text-decoration: none;
+      font-size: 12px;
+    }
+
+    .link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .stepper {
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div>
+      <div class="sidebar-header">Create a new listing</div>
+      <div class="sidebar-sub">Guided flow to add a new experience on Hub.</div>
+    </div>
+
+    <div>
+      <div class="sidebar-sub" style="text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em;">
+        Steps
+      </div>
+      <div class="stepper">
+        <div class="step active" data-step="1">
+          <div class="step-index">1</div>
+          <div>
+            <div class="step-label-main">Choose listing method</div>
+            <div class="step-label-sub">360, AI-assisted, or manual</div>
+          </div>
+        </div>
+        <div class="step" data-step="2">
+          <div class="step-index">2</div>
+          <div>
+            <div class="step-label-main">Provide source</div>
+            <div class="step-label-sub">Website or document</div>
+          </div>
+        </div>
+        <div class="step" data-step="3">
+          <div class="step-index">3</div>
+          <div>
+            <div class="step-label-main">Review AI pre-fill</div>
+            <div class="step-label-sub">Edit before submitting</div>
+          </div>
+        </div>
+        <div class="step" data-step="4">
+          <div class="step-index">4</div>
+          <div>
+            <div class="step-label-main">Complete options & schedule</div>
+            <div class="step-label-sub">Manual only</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Add a new experience</div>
+        <div class="topbar-subtitle">
+          Start with AI-assisted listing to pre-fill content from your website or brochure.
+        </div>
+      </div>
+      <!-- <div>
+        <span class="badge">⚡ Recommended: AI-assisted listing</span>
+      </div> -->
+    </div>
+
+    <!-- STEP 1: Choose funnel -->
+    <div class="content-card active" id="card-step-1">
+      <div class="card-title-row">
+        <div>
+          <!-- <div class="card-title">How do you want to create this listing?</div> -->
+          <!-- <div class="card-subtitle">
+            We’ll pick the best flow based on your setup. You can always switch to manual later.
+          </div> -->
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top: 16px;">
+        <div class="form-field">
+          <label for="exp-name">Experience name</label>
+          <input type="text" id="exp-name" placeholder="e.g. Sydney Harbour Sunset Cruise" />
+        </div>
+        <div class="form-field">
+          <label for="exp-subcat">Sub-category</label>
+          <select id="exp-subcat">
+            <option value="">Select…</option>
+            <option>Guided tour</option>
+            <option>Cruise</option>
+            <option>Theme park</option>
+            <option>Museum</option>
+            <option>Hop-on hop-off</option>
+          </select>
+        </div>
+      </div>
+      <div class="hint" style="margin-top: 6px;">
+        We’ll use the name and sub-category to see if you’re eligible for 360 listing.
+      </div>
+
+      <div style="margin-top: 18px;">
+        <div class="section-header">Listing method</div>
+        <div class="funnel-grid">
+          <!-- <div class="funnel-card disabled">
+            <div class="funnel-label">
+              360 Listing
+              <span class="funnel-chip">Auto-detected</span>
+            </div>
+            <div class="funnel-body">
+              For connected partners. We sync most of the content, pricing, and schedules automatically.
+            </div>
+            <div class="funnel-footer">
+              If you’re eligible, we’ll send you through this flow automatically.
+            </div>
+          </div> -->
+          <div class="funnel-card" id="funnel-manual">
+            <div class="funnel-label">Manual listing</div>
+            <div class="funnel-body">
+              Start from a blank form and fill in all content, media, options, and schedules yourself.
+            </div>
+            <div class="funnel-footer">
+              Best if you prefer full control and don’t have a website or brochure ready.
+            </div>
+          </div>
+          <div class="funnel-card selected" id="funnel-ai">
+            <div class="funnel-label">
+              AI-assisted listing
+              <span class="funnel-chip" style="background:#dcfce7; color:rgba(186, 122, 235, 0.25); border:1px solid #bbf7d0;">Recommended</span>
+            </div>
+            <div class="funnel-body">
+              Paste your website or upload a brochure. We’ll pre-fill your content fields using AI so you can review and submit faster.
+            </div>
+            <div class="funnel-footer">
+              No prices or schedules will be filled. You’ll add those manually later.
+            </div>
+          </div>
+
+        
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <div class="muted-note">You can switch to manual at any point if AI cannot parse your content.</div>
+        <div class="button-row">
+          <button class="btn-secondary" id="btn-step1-manual">Skip AI, go manual</button>
+          <button class="btn-primary" id="btn-step1-next">
+            Continue with AI
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Provide source -->
+    <div class="content-card" id="card-step-2">
+      <div class="card-title-row">
+        <div>
+          <div class="card-title">Let AI read your content</div>
+          <div class="card-subtitle">
+            Share your website or upload a document. We’ll extract text-only content and map it to the right fields.
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="pill-tag">No prices or schedules</span>
+          <span class="pill-tag">You’ll review everything</span>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        <span class="info-icon">ℹ️</span>
+        <div>
+          <strong>We only extract what you give us.</strong>  
+          We don’t invent or guess content. You’ll be able to edit every field before submitting.
+        </div>
+      </div>
+
+      <div style="margin-top: 16px;">
+        <label>Where should we pull content from?</label>
+        <div class="radio-group">
+          <label class="radio-pill active" id="pill-website">
+            <input type="radio" name="source-type" value="website" checked style="display:none;" />
+            🌐 Website / OTA page
+          </label>
+          <label class="radio-pill" id="pill-document">
+            <input type="radio" name="source-type" value="document" style="display:none;" />
+            📄 Upload a document
+          </label>
+        </div>
+      </div>
+
+      <!-- Website source -->
+      <div id="source-website" style="margin-top: 14px;">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="sp-website">Your experience page (preferred)</label>
+            <input type="url" id="sp-website" placeholder="https://yourwebsite.com/sydney-harbour-cruise" />
+          </div>
+          <div class="form-field">
+            <label for="ota-url">OTA product link (optional)</label>
+            <input type="url" id="ota-url" placeholder="https://example-ota.com/experience/12345" />
+            <span class="muted-note">
+              We’ll only use text content, and only after you confirm you own this listing.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Document source -->
+      <div id="source-document" style="margin-top: 14px; display:none;">
+        <div class="form-row">
+          <div class="form-field">
+            <label for="doc-upload">Upload brochure or content file</label>
+            <input type="file" id="doc-upload" accept=".pdf,.doc,.docx,.ppt,.pptx,.csv,.txt" />
+            <span class="muted-note">
+              Supported: PDF, DOCX, PPT, CSV, TXT. We only read text, not images.
+            </span>
+          </div>
+          <!-- <div class="form-field">
+            <label>What’s inside this document?</label>
+            <textarea placeholder="e.g. Overview, inclusions, exclusions, meeting point, policies…"></textarea>
+          </div> -->
+        </div>
+      </div>
+
+      <div class="warning-banner">
+        <span class="info-icon">✅</span>
+        <div>
+          <strong>Consent check.</strong>  
+          By continuing, you confirm you have the right to use this content and allow Hub to parse and store it for this listing.
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button class="btn-ghost" id="btn-step2-back">Back</button>
+        <div class="button-row">
+          <button class="btn-secondary" id="btn-step2-manual">Switch to manual</button>
+          <button class="btn-primary" id="btn-step2-next">Let AI pre-fill</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 3: Review AI Pre-fill -->
+    <div class="content-card" id="card-step-3">
+      <div class="card-title-row">
+        <div>
+          <div class="card-title">Review AI pre-filled content</div>
+          <div class="card-subtitle">
+            We’ve mapped your content into Hub fields. Please review and edit before moving on.
+          </div>
+        </div>
+        <div class="tag-row">
+          <span class="pill-tag">Source: AI pre-fill</span>
+          <span class="pill-tag">You’re in control</span>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        <span class="info-icon">👀</span>
+        <div>
+          <strong>Important:</strong> Hub does not auto-approve this content.  
+          You are responsible for ensuring the information is accurate and up to date.
+        </div>
+      </div>
+
+      <div class="two-column">
+        <div class="form-field">
+          <label>Experience title</label>
+          <input type="text" value="Sydney Harbour Sunset Cruise with Snacks & Drinks" />
+        </div>
+        <div class="form-field">
+          <label>Short tagline</label>
+          <input type="text" value="Golden hour views of the Sydney skyline from the water." />
+        </div>
+      </div>
+
+      <div class="form-field" style="margin-top: 10px;">
+        <label>Overview / Description</label>
+        <textarea rows="5">Relax on a 2-hour sunset cruise along Sydney Harbour, taking in iconic landmarks such as the Opera House and Harbour Bridge. Enjoy complimentary snacks and one welcome drink as you listen to light commentary from the crew.</textarea>
+      </div>
+
+      <div class="two-column">
+        <div class="form-field">
+          <label>Highlights</label>
+          <textarea>- Sunset views over Sydney Harbour
+- See Opera House & Harbour Bridge from the water
+- Welcome drink included
+- Comfortable indoor and outdoor seating</textarea>
+        </div>
+        <div class="form-field">
+          <label>Inclusions</label>
+          <textarea>- 2-hour harbour cruise
+- One complimentary welcome drink
+- Light snacks onboard</textarea>
+        </div>
+      </div>
+
+      <div class="two-column">
+        <div class="form-field">
+          <label>Exclusions</label>
+          <textarea>- Hotel transfers
+- Additional drinks and snacks
+- Gratuities</textarea>
+        </div>
+        <div class="form-field">
+          <label>Meeting point</label>
+          <textarea>Circular Quay Wharf 6, Sydney. Please arrive 20 minutes before departure. Look for the blue and white harbour cruise vessel.</textarea>
+        </div>
+      </div>
+
+      <div class="two-column">
+        <div class="form-field">
+          <label>Important information / Know before you go</label>
+          <textarea>- This experience operates in most weather conditions.
+- Please dress according to the weather and wear comfortable shoes.
+- Passengers under 18 must be accompanied by an adult.</textarea>
+        </div>
+        <div class="form-field">
+          <label>Cancellation policy</label>
+          <textarea>Free cancellation up to 24 hours before the experience starts. No refunds for late arrivals or no-shows.</textarea>
+        </div>
+      </div>
+
+      <div class="warning-banner">
+        <span class="info-icon">⏱️</span>
+        <div>
+          <strong>Next step: options & schedules.</strong>  
+          AI cannot fill options, prices, or schedules. You’ll complete those manually in the next step.
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button class="btn-ghost" id="btn-step3-back">Back</button>
+        <div class="button-row">
+          <button class="btn-secondary" id="btn-step3-manual">Switch to manual</button>
+          <button class="btn-primary" id="btn-step3-next">
+            Continue to options & schedule
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 4: Placeholder for options & schedule -->
+    <div class="content-card" id="card-step-4">
+      <div class="card-title-row">
+        <div>
+          <div class="card-title">Complete options & schedule</div>
+          <div class="card-subtitle">
+            AI doesn’t touch this part yet. You’ll set up variants, prices, and schedules manually.
+          </div>
+        </div>
+      </div>
+
+      <div class="info-banner">
+        <span class="info-icon">🧩</span>
+        <div>
+          This prototype focuses on the AI content flow.  
+          Here you would normally configure:
+          <ul style="margin-top:4px; padding-left:18px;">
+            <li>Option names & descriptions</li>
+            <li>Pricing & pax types</li>
+            <li>Schedules & operating days</li>
+            <li>Inventory / capacity</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-actions">
+        <button class="btn-ghost" id="btn-step4-back">Back</button>
+        <div class="button-row">
+          <button class="btn-primary">
+            Finish later
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manual-only info card (simple) -->
+    <div class="content-card" id="card-manual-info">
+      <div class="card-title-row">
+        <div>
+          <div class="card-title">Manual listing flow</div>
+          <div class="card-subtitle">
+            You’ve chosen to skip AI. You’ll see the standard multi-step form to create your listing from scratch.
+          </div>
+        </div>
+      </div>
+      <div class="info-banner">
+        <span class="info-icon">✍️</span>
+        <div>
+          In the real product, this is where we’d route you into the existing “Add experience” flow without any AI pre-fill.
+        </div>
+      </div>
+      <div style="margin-top: 12px;">
+        <a href="#" class="link" onclick="alert('In a real build, this would open the manual flow form.'); return false;">
+          Open manual listing form (prototype stub)
+        </a>
+      </div>
+      <div class="footer-actions">
+        <button class="btn-ghost" id="btn-manual-back">Back</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simple JS to drive the prototype
+
+  const stepCards = {
+    1: document.getElementById('card-step-1'),
+    2: document.getElementById('card-step-2'),
+    3: document.getElementById('card-step-3'),
+    4: document.getElementById('card-step-4'),
+    manualInfo: document.getElementById('card-manual-info')
+  };
+
+  const steps = document.querySelectorAll('.step');
+
+  function setActiveStep(stepNumber) {
+    steps.forEach(step => {
+      step.classList.toggle('active', step.dataset.step === String(stepNumber));
+    });
+  }
+
+  function showCard(id) {
+    Object.values(stepCards).forEach(card => card.classList.remove('active'));
+    if (stepCards[id]) {
+      stepCards[id].classList.add('active');
+    }
+  }
+
+  // Step 1 → AI flow
+  document.getElementById('btn-step1-next').addEventListener('click', () => {
+    setActiveStep(2);
+    showCard(2);
+  });
+
+  // Step 1 → Manual flow directly
+  document.getElementById('btn-step1-manual').addEventListener('click', () => {
+    steps.forEach(s => s.classList.remove('active'));
+    showCard('manualInfo');
+  });
+
+  // Funnel cards selection visual only
+  const funnelAI = document.getElementById('funnel-ai');
+  const funnelManual = document.getElementById('funnel-manual');
+
+  function selectFunnel(selected) {
+    if (selected === 'ai') {
+      funnelAI.classList.add('selected');
+      funnelManual.classList.remove('selected');
+    } else {
+      funnelManual.classList.add('selected');
+      funnelAI.classList.remove('selected');
+    }
+  }
+
+  funnelAI.addEventListener('click', () => selectFunnel('ai'));
+  funnelManual.addEventListener('click', () => selectFunnel('manual'));
+
+  // Step 2 source toggle
+  const pillWebsite = document.getElementById('pill-website');
+  const pillDocument = document.getElementById('pill-document');
+  const sourceWebsite = document.getElementById('source-website');
+  const sourceDocument = document.getElementById('source-document');
+
+  function setSource(type) {
+    if (type === 'website') {
+      pillWebsite.classList.add('active');
+      pillDocument.classList.remove('active');
+      sourceWebsite.style.display = 'block';
+      sourceDocument.style.display = 'none';
+    } else {
+      pillDocument.classList.add('active');
+      pillWebsite.classList.remove('active');
+      sourceWebsite.style.display = 'none';
+      sourceDocument.style.display = 'block';
+    }
+  }
+
+  pillWebsite.addEventListener('click', () => setSource('website'));
+  pillDocument.addEventListener('click', () => setSource('document'));
+
+  // Navigation buttons
+  document.getElementById('btn-step2-back').addEventListener('click', () => {
+    setActiveStep(1);
+    showCard(1);
+  });
+
+  document.getElementById('btn-step2-next').addEventListener('click', () => {
+    setActiveStep(3);
+    showCard(3);
+  });
+
+  document.getElementById('btn-step2-manual').addEventListener('click', () => {
+    steps.forEach(s => s.classList.remove('active'));
+    showCard('manualInfo');
+  });
+
+  document.getElementById('btn-step3-back').addEventListener('click', () => {
+    setActiveStep(2);
+    showCard(2);
+  });
+
+  document.getElementById('btn-step3-next').addEventListener('click', () => {
+    setActiveStep(4);
+    showCard(4);
+  });
+
+  document.getElementById('btn-step3-manual').addEventListener('click', () => {
+    steps.forEach(s => s.classList.remove('active'));
+    showCard('manualInfo');
+  });
+
+  document.getElementById('btn-step4-back').addEventListener('click', () => {
+    setActiveStep(3);
+    showCard(3);
+  });
+
+  document.getElementById('btn-manual-back').addEventListener('click', () => {
+    setActiveStep(1);
+    showCard(1);
+  });
+</script>
+</body>
+</html>
