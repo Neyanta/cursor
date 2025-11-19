@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Hub • Add New Experience – Prototype B (Horizontal Stepper)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --hub-accent: #8000ff;
+    --hub-accent-soft: rgba(128,0,255,0.07);
+    --hub-bg: #f5f5f8;
+    --hub-surface: #ffffff;
+    --hub-border: #dedee8;
+    --hub-text: #1e1f28;
+    --hub-text-muted: #70727f;
+    --radius-lg: 14px;
+    --radius-pill: 999px;
+    --shadow-soft: 0 10px 30px rgba(15,23,42,0.08);
+  }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "SF Pro", sans-serif;
+    background: var(--hub-bg);
+  }
+
+  /* App Shell */
+  .app-header {
+    background: #fff;
+    border-bottom: 1px solid var(--hub-border);
+    padding: 14px 24px;
+    display: flex; justify-content: space-between;
+    align-items: center;
+    position: sticky; top: 0; z-index: 20;
+  }
+  .logo {
+    width: 30px;height: 30px;border-radius: 10px;
+    background: radial-gradient(circle at 20% 20%, #ffb3ff, #8000ff);
+    display: flex;align-items:center;justify-content:center;
+    font-weight:700;color:#fff;
+  }
+
+  /* Route Toggle */
+  .route-toggle {
+    border: 1px solid rgba(128,0,255,0.2);
+    background: #f1e8ff;
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    display: inline-flex;gap:3px;
+  }
+  .route-toggle button {
+    padding: 6px 10px;font-size:12px;border:none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    cursor: pointer;color: var(--hub-text-muted);
+  }
+  .route-toggle button.active {
+    background: #fff; color: var(--hub-accent);
+    box-shadow: 0 0 0 1px rgba(128,0,255,0.18);
+  }
+
+  /* Horizontal Stepper */
+  .stepper {
+    width: 100%;background: #fff;
+    border-bottom: 1px solid var(--hub-border);
+    padding: 14px 24px;
+    display: flex; gap: 18px; overflow-x: auto;
+    position: sticky; top: 62px; z-index: 10;
+  }
+  .step {
+    display: flex; flex-direction: column;align-items:center;
+    min-width: 110px;
+    cursor:pointer;
+  }
+  .step-index {
+    width: 26px;height: 26px;border-radius: 50%;
+    border: 2px solid var(--hub-border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px; background:#fff;
+  }
+  .step.active .step-index {
+    border-color: var(--hub-accent);
+    background: var(--hub-accent);
+    color:#fff;
+  }
+  .step-label {
+    margin-top:4px; font-size:11px;color:var(--hub-text-muted);
+    text-align:center;max-width:100px;
+  }
+  .step.active .step-label { color: var(--hub-accent);font-weight:500; }
+
+  /* Content */
+  .content {
+    padding: 24px;
+    display:flex;justify-content:center;
+  }
+  .card {
+    background:#fff;border-radius: var(--radius-lg);
+    padding: 18px; box-shadow: var(--shadow-soft);
+    width: 840px; max-width:100%;
+  }
+  .card-title {
+    font-size:16px;font-weight:600;margin-bottom:6px;
+  }
+  .card-sub { font-size:12px;color:var(--hub-text-muted);margin-bottom:16px; }
+
+  /* Fields */
+  .field { margin-bottom:12px;display:flex;flex-direction:column;gap:4px; }
+  .field label { font-size:12px;color:var(--hub-text-muted); }
+  .field input, .field textarea, .field select {
+    border:1px solid #dcdceb; border-radius:10px;
+    padding:8px;font-size:13px; background:#fafaff;
+  }
+  .field textarea { min-height: 80px; }
+
+  /* Buttons */
+  .btn-row { display:flex;gap:10px;margin-top:16px; }
+  .btn {
+    padding:7px 14px; border-radius:var(--radius-pill);
+    border:1px solid transparent; cursor:pointer;
+    font-size:12px;
+  }
+  .btn.primary { background:var(--hub-accent);color:#fff; }
+  .btn.secondary { background:#fff;border:1px solid var(--hub-border); }
+  .btn.small { padding:5px 10px; font-size:11px; }
+
+  /* Modal */
+  .modal-backdrop {
+    display:none;position:fixed;inset:0;
+    background:rgba(0,0,0,0.35);
+    justify-content:center;align-items:center;z-index:200;
+  }
+  .modal {
+    width:360px;max-width:90%;
+    background:#fff;border-radius:16px;
+    padding:16px;display:flex;flex-direction:column;gap:10px;
+  }
+  .modal-title { font-size:14px;font-weight:600; }
+  .modal-sub { font-size:12px;color:var(--hub-text-muted); }
+
+  .option-box {
+    border:1px solid #eee;padding:10px;border-radius:10px;
+    background:#faf9ff; display:flex;flex-direction:column;gap:6px;
+  }
+  .option-row { display:flex;gap:6px; }
+  .modal-footer { display:flex;justify-content:flex-end;gap:8px;margin-top:12px; }
+</style>
+</head>
+
+<body>
+<div class="app-header">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="logo">H</div>
+    <div>
+      <div style="font-size:15px;font-weight:600;">Add a new experience</div>
+      <div style="font-size:11px;color:var(--hub-text-muted);">Prototype B · Horizontal stepper</div>
+    </div>
+  </div>
+
+  <div class="route-toggle" id="routeToggle">
+    <button data-route="ai" class="active">AI-assisted</button>
+    <button data-route="360">360 listing</button>
+    <button data-route="manual">Manual</button>
+  </div>
+</div>
+
+<!-- Horizontal Stepper -->
+<div class="stepper" id="stepper"></div>
+
+<!-- MAIN CONTENT -->
+<div class="content">
+  <div class="card" id="viewCard">
+    <!-- Dynamic content injected here -->
+  </div>
+</div>
+
+<!-- C PARTIAL MODAL -->
+<div class="modal-backdrop" id="cModal">
+  <div class="modal">
+    <div class="modal-title">Pick the closest match</div>
+    <div class="modal-sub">We found a few Cs that might apply.</div>
+
+    <div class="option-box">
+      <label class="option-row">
+        <input type="radio" name="cPick" value="C1" checked />
+        <div>
+          <div style="font-size:12px;font-weight:500;">C1 · Observation Decks</div>
+          <div style="font-size:11px;color:var(--hub-text-muted);">Burj Khalifa style timed entry.</div>
+        </div>
+      </label>
+
+      <label class="option-row">
+        <input type="radio" name="cPick" value="C2" />
+        <div>
+          <div style="font-size:12px;font-weight:500;">C2 · Attraction Combos</div>
+          <div style="font-size:11px;color:var(--hub-text-muted);">Multi-attraction passes.</div>
+        </div>
+      </label>
+
+      <label class="option-row">
+        <input type="radio" name="cPick" value="unmanaged" />
+        <div>
+          <div style="font-size:12px;font-weight:500;">None of these</div>
+          <div style="font-size:11px;color:#777;">Continue unmanaged.</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn small secondary" onclick="closeCModal()">Cancel</button>
+      <button class="btn small primary" onclick="confirmCChoice()">Confirm</button>
+    </div>
+  </div>
+</div>
+<script>
+    /* ---------------------------------------------------------
+       STATE
+    --------------------------------------------------------- */
+    const state = {
+      route: "ai",       // ai | 360 | manual
+      step: "source",    // source | prefill | c-decision | basic | highlights | ...
+      stepsOrder: [
+        "source",
+        "prefill",
+        "c-decision",
+        "basic",
+        "highlights",
+        "description",
+        "itinerary",
+        "guidelines",
+        "meeting",
+        "media",
+        "variants",
+        "pricing",
+        "schedule",
+        "inventory",
+        "review"
+      ],
+      cScenario: "full"  // full | none | partial
+    };
+    
+    /* ---------------------------------------------------------
+       DOM REFERENCES
+    --------------------------------------------------------- */
+    const routeToggle = document.getElementById("routeToggle");
+    const stepper = document.getElementById("stepper");
+    const viewCard = document.getElementById("viewCard");
+    const cModal = document.getElementById("cModal");
+    
+    /* ---------------------------------------------------------
+       ROUTE SWITCHING
+    --------------------------------------------------------- */
+    routeToggle.addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+      const route = btn.dataset.route;
+      state.route = route;
+    
+      [...routeToggle.children].forEach(b =>
+        b.classList.toggle("active", b.dataset.route === route)
+      );
+    
+      setStep("source");
+    });
+    
+    /* ---------------------------------------------------------
+       STEPPER RENDERING
+    --------------------------------------------------------- */
+    function renderStepper() {
+      stepper.innerHTML = "";
+      state.stepsOrder.forEach((step, i) => {
+        const div = document.createElement("div");
+        div.className = "step" + (state.step === step ? " active" : "");
+        div.dataset.step = step;
+        div.innerHTML = `
+          <div class="step-index">${i + 1}</div>
+          <div class="step-label">${label(step)}</div>
+        `;
+        stepper.appendChild(div);
+      });
+    
+      // Step click
+      [...stepper.children].forEach(s => {
+        s.addEventListener("click", () => {
+          setStep(s.dataset.step);
+        });
+      });
+    }
+    
+    /* ---------------------------------------------------------
+       STEP CHANGER
+    --------------------------------------------------------- */
+    function setStep(step) {
+      state.step = step;
+      renderStepper();
+      renderView(step);
+    }
+    
+    /* ---------------------------------------------------------
+       LABEL HELPER
+    --------------------------------------------------------- */
+    function label(step) {
+      return {
+        "source": "Source & import",
+        "prefill": "Prefill / sync",
+        "c-decision": "CE decision",
+        "basic": "Basic details",
+        "highlights": "Highlights",
+        "description": "Description",
+        "itinerary": "Itinerary",
+        "guidelines": "Guidelines",
+        "meeting": "Meeting point",
+        "media": "Media",
+        "variants": "Variants",
+        "pricing": "Pricing",
+        "schedule": "Schedule",
+        "inventory": "Inventory",
+        "review": "Review & submit"
+      }[step];
+    }
+    
+    /* ---------------------------------------------------------
+       VIEW RENDERER
+    --------------------------------------------------------- */
+    function renderView(step) {
+      if (step === "source") return renderSource();
+      if (step === "prefill") return renderPrefill();
+      if (step === "c-decision") return renderCDecision();
+      if (step === "basic") return renderBasic();
+    
+      // All other unified steps → placeholder
+      renderPlaceholder(step);
+    }
+    
+    /* ---------------------------------------------------------
+       SOURCE VIEW (ROUTE-SPECIFIC)
+    --------------------------------------------------------- */
+    function renderSource() {
+      if (state.route === "ai") {
+        viewCard.innerHTML = `
+          <div class="card-title">Upload your source</div>
+          <div class="card-sub">We’ll parse your document and prefill the listing with AI.</div>
+
+          <div class="field">
+            <label>Choose a source</label>
+            <div class="btn-row">
+              <button class="btn primary small">Upload PDF / doc</button>
+              <button class="btn secondary small">Paste URL</button>
+              <button class="btn secondary small">Use images</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Commission (%)</label>
+            <input type="number" placeholder="e.g. 15" />
+          </div>
+
+          <div class="btn-row">
+            <button class="btn primary" onclick="setStep('prefill')">Continue</button>
+          </div>
+        `;
+      }
+
+      if (state.route === "360") {
+        viewCard.innerHTML = `
+          <div class="card-title">Connect via product code</div>
+          <div class="card-sub">We’ll pull structured content from your 360 provider.</div>
+
+          <div class="field">
+            <label>Enter product code</label>
+            <input placeholder="VENTRATA · 12345-ABC"/>
+          </div>
+
+          <div class="field">
+            <label>Commission (%)</label>
+            <input type="number" placeholder="e.g. 15" />
+          </div>
+
+          <div class="btn-row">
+            <button class="btn primary small" onclick="setStep('prefill')">Fetch</button>
+            <button class="btn small secondary" onclick="switchToAI()">Switch to AI</button>
+            <button class="btn small secondary" onclick="switchToManual()">Switch to manual</button>
+          </div>
+        `;
+      }
+
+      if (state.route === "manual") {
+        viewCard.innerHTML = `
+          <div class="card-title">Start from scratch</div>
+          <div class="card-sub">Provide experience basics manually.</div>
+
+          <div class="field">
+            <label>Experience name</label>
+            <input placeholder="e.g. Louvre Guided Tour"/>
+          </div>
+
+          <div class="field">
+            <label>Category & subcategory</label>
+            <select>
+              <option>Landmarks · Museums</option>
+              <option>City Tours · Guided Tours</option>
+              <option>Cruises · Water Activities</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Commission (%)</label>
+            <input type="number" placeholder="e.g. 15" />
+          </div>
+
+          <div class="btn-row">
+            <button class="btn primary" onclick="setStep('prefill')">Continue</button>
+          </div>
+        `;
+      }
+    }
+    
+    /* ---------------------------------------------------------
+       PREFILL VIEW (ROUTE-SPECIFIC)
+    --------------------------------------------------------- */
+    function renderPrefill() {
+      if (state.route === "ai") {
+        viewCard.innerHTML = `
+          <div class="card-title">Review AI Prefill</div>
+          <div class="card-sub">Check whether the extracted fields look right.</div>
+    
+          <div class="field">
+            <label>Detected title</label>
+            <input value="Burj Khalifa At The Top + Aquarium"/>
+          </div>
+    
+          <div class="field">
+            <label>Extracted summary</label>
+            <textarea>AI extracted highlights, inclusions, and redemption info.</textarea>
+          </div>
+    
+          <div class="btn-row">
+            <button class="btn primary" onclick="setStep('c-decision')">Looks good</button>
+          </div>
+        `;
+      }
+    
+      if (state.route === "360") {
+        viewCard.innerHTML = `
+          <div class="card-title">Review 360 Import</div>
+          <div class="card-sub">Confirm this is the correct synced product.</div>
+    
+          <div class="field">
+            <label>Imported product</label>
+            <input value="VENTRATA · Dubai Big Bus 24H"/>
+          </div>
+    
+          <div class="btn-row">
+            <button class="btn primary small" onclick="setStep('c-decision')">Continue</button>
+            <button class="btn small secondary" onclick="switchToAI()">Switch to AI</button>
+            <button class="btn small secondary" onclick="switchToManual()">Switch to manual</button>
+          </div>
+        `;
+      }
+    
+      if (state.route === "manual") {
+        viewCard.innerHTML = `
+          <div class="card-title">Manual Mode</div>
+          <div class="card-sub">You will enter all fields manually.</div>
+    
+          <div class="btn-row">
+            <button class="btn primary" onclick="setStep('c-decision')">Continue</button>
+          </div>
+        `;
+      }
+    }
+    
+    /* ---------------------------------------------------------
+       C DECISION VIEW
+    --------------------------------------------------------- */
+    function renderCDecision() {
+      viewCard.innerHTML = `
+        <div class="card-title">CE decision (managed vs unmanaged)</div>
+        <div class="card-sub">We automatically match your listing to a C template.</div>
+    
+        <div class="field">
+          <label>Select a scenario (for demo)</label>
+          <select id="cScenarioSelect">
+            <option value="full">Complete match (silent)</option>
+            <option value="none">No match (silent)</option>
+            <option value="partial">Partial match (ask)</option>
+          </select>
+        </div>
+    
+        <div class="btn-row">
+          <button class="btn primary" onclick="handleCDecision()">Continue</button>
+        </div>
+      `;
+    
+      document.getElementById("cScenarioSelect").value = state.cScenario;
+    
+      document.getElementById("cScenarioSelect").addEventListener("change", (e) => {
+        state.cScenario = e.target.value;
+      });
+    }
+    
+    /* ---------------------------------------------------------
+       C DECISION LOGIC
+    --------------------------------------------------------- */
+    function handleCDecision() {
+      if (state.cScenario === "partial") {
+        openCModal();
+      } else {
+        setStep("basic");
+      }
+    }
+    
+    function openCModal() {
+      cModal.style.display = "flex";
+    }
+    function closeCModal() {
+      cModal.style.display = "none";
+    }
+    function confirmCChoice() {
+      closeCModal();
+      setStep("basic");
+    }
+    
+    /* ---------------------------------------------------------
+       BASIC (UNIFIED) VIEW
+    --------------------------------------------------------- */
+    function renderBasic() {
+      viewCard.innerHTML = `
+        <div class="card-title">Basic details</div>
+        <div class="card-sub">From here on, all routes share the same unified flow.</div>
+    
+        <div class="field">
+          <label>Experience title</label>
+          <input value="Burj Khalifa At The Top + Aquarium"/>
+        </div>
+    
+        <div class="field">
+          <label>Short description</label>
+          <textarea>Visit two iconic attractions with one ticket.</textarea>
+        </div>
+    
+        <div class="btn-row">
+          <button class="btn primary" onclick="setStep('highlights')">Continue</button>
+        </div>
+      `;
+    }
+    
+    /* ---------------------------------------------------------
+       PLACEHOLDER FOR REST OF UNIFIED FLOW
+    --------------------------------------------------------- */
+    function renderPlaceholder(step) {
+      viewCard.innerHTML = `
+        <div class="card-title">${label(step)}</div>
+        <div class="card-sub">Unified flow section – same for AI, 360, and manual.</div>
+    
+        <div class="field">
+          <label>${label(step)} content</label>
+          <textarea placeholder="Form fields for ${label(step)} go here..."></textarea>
+        </div>
+    
+        <div class="btn-row">
+          <button class="btn primary" onclick="goNext()">Continue</button>
+        </div>
+      `;
+    }
+    
+    /* ---------------------------------------------------------
+       STEP NAV (NEXT)
+    --------------------------------------------------------- */
+    function goNext() {
+      const idx = state.stepsOrder.indexOf(state.step);
+      if (idx < state.stepsOrder.length - 1) {
+        setStep(state.stepsOrder[idx + 1]);
+      }
+    }
+    
+    /* ---------------------------------------------------------
+       SWITCH HELPERS (360 → AI / manual only)
+    --------------------------------------------------------- */
+    function switchToAI() {
+      state.route = "ai";
+      [...routeToggle.children].forEach(b => b.classList.toggle("active", b.dataset.route === "ai"));
+      setStep("source");
+    }
+    function switchToManual() {
+      state.route = "manual";
+      [...routeToggle.children].forEach(b => b.classList.toggle("active", b.dataset.route === "manual"));
+      setStep("source");
+    }
+    
+    /* ---------------------------------------------------------
+       INIT
+    --------------------------------------------------------- */
+    setStep("source");
+    </script>
+    </body>
+    </html>

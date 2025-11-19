@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hub • Add New Experience – Prototype A (Vertical Nav)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --hub-bg: #f5f5f8;
+      --hub-surface: #ffffff;
+      --hub-accent: #8000ff;
+      --hub-accent-soft: rgba(128, 0, 255, 0.07);
+      --hub-border: #e0e0ea;
+      --hub-text: #1f1f2b;
+      --hub-text-muted: #6a6a7a;
+      --hub-danger: #e53935;
+      --hub-radius-lg: 16px;
+      --hub-radius-md: 10px;
+      --hub-radius-pill: 999px;
+      --hub-shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+      --hub-shadow-subtle: 0 1px 3px rgba(15, 23, 42, 0.12);
+      --hub-step-size: 32px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #faf5ff, #f5f5f8 40%);
+      color: var(--hub-text);
+    }
+
+    /* Layout */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 24px;
+      background: #ffffffdd;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--hub-border);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .app-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 20% 20%, #ffb3ff, #8000ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      box-shadow: var(--hub-shadow-subtle);
+    }
+
+    .logo span {
+      transform: translateY(1px);
+    }
+
+    .app-title {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-title-main {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .app-title-sub {
+      font-size: 11px;
+      color: var(--hub-text-muted);
+    }
+
+    .app-header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pill-badge {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: var(--hub-radius-pill);
+      background: var(--hub-accent-soft);
+      color: var(--hub-accent);
+      border: 1px solid rgba(128, 0, 255, 0.18);
+    }
+
+    .route-toggle {
+      display: inline-flex;
+      border-radius: var(--hub-radius-pill);
+      padding: 2px;
+      background: #f2edf9;
+      border: 1px solid rgba(128, 0, 255, 0.2);
+      box-shadow: var(--hub-shadow-subtle);
+    }
+
+    .route-toggle button {
+      border: none;
+      background: transparent;
+      padding: 6px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      border-radius: var(--hub-radius-pill);
+      color: var(--hub-text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .route-toggle button.active {
+      background: #ffffff;
+      color: var(--hub-accent);
+      box-shadow: 0 0 0 1px rgba(128, 0, 255, 0.18);
+    }
+
+    .route-toggle button span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--hub-accent);
+    }
+
+    .app-main {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      padding: 16px 18px;
+      gap: 16px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: var(--hub-radius-lg);
+      padding: 12px 12px 14px;
+      box-shadow: var(--hub-shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--hub-text-muted);
+      letter-spacing: 0.08em;
+      margin: 6px 6px 2px;
+    }
+
+    .sidebar-step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--hub-text-muted);
+      transition: background 0.15s, color 0.15s, transform 0.05s;
+      position: relative;
+    }
+
+    .sidebar-step:hover {
+      background: #f2edf9;
+      color: var(--hub-text);
+    }
+
+    .sidebar-step.active {
+      background: var(--hub-accent-soft);
+      color: var(--hub-accent);
+    }
+
+    .sidebar-step.disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .step-index {
+      width: var(--hub-step-size);
+      height: var(--hub-step-size);
+      border-radius: 999px;
+      border: 1px solid #d3c6f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      background: #f9f7ff;
+    }
+
+    .sidebar-step.active .step-index {
+      border-color: transparent;
+      background: radial-gradient(circle at 30% 30%, #ffb3ff, #8000ff);
+      color: #ffffff;
+    }
+
+    .step-label {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .step-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(128, 0, 255, 0.2);
+      color: var(--hub-accent);
+      background: #fbf7ff;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px dashed #e0d7f5;
+      font-size: 11px;
+      color: var(--hub-text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-footer span.route-label {
+      font-weight: 600;
+      color: var(--hub-accent);
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .content-card {
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: var(--hub-radius-lg);
+      padding: 16px 18px;
+      box-shadow: var(--hub-shadow-soft);
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .content-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .content-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .content-subtitle {
+      font-size: 12px;
+      color: var(--hub-text-muted);
+    }
+
+    .chips {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .chip {
+      border-radius: var(--hub-radius-pill);
+      border: 1px solid var(--hub-border);
+      padding: 3px 8px;
+      font-size: 11px;
+      color: var(--hub-text-muted);
+      background: #fafafa;
+    }
+
+    .chip.highlight {
+      border-color: rgba(128, 0, 255, 0.28);
+      color: var(--hub-accent);
+      background: #f5ebff;
+    }
+
+    .pill-info {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: var(--hub-radius-pill);
+      background: #f8fafc;
+      border: 1px dashed #d2d7e3;
+      color: var(--hub-text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-info strong {
+      color: var(--hub-text);
+    }
+
+    .pill-danger {
+      border-color: rgba(229, 57, 53, 0.35);
+      background: #fff4f4;
+      color: #c62828;
+    }
+
+    .badge-quiet {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: var(--hub-text-muted);
+    }
+
+    .content-body {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .content-full {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .field-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--hub-text-muted);
+    }
+
+    .field-input,
+    .field-textarea,
+    .field-select {
+      border-radius: 10px;
+      border: 1px solid #dde0ec;
+      padding: 7px 9px;
+      font-size: 12px;
+      font-family: inherit;
+      width: 100%;
+      resize: vertical;
+      background: #fbfbff;
+    }
+
+    .field-textarea {
+      min-height: 70px;
+    }
+
+    .field-input:focus,
+    .field-textarea:focus,
+    .field-select:focus {
+      outline: none;
+      border-color: rgba(128, 0, 255, 0.7);
+      box-shadow: 0 0 0 1px rgba(128, 0, 255, 0.12);
+      background: #ffffff;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--hub-text-muted);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      border: 1px solid transparent;
+      background: #f3f4ff;
+      color: var(--hub-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--hub-shadow-subtle);
+    }
+
+    .btn.primary {
+      background: var(--hub-accent);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .btn.secondary {
+      background: #ffffff;
+      border-color: var(--hub-border);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      color: var(--hub-text-muted);
+      padding-inline: 4px;
+    }
+
+    .btn.small {
+      padding: 4px 9px;
+      font-size: 11px;
+      box-shadow: none;
+      background: #f4f3ff;
+    }
+
+    .btn.warning {
+      background: #fff4f4;
+      border-color: rgba(229, 57, 53, 0.4);
+      color: #c62828;
+    }
+
+    .btn-icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.95);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      box-shadow: 0 0 0 1px rgba(128, 0, 255, 0.2);
+    }
+
+    /* Timeline / side panel in content */
+    .side-panel {
+      border-radius: 12px;
+      border: 1px dashed #e0d7f5;
+      padding: 10px;
+      background: #fbf8ff;
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .side-panel-title {
+      font-weight: 600;
+      font-size: 11px;
+      color: var(--hub-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .timeline {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+
+    .timeline-dot {
+      margin-top: 3px;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #c7b4ff;
+      flex-shrink: 0;
+    }
+
+    .timeline-content {
+      flex: 1;
+    }
+
+    .timeline-title {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .timeline-desc {
+      font-size: 11px;
+      color: var(--hub-text-muted);
+    }
+
+    /* Subtle footer */
+    .content-footer {
+      font-size: 11px;
+      color: var(--hub-text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .breadcrumbs {
+      font-size: 11px;
+      color: var(--hub-text-muted);
+    }
+
+    .breadcrumbs span.current {
+      color: var(--hub-accent);
+      font-weight: 500;
+    }
+
+    /* C-decision pill area */
+    .c-status {
+      display: inline-flex;
+      padding: 3px 8px;
+      border-radius: var(--hub-radius-pill);
+      border: 1px dashed #d0c2ff;
+      background: #fbf8ff;
+      font-size: 11px;
+      color: var(--hub-text-muted);
+      gap: 6px;
+      align-items: center;
+    }
+
+    .c-status span.key {
+      font-weight: 500;
+      color: var(--hub-text);
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 16px 18px 14px;
+      width: 380px;
+      max-width: calc(100% - 32px);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.32);
+      border: 1px solid #ebe5ff;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--hub-text-muted);
+    }
+
+    .modal-close {
+      border-radius: 999px;
+      border: none;
+      background: #f8f6ff;
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--hub-text-muted);
+    }
+
+    .modal-body {
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .modal-options {
+      border-radius: 10px;
+      border: 1px solid #eee6ff;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      background: #fbf9ff;
+    }
+
+    .modal-option {
+      display: flex;
+      gap: 6px;
+      padding: 5px 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      align-items: flex-start;
+    }
+
+    .modal-option:hover {
+      background: #f3ecff;
+    }
+
+    .modal-option input {
+      margin-top: 3px;
+    }
+
+    .modal-option-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .modal-option-title {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .modal-option-desc {
+      font-size: 11px;
+      color: var(--hub-text-muted);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 960px) {
+      .app-main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+        padding: 8px;
+      }
+      .sidebar-step {
+        min-width: 130px;
+      }
+      .content-card {
+        min-height: 0;
+      }
+      .content-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-header">
+    <div class="app-header-left">
+      <div class="logo"><span>H</span></div>
+      <div class="app-title">
+        <div class="app-title-main">Add a new experience</div>
+        <div class="app-title-sub">Prototype A · Vertical navigation · AI &amp; 360 routes</div>
+      </div>
+    </div>
+    <div class="app-header-right">
+      <span class="pill-badge">Internal concept preview</span>
+      <div class="route-toggle" id="routeToggle">
+        <button data-route="ai" class="active">
+          <span class="dot"></span> AI-assisted
+        </button>
+        <button data-route="360">
+          <span class="dot" style="background:#ff8a00;"></span> 360 listing
+        </button>
+        <button data-route="manual">
+          <span class="dot" style="background:#64748b;"></span> Manual
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section-title">Prepare</div>
+
+      <div class="sidebar-step" data-step="source">
+        <div class="step-index">1</div>
+        <div class="step-label">Source &amp; import</div>
+        <span class="step-tag">Route-specific</span>
+      </div>
+
+      <div class="sidebar-step" data-step="prefill">
+        <div class="step-index">2</div>
+        <div class="step-label">Prefill / sync review</div>
+      </div>
+
+      <div class="sidebar-step" data-step="c-decision">
+        <div class="step-index">3</div>
+        <div class="step-label">C decision (managed vs unmanaged)</div>
+      </div>
+
+      <div class="sidebar-section-title">Listing details</div>
+
+      <div class="sidebar-step" data-step="basic">
+        <div class="step-index">4</div>
+        <div class="step-label">Basic details</div>
+      </div>
+      <div class="sidebar-step" data-step="highlights">
+        <div class="step-index">5</div>
+        <div class="step-label">Highlights</div>
+      </div>
+      <div class="sidebar-step" data-step="description">
+        <div class="step-index">6</div>
+        <div class="step-label">Description</div>
+      </div>
+      <div class="sidebar-step" data-step="itinerary">
+        <div class="step-index">7</div>
+        <div class="step-label">Itinerary (if applicable)</div>
+      </div>
+      <div class="sidebar-step" data-step="guidelines">
+        <div class="step-index">8</div>
+        <div class="step-label">Guidelines / Know before you go</div>
+      </div>
+      <div class="sidebar-step" data-step="meeting">
+        <div class="step-index">9</div>
+        <div class="step-label">Meeting / Redemption point</div>
+      </div>
+      <div class="sidebar-step" data-step="media">
+        <div class="step-index">10</div>
+        <div class="step-label">Media</div>
+      </div>
+      <div class="sidebar-step" data-step="variants">
+        <div class="step-index">11</div>
+        <div class="step-label">Variants &amp; options</div>
+      </div>
+      <div class="sidebar-step" data-step="pricing">
+        <div class="step-index">12</div>
+        <div class="step-label">Pricing &amp; taxes</div>
+      </div>
+      <div class="sidebar-step" data-step="schedule">
+        <div class="step-index">13</div>
+        <div class="step-label">Schedule &amp; slots</div>
+      </div>
+      <div class="sidebar-step" data-step="inventory">
+        <div class="step-index">14</div>
+        <div class="step-label">Inventory</div>
+      </div>
+      <div class="sidebar-step" data-step="review">
+        <div class="step-index">15</div>
+        <div class="step-label">Review &amp; submit</div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div>
+          Current route: <span class="route-label" id="sidebarRouteLabel">AI-assisted</span>
+        </div>
+        <div>
+          Steps 1–3 change based on route. Steps 4–15 are identical for all routes.
+        </div>
+      </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <section class="content">
+      <div class="content-card">
+        <div class="content-header">
+          <div class="content-title-group">
+            <div class="content-title" id="contentTitle">Upload your source</div>
+            <div class="content-subtitle" id="contentSubtitle">
+              We’ll use AI to parse your document and prefill the listing for you.
+            </div>
+          </div>
+          <div class="chips" id="chips">
+            <span class="chip highlight" id="chipRoute">AI-assisted route</span>
+            <span class="chip" id="chipStep">Step 1 · Source &amp; import</span>
+          </div>
+        </div>
+
+        <!-- ROUTE-SPECIFIC CONTENT -->
+        <div id="view-source" class="content-body">
+          <!-- MAIN AREA -->
+          <div>
+            <div class="pill-info" id="sourceHint">
+              <strong>AI will do the heavy lifting.</strong>
+              Drop in any source and we’ll extract the right fields.
+            </div>
+
+            <!-- AI ROUTE SOURCE -->
+            <div class="content-full route-panel" data-route-panel="ai">
+              <div class="field-group">
+                <div class="field-label">Upload a source</div>
+                <div class="btn-row">
+                  <button class="btn primary small">
+                    <span class="btn-icon">↑</span> Upload PDF / doc
+                  </button>
+                  <button class="btn small secondary">
+                    <span class="btn-icon">🔗</span> Paste website or product URL
+                  </button>
+                  <button class="btn small secondary">
+                    <span class="btn-icon">🖼</span> Use images &amp; media
+                  </button>
+                </div>
+                <div class="hint">
+                  We’ll parse the content, identify the right C, and prefill your listing. You can edit everything later.
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Commission (%)</div>
+                <input class="field-input" placeholder="e.g. 20" />
+                <div class="hint">This will help us prefill pricing logic later in the flow.</div>
+              </div>
+            </div>
+
+            <!-- 360 ROUTE SOURCE -->
+            <div class="content-full route-panel" data-route-panel="360" style="display:none;">
+              <div class="field-group">
+                <div class="field-label">Enter product code from your 360 provider</div>
+                <input class="field-input" placeholder="e.g. VENTRATA · 12345-ABC" />
+                <div class="hint">We’ll fetch the experience details, options, media, and schedules from your connected provider.</div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Commission (%)</div>
+                <input class="field-input" placeholder="e.g. 20" />
+                <div class="hint">This will help us prefill pricing logic later in the flow.</div>
+              </div>
+              <div class="btn-row">
+                <button class="btn primary small">
+                  Fetch from 360
+                </button>
+                <button class="btn small warning" id="btn360ToAI">
+                  Switch to AI-assisted listing
+                </button>
+                <button class="btn small secondary" id="btn360ToManual">
+                  Switch to manual listing
+                </button>
+              </div>
+              <div class="pill-info pill-danger">
+                <strong>Heads up</strong> Switching away from 360 will reset this step and you’ll start fresh in AI or manual flow.
+              </div>
+            </div>
+
+            <!-- MANUAL ROUTE SOURCE -->
+            <div class="content-full route-panel" data-route-panel="manual" style="display:none;">
+              <div class="field-group">
+                <div class="field-label">Experience name</div>
+                <input class="field-input" placeholder="e.g. Dubai Desert Safari with BBQ Dinner" />
+              </div>
+              <div class="field-group">
+                <div class="field-label">Category &amp; subcategory</div>
+                <select class="field-select">
+                  <option>Desert Safari · Adventure</option>
+                  <option>City Tours · Guided tours</option>
+                  <option>Cruises &amp; Water · Sightseeing cruises</option>
+                  <option>Theme parks · Full-day</option>
+                </select>
+                <div class="hint">
+                  These values will be used to run the C decision and decide if your listing is managed or unmanaged.
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Commission (%)</div>
+                <input class="field-input" placeholder="e.g. 20" />
+                <div class="hint">This will help us prefill pricing logic later in the flow.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIDE PANEL -->
+          <aside class="side-panel">
+            <div class="side-panel-title">What happens in this step?</div>
+            <ul class="timeline" id="sourceTimeline">
+              <!-- Filled dynamically -->
+            </ul>
+          </aside>
+        </div>
+
+        <!-- PREFILL / SYNC REVIEW -->
+        <div id="view-prefill" class="content-body" style="display:none;">
+          <div>
+            <div class="pill-info" id="prefillHint">
+              <strong>Quick sanity check.</strong>
+              Confirm that we’ve interpreted your content correctly before we lock in the basics.
+            </div>
+
+            <div class="content-full route-panel" data-route-panel="ai">
+              <div class="field-group">
+                <div class="field-label">Detected experience title</div>
+                <input class="field-input" value="Burj Khalifa At The Top + Dubai Aquarium Combo" />
+                <div class="hint">You’ll be able to refine this again in “Basic details”.</div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Detected category</div>
+                <input class="field-input" value="Landmarks &amp; Monuments · Observatories" />
+              </div>
+              <div class="field-group">
+                <div class="field-label">Snapshot of extracted content</div>
+                <textarea class="field-textarea">Highlights, inclusions, redemption info and policies have been extracted from your PDF. We’ll map them into the right fields for you in the next steps.</textarea>
+              </div>
+            </div>
+
+            <div class="content-full route-panel" data-route-panel="360" style="display:none;">
+              <div class="field-group">
+                <div class="field-label">Fetched product</div>
+                <div class="pill-info">
+                  <strong>VENTRATA · #12345-ABC</strong> · Dubai Big Bus Hop-On Hop-Off 24H Classic
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">What we’ll import</div>
+                <ul class="timeline">
+                  <li class="timeline-item">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Core content</div>
+                      <div class="timeline-desc">Title, descriptions, and inclusions/exclusions.</div>
+                    </div>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Options &amp; variants</div>
+                      <div class="timeline-desc">Ticket types, duration, and language options.</div>
+                    </div>
+                  </li>
+                  <li class="timeline-item">
+                    <span class="timeline-dot"></span>
+                    <div class="timeline-content">
+                      <div class="timeline-title">Media &amp; schedules</div>
+                      <div class="timeline-desc">Gallery, operating hours, and core timetable.</div>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <div class="btn-row">
+                <button class="btn primary small">Looks good · Continue</button>
+                <button class="btn small warning" id="btn360PrefillToAI">Switch to AI-assisted instead</button>
+                <button class="btn small secondary" id="btn360PrefillToManual">Switch to manual instead</button>
+              </div>
+            </div>
+
+            <div class="content-full route-panel" data-route-panel="manual" style="display:none;">
+              <div class="field-group">
+                <div class="field-label">You’re in manual mode</div>
+                <div class="pill-info">
+                  You’ll key in all details yourself. We’ll still guide you step by step.
+                </div>
+              </div>
+              <div class="field-group">
+                <div class="field-label">What comes next</div>
+                <div class="hint">
+                  Next, we’ll run a C decision to see if your experience falls under a managed template, and then you’ll fill in the listing fields.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="side-panel">
+            <div class="side-panel-title">Flow context</div>
+            <ul class="timeline">
+              <li class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">AI route</div>
+                  <div class="timeline-desc">Verify that our extraction is directionally correct.</div>
+                </div>
+              </li>
+              <li class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">360 route</div>
+                  <div class="timeline-desc">Confirm we’ve fetched the right product from your provider before mapping fields.</div>
+                </div>
+              </li>
+            </ul>
+          </aside>
+        </div>
+
+        <!-- C DECISION -->
+        <div id="view-c-decision" class="content-body" style="display:none;">
+          <div>
+            <div class="pill-info">
+              <strong>We’ve done a C match in the background.</strong>
+              This decides whether your listing is managed or unmanaged.
+            </div>
+
+            <div class="content-full">
+              <div class="field-group">
+                <div class="field-label">Experience detected</div>
+                <input class="field-input" value="Burj Khalifa At The Top + Dubai Aquarium Combo" />
+              </div>
+              <div class="field-group">
+                <div class="field-label">C outcome scenario</div>
+                <select class="field-select" id="cScenarioSelect">
+                  <option value="full">Complete match (silent)</option>
+                  <option value="none">No match (silent)</option>
+                  <option value="partial">Partial match (ask SP to choose)</option>
+                </select>
+                <div class="hint">
+                  Use this dropdown just for demo · it simulates different C-decision behaviors.
+                </div>
+              </div>
+
+              <div class="field-group">
+                <div class="field-label">Current state</div>
+                <div id="cStatusDisplay" class="c-status">
+                  <span class="key">Complete match</span> · Listing will follow managed template silently.
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button class="btn primary small" id="btnTriggerCModal">
+                  Continue to listing details
+                </button>
+                <button class="btn small secondary" onclick="goToStep('basic')">
+                  Skip ahead for demo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="side-panel">
+            <div class="side-panel-title">C behavior</div>
+            <ul class="timeline">
+              <li class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">Complete match</div>
+                  <div class="timeline-desc">
+                    We silently tag the listing to a C template. SP sees no modal, potentially a small label.
+                  </div>
+                </div>
+              </li>
+              <li class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">No match</div>
+                  <div class="timeline-desc">
+                    Listing becomes unmanaged. SP can edit everything. No modal is shown.
+                  </div>
+                </div>
+              </li>
+              <li class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">Partial match</div>
+                  <div class="timeline-desc">
+                    We show a lightweight picker so SP can choose between 2–3 Cs or continue unmanaged.
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </aside>
+        </div>
+
+        <!-- BASIC DETAILS (UNIFIED FLOW) -->
+        <div id="view-basic" class="content-body" style="display:none;">
+          <div>
+            <div class="pill-info">
+              <strong>Unified flow starts here.</strong>
+              From this step onwards, the experience is identical for AI, 360, and manual.
+            </div>
+
+            <div class="content-full">
+              <div class="field-group">
+                <div class="field-label">Experience title</div>
+                <input class="field-input" value="Burj Khalifa At The Top + Dubai Aquarium Combo" />
+              </div>
+              <div class="field-group">
+                <div class="field-label">Short description</div>
+                <textarea class="field-textarea">Visit two of Dubai’s most iconic attractions with a single ticket: soar to the observation deck at Burj Khalifa and explore the immersive underwater world at Dubai Aquarium &amp; Underwater Zoo.</textarea>
+              </div>
+              <div class="field-group">
+                <div class="field-label">Category &amp; subcategory</div>
+                <input class="field-input" value="Landmarks &amp; Monuments · Combo tickets" />
+              </div>
+            </div>
+          </div>
+
+          <aside class="side-panel">
+            <div class="side-panel-title">Why this step is shared</div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">AI, 360, and manual converge</div>
+                  <div class="timeline-desc">
+                    Regardless of how we sourced the content, SPs now interact with the same UX and the same fields.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- SIMPLE PLACEHOLDER VIEWS FOR OTHER STEPS -->
+        <div id="view-placeholder" class="content-body" style="display:none;">
+          <div>
+            <div class="pill-info">
+              This is a placeholder for this step in the unified flow. In the real implementation, the detailed form lives here.
+            </div>
+            <div class="content-full">
+              <div class="field-group">
+                <div class="field-label" id="placeholderLabel">Section</div>
+                <textarea class="field-textarea" placeholder="Imagine the full form for this section here (options, slots, pricing etc.)."></textarea>
+              </div>
+            </div>
+          </div>
+          <aside class="side-panel">
+            <div class="side-panel-title">Unified UX</div>
+            <div class="timeline">
+              <div class="timeline-item">
+                <span class="timeline-dot"></span>
+                <div class="timeline-content">
+                  <div class="timeline-title">Same navigation pattern</div>
+                  <div class="timeline-desc">
+                    Vertical menu persists. Only the content of this panel changes per step.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="content-footer">
+          <div class="breadcrumbs">
+            Prepare &gt; <span id="crumbSection">Source &amp; import</span>
+            · Route: <span id="crumbRoute">AI-assisted</span>
+          </div>
+          <div>
+            <button class="btn ghost small" onclick="goPrevStep()">Back</button>
+            <button class="btn primary small" onclick="goNextStep()">Continue</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- C-PARTIAL MODAL -->
+  <div class="modal-backdrop" id="cModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Pick the closest match for your experience</div>
+          <div class="modal-subtitle">
+            We found a few candidate Cs that could fit. Choose the one that best represents this listing.
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeCModal()">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-options">
+          <label class="modal-option">
+            <input type="radio" name="cOption" value="C1" checked />
+            <div class="modal-option-label">
+              <div class="modal-option-title">C1 · Burj Khalifa &amp; Observation Decks</div>
+              <div class="modal-option-desc">
+                For skyline observatory experiences in Dubai with timed entry and single tower.
+              </div>
+            </div>
+          </label>
+          <label class="modal-option">
+            <input type="radio" name="cOption" value="C2" />
+            <div class="modal-option-label">
+              <div class="modal-option-title">C2 · Dubai Combos &amp; Multi-Attraction passes</div>
+              <div class="modal-option-desc">
+                For combinations of two or more iconic attractions in one ticket.
+              </div>
+            </div>
+          </label>
+          <label class="modal-option">
+            <input type="radio" name="cOption" value="unmanaged" />
+            <div class="modal-option-label">
+              <div class="modal-option-title">None of these · Continue as unmanaged</div>
+              <div class="modal-option-desc">
+                We’ll keep everything unlocked and won’t attach this to a C template.
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn small secondary" onclick="closeCModal()">Cancel</button>
+        <button class="btn small primary" onclick="confirmCChoice()">Confirm &amp; continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const state = {
+    route: 'ai',           // 'ai' | '360' | 'manual'
+    step: 'source',        // sidebar data-step value
+    stepsOrder: [
+      'source',
+      'prefill',
+      'c-decision',
+      'basic',
+      'highlights',
+      'description',
+      'itinerary',
+      'guidelines',
+      'meeting',
+      'media',
+      'variants',
+      'pricing',
+      'schedule',
+      'inventory',
+      'review'
+    ],
+    cScenario: 'full'      // 'full' | 'none' | 'partial'
+  };
+
+  const routeToggle = document.getElementById('routeToggle');
+  const sidebarSteps = Array.from(document.querySelectorAll('.sidebar-step'));
+  const sidebarRouteLabel = document.getElementById('sidebarRouteLabel');
+  const contentTitle = document.getElementById('contentTitle');
+  const contentSubtitle = document.getElementById('contentSubtitle');
+  const chipRoute = document.getElementById('chipRoute');
+  const chipStep = document.getElementById('chipStep');
+  const crumbSection = document.getElementById('crumbSection');
+  const crumbRoute = document.getElementById('crumbRoute');
+  const sourceTimeline = document.getElementById('sourceTimeline');
+  const sourceHint = document.getElementById('sourceHint');
+  const prefillHint = document.getElementById('prefillHint');
+  const placeholderLabel = document.getElementById('placeholderLabel');
+
+  const views = {
+    source: document.getElementById('view-source'),
+    prefill: document.getElementById('view-prefill'),
+    'c-decision': document.getElementById('view-c-decision'),
+    basic: document.getElementById('view-basic'),
+    placeholders: document.getElementById('view-placeholder')
+  };
+
+  const cScenarioSelect = document.getElementById('cScenarioSelect');
+  const cStatusDisplay = document.getElementById('cStatusDisplay');
+  const cModal = document.getElementById('cModal');
+  const btnTriggerCModal = document.getElementById('btnTriggerCModal');
+
+  function setRoute(route) {
+    state.route = route;
+    // update toggle
+    Array.from(routeToggle.querySelectorAll('button')).forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.route === route);
+    });
+    // update route label
+    sidebarRouteLabel.textContent =
+      route === 'ai'
+        ? 'AI-assisted'
+        : route === '360'
+          ? '360 listing'
+          : 'Manual';
+    crumbRoute.textContent = sidebarRouteLabel.textContent;
+    // reset to source step when route changes
+    setStep('source');
+  }
+
+  function setStep(step) {
+    state.step = step;
+    // update sidebar
+    sidebarSteps.forEach(s => {
+      s.classList.toggle('active', s.dataset.step === step);
+    });
+
+    // show/hide views
+    Object.values(views).forEach(v => v.style.display = 'none');
+    if (step === 'source') {
+      views.source.style.display = 'grid';
+    } else if (step === 'prefill') {
+      views.prefill.style.display = 'grid';
+    } else if (step === 'c-decision') {
+      views['c-decision'].style.display = 'grid';
+    } else if (step === 'basic') {
+      views.basic.style.display = 'grid';
+    } else {
+      views.placeholders.style.display = 'grid';
+    }
+
+    updateContentForStep(step);
+  }
+
+  function updateContentForStep(step) {
+    // route-specific panels in source/prefill
+    document.querySelectorAll('.route-panel').forEach(p => {
+      const panelRoute = p.getAttribute('data-route-panel');
+      p.style.display = panelRoute === state.route ? 'flex' : 'none';
+    });
+
+    // update header & chips & crumb
+    crumbSection.textContent = stepLabel(step);
+    chipStep.textContent = `Step ${stepIndex(step)} · ${stepLabel(step)}`;
+    chipRoute.textContent =
+      state.route === 'ai'
+        ? 'AI-assisted route'
+        : state.route === '360'
+          ? '360 route'
+          : 'Manual route';
+
+    if (step === 'source') {
+      if (state.route === 'ai') {
+        contentTitle.textContent = 'Upload your source';
+        contentSubtitle.textContent = 'We’ll parse your content and prefill your listing with AI.';
+        sourceHint.innerHTML = '<strong>AI will do the heavy lifting.</strong> Drop in any source and we’ll extract the right fields.';
+        sourceTimeline.innerHTML = `
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Collect content</div>
+              <div class="timeline-desc">PDFs, URLs, decks – anything an SP already has.</div>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Run AI parsing</div>
+              <div class="timeline-desc">We map unstructured text to Headout fields.</div>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Prepare C decision</div>
+              <div class="timeline-desc">Name + category from this step are later used for managed/unmanaged logic.</div>
+            </div>
+          </li>
+        `;
+      } else if (state.route === '360') {
+        contentTitle.textContent = 'Connect via product code';
+        contentSubtitle.textContent = 'We’ll pull your experience details directly from your 360 provider.';
+        sourceHint.innerHTML = '<strong>360 pulls structured content.</strong> We’ll still run it through the same listing UX.';
+        sourceTimeline.innerHTML = `
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Identify the right product</div>
+              <div class="timeline-desc">Match the code from Ventrata or another provider.</div>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Fetch structured data</div>
+              <div class="timeline-desc">Core content, options, media and basic schedules.</div>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Allow escape hatch</div>
+              <div class="timeline-desc">SP can still fall back to AI or manual if 360 doesn’t look right.</div>
+            </div>
+          </li>
+        `;
+      } else {
+        contentTitle.textContent = 'Start from scratch';
+        contentSubtitle.textContent = 'Key in the basics yourself – we’ll still guide the rest of the flow.';
+        sourceHint.innerHTML = '<strong>Manual gives full control.</strong> We’ll still layer the same C logic and fields on top.';
+        sourceTimeline.innerHTML = `
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Name &amp; classify</div>
+              <div class="timeline-desc">SP provides name and selects category/subcategory.</div>
+            </div>
+          </li>
+          <li class="timeline-item">
+            <span class="timeline-dot"></span>
+            <div class="timeline-content">
+              <div class="timeline-title">Run C decision</div>
+              <div class="timeline-desc">We decide if this can attach to an existing template or stay unmanaged.</div>
+            </div>
+          </li>
+        `;
+      }
+    } else if (step === 'prefill') {
+      if (state.route === 'ai') {
+        contentTitle.textContent = 'Review AI prefill';
+        contentSubtitle.textContent = 'Check that the extracted title and category look correct.';
+        prefillHint.innerHTML = '<strong>Lightweight review.</strong> You don’t need to polish here – just fix big misses.';
+      } else if (state.route === '360') {
+        contentTitle.textContent = 'Review 360 import';
+        contentSubtitle.textContent = 'Confirm we fetched the right product and data from your provider.';
+        prefillHint.innerHTML = '<strong>Safety check.</strong> If this isn’t the right product, SP can switch to AI or manual.';
+      } else {
+        contentTitle.textContent = 'Manual prep';
+        contentSubtitle.textContent = 'You’re not importing anything – we’ll move you straight into the unified fields.';
+        prefillHint.innerHTML = '<strong>No prefill here.</strong> This step is effectively a spacer in manual flow.';
+      }
+    } else if (step === 'c-decision') {
+      contentTitle.textContent = 'C decision (managed vs unmanaged)';
+      contentSubtitle.textContent = 'Based on the name and category, we try to attach your listing to the right C template.';
+    } else if (step === 'basic') {
+      contentTitle.textContent = 'Basic details';
+      contentSubtitle.textContent = 'From here on, AI, 360, and manual share the exact same UX and fields.';
+    } else {
+      contentTitle.textContent = stepLabel(step);
+      contentSubtitle.textContent = 'Unified listing step – identical across all routes.';
+      placeholderLabel.textContent = stepLabel(step);
+    }
+  }
+
+  function stepIndex(step) {
+    return state.stepsOrder.indexOf(step) + 1;
+  }
+
+  function stepLabel(step) {
+    switch (step) {
+      case 'source': return 'Source & import';
+      case 'prefill': return 'Prefill / sync review';
+      case 'c-decision': return 'C decision (managed vs unmanaged)';
+      case 'basic': return 'Basic details';
+      case 'highlights': return 'Highlights';
+      case 'description': return 'Description';
+      case 'itinerary': return 'Itinerary';
+      case 'guidelines': return 'Guidelines / Know before you go';
+      case 'meeting': return 'Meeting / Redemption point';
+      case 'media': return 'Media';
+      case 'variants': return 'Variants & options';
+      case 'pricing': return 'Pricing & taxes';
+      case 'schedule': return 'Schedule & slots';
+      case 'inventory': return 'Inventory';
+      case 'review': return 'Review & submit';
+      default: return 'Step';
+    }
+  }
+
+  function goToStep(step) {
+    setStep(step);
+  }
+
+  function goNextStep() {
+    const idx = state.stepsOrder.indexOf(state.step);
+    if (idx < state.stepsOrder.length - 1) {
+      setStep(state.stepsOrder[idx + 1]);
+    }
+  }
+
+  function goPrevStep() {
+    const idx = state.stepsOrder.indexOf(state.step);
+    if (idx > 0) {
+      setStep(state.stepsOrder[idx - 1]);
+    }
+  }
+
+  // C scenario handling
+  cScenarioSelect.addEventListener('change', () => {
+    state.cScenario = cScenarioSelect.value;
+    refreshCStatus();
+  });
+
+  function refreshCStatus() {
+    if (state.cScenario === 'full') {
+      cStatusDisplay.innerHTML =
+        '<span class="key">Complete match</span> · Listing will follow a managed C template silently.';
+    } else if (state.cScenario === 'none') {
+      cStatusDisplay.innerHTML =
+        '<span class="key">No C match</span> · Listing will be treated as unmanaged. SP can edit everything.';
+    } else {
+      cStatusDisplay.innerHTML =
+        '<span class="key">Partial match</span> · We\'ll ask SP to choose from 2–3 C options before continuing.';
+    }
+  }
+
+  btnTriggerCModal.addEventListener('click', () => {
+    if (state.cScenario === 'partial') {
+      openCModal();
+    } else {
+      // full or none are silent; just move on
+      setStep('basic');
+    }
+  });
+
+  function openCModal() {
+    cModal.style.display = 'flex';
+  }
+
+  function closeCModal() {
+    cModal.style.display = 'none';
+  }
+
+  function confirmCChoice() {
+    closeCModal();
+    setStep('basic');
+  }
+
+  // Route toggle listeners
+  routeToggle.addEventListener('click', (e) => {
+    if (e.target.closest('button')) {
+      const btn = e.target.closest('button');
+      const route = btn.dataset.route;
+      setRoute(route);
+    }
+  });
+
+  // 360 switch buttons
+  const btn360ToAI = document.getElementById('btn360ToAI');
+  const btn360ToManual = document.getElementById('btn360ToManual');
+  const btn360PrefillToAI = document.getElementById('btn360PrefillToAI');
+  const btn360PrefillToManual = document.getElementById('btn360PrefillToManual');
+
+  if (btn360ToAI) {
+    btn360ToAI.addEventListener('click', () => setRoute('ai'));
+  }
+  if (btn360ToManual) {
+    btn360ToManual.addEventListener('click', () => setRoute('manual'));
+  }
+  if (btn360PrefillToAI) {
+    btn360PrefillToAI.addEventListener('click', () => setRoute('ai'));
+  }
+  if (btn360PrefillToManual) {
+    btn360PrefillToManual.addEventListener('click', () => setRoute('manual'));
+  }
+
+  // Sidebar step clicks
+  sidebarSteps.forEach(s => {
+    s.addEventListener('click', () => {
+      const step = s.dataset.step;
+      setStep(step);
+    });
+  });
+
+  // Initial render
+  refreshCStatus();
+  setRoute('ai');
+</script>
+</body>
+</html>
