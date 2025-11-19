@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Moderation UX Options + Pricing Table Mock</title>
+  <style>
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #f8f9fb;
+      margin: 0;
+      padding: 30px;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 24px;
+      font-size: 26px;
+      color: #111;
+    }
+
+    h2 {
+      margin: 40px 0 20px;
+      font-size: 20px;
+      color: #8000FF;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 26px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+    }
+
+    .title {
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #8000FF;
+    }
+
+    .example {
+      background: #F2F3F5;
+      border-radius: 10px;
+      padding: 14px;
+      margin-top: 10px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .old { color: #7b7b7b; }
+    .arrow { margin: 0 6px; color: #444; }
+    .new { color: #0A8E2E; font-weight: 600; }
+
+    .badge {
+      background: #E7F7EA;
+      color: #0A8E2E;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 10px;
+      margin-left: 6px;
+    }
+
+    .left-border {
+      border-left: 4px solid #0A8E2E;
+      padding-left: 12px;
+    }
+
+    .glow {
+      background: rgba(10, 142, 46, 0.15);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+      color: #0A8E2E;
+    }
+
+    /* Pricing table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 20px;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 7px rgba(0,0,0,0.08);
+    }
+
+    th {
+      background: #fafafa;
+      padding: 14px;
+      font-weight: 600;
+      font-size: 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #f1f1f1;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tag {
+      background: #EDEBFE;
+      color: #8000FF;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Moderation UX — Options A, B, C, E</h1>
+
+<!------------------------------->
+<!-- OPTION CARDS -->
+<!------------------------------->
+
+<div class="grid">
+
+  <div class="card">
+    <div class="title">A. Ghost Placeholder (— → value)</div>
+    <div class="example">
+      <strong>Edited value:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New value:</strong><br>
+      — <span class="arrow">→</span> <span class="new">10</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">B. NEW Badge</div>
+    <div class="example">
+      <strong>Edited value:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New value:</strong><br>
+      <span class="new">10</span><span class="badge">NEW</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">C. Green Left Border (New Row)</div>
+    <div class="example left-border">
+      <strong>New PAX Row:</strong><br>
+      <span class="new">Unemployed</span><br>
+      <span class="new">25 - 64</span><br>
+      <span class="new">8 €</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="title">E. Glow Tint (New value)</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">10</span> <span class="arrow">→</span> <span class="new glow">12</span>
+      <br><br>
+      <strong>New:</strong><br>
+      <span class="glow">10</span>
+    </div>
+  </div>
+
+</div>
+
+<!------------------------------->
+<!-- FULL PRICING TABLE MOCK -->
+<!------------------------------->
+
+<h2>Full Pricing Table Mock with A + B + C + E</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Pax Type</th>
+      <th>Age Range</th>
+      <th>Retail Price</th>
+      <th>SP Discount</th>
+      <th>HO Discount</th>
+      <th>HO Markup</th>
+      <th>Selling Price</th>
+      <th>Net Price</th>
+      <th>Take Rate</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    <!-- EDITED ROW EXAMPLE -->
+    <tr>
+      <td>Adult</td>
+      <td><span class="cell"><span class="old">18-64</span> → <span class="new">19-64</span></span></td>
+      <td><span class="cell"><span class="old">12</span> → <span class="new">14</span></span></td>
+      <td><span class="cell"><span class="new">14.3%</span></span></td>
+      <td>0%</td>
+      <td>0%</td>
+      <td><span class="cell"><span class="old">10</span> → <span class="new">12</span></span></td>
+      <td><span class="cell"><span class="new">12</span></span></td>
+      <td>0%</td>
+    </tr>
+
+    <!-- NEW PAX ROW (USES C + E) -->
+    <tr class="left-border">
+      <td><span class="new">Unemployed</span></td>
+      <td><span class="glow">25 - 64</span></td>
+      <td><span class="glow">10</span></td>
+      <td><span class="glow">20%</span></td>
+      <td>0%</td>
+      <td>0%</td>
+      <td><span class="glow">8</span></td>
+      <td><span class="glow">8</span></td>
+      <td><span class="badge">NEW</span></td>
+    </tr>
+
+    <!-- EXAMPLE NEW VALUES IN EXISTING ROW (A + E) -->
+    <tr>
+      <td>Senior</td>
+      <td>65 - 99</td>
+      <td>10</td>
+      <td><span class="cell">— → <span class="glow new">20%</span></span></td>
+      <td>0%</td>
+      <td>0%</td>
+      <td>8</td>
+      <td>8</td>
+      <td>0%</td>
+    </tr>
+
+  </tbody>
+</table>
+
+</body>
+</html>

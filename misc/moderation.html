@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Moderation Visualization Options</title>
+  <style>
+    body {
+      font-family: Inter, system-ui, sans-serif;
+      background: #f8f9fb;
+      margin: 0;
+      padding: 24px;
+      color: #222;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+    }
+
+    .title {
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 14px;
+      color: #8000FF;
+    }
+
+    .example {
+      background: #F4F4F6;
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 12px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* Shared styling for value diff */
+    .old {
+      color: #888;
+    }
+    .arrow {
+      margin: 0 6px;
+      color: #555;
+    }
+    .new {
+      color: #0A8E2E;
+      font-weight: 600;
+    }
+
+    /* Option-specific styles */
+    .badge {
+      background: #E7F7EA;
+      color: #0A8E2E;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    .left-border-new {
+      border-left: 4px solid #0A8E2E;
+      padding-left: 12px;
+    }
+
+    .dot {
+      height: 8px;
+      width: 8px;
+      background: #0A8E2E;
+      display: inline-block;
+      border-radius: 50%;
+      margin-left: 6px;
+    }
+
+    .glow {
+      background: rgba(10, 142, 46, 0.10);
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .dotted {
+      border: 1px dashed #0A8E2E;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .icon {
+      margin-left: 6px;
+      color: #0A8E2E;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .toggle {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 8px;
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Moderation – Visualization Options (A–H)</h1>
+
+<div class="grid">
+
+  <!-- A: Ghost Placeholder -->
+  <div class="card">
+    <div class="title">A. Ghost Placeholder (— → value)</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New:</strong><br>
+      — <span class="arrow">→</span> <span class="new">10</span>
+    </div>
+  </div>
+
+  <!-- B: NEW Badge -->
+  <div class="card">
+    <div class="title">B. "NEW" Badge</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New:</strong><br>
+      <span class="new">10</span><span class="badge">NEW</span>
+    </div>
+  </div>
+
+  <!-- C: Green Left Border -->
+  <div class="card">
+    <div class="title">C. Green Left Border (New Row)</div>
+    <div class="example left-border-new">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New Row:</strong><br>
+      <span class="new">10</span>
+    </div>
+  </div>
+
+  <!-- D: Dot Indicator -->
+  <div class="card">
+    <div class="title">D. Green Dot Indicator</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New:</strong><br>
+      <span class="new">10</span><span class="dot"></span>
+    </div>
+  </div>
+
+  <!-- E: Glow Tint -->
+  <div class="card">
+    <div class="title">E. Subtle Glow Tint for New Values</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New:</strong><br>
+      <span class="glow new">10</span>
+    </div>
+  </div>
+
+  <!-- F: Icon + Tooltip -->
+  <div class="card">
+    <div class="title">F. Plus Icon for New</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New:</strong><br>
+      <span class="new">10</span><span class="icon">+</span>
+    </div>
+  </div>
+
+  <!-- G: Dotted Outline -->
+  <div class="card">
+    <div class="title">G. Dotted Outline for New Values</div>
+    <div class="example">
+      <strong>Edited:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span>
+      <br><br>
+      <strong>New:</strong><br>
+      <span class="dotted new">10</span>
+    </div>
+  </div>
+
+  <!-- H: Before/After Toggle (Mode Switch) -->
+  <div class="card">
+    <div class="title">H. Mode Toggle (Latest vs Diff)</div>
+    <div class="example">
+      <strong>Diff Mode:</strong><br>
+      <span class="old">5</span> <span class="arrow">→</span> <span class="new">10</span><br><br>
+      <strong>Latest Only Mode:</strong><br>
+      <span class="glow new">10</span>
+      <div class="toggle">Toggle: Latest ↔ Diff</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
