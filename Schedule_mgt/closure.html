@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Schedule Creation – Holiday Picker Prototype</title>
+  <style>
+    :root {
+      --primary: #8000FF;
+      --primary-soft: rgba(128, 0, 255, 0.08);
+      --text-main: #1f1f33;
+      --text-subtle: #6b6b87;
+      --border-subtle: #e2e2f0;
+      --bg-page: #f6f6fb;
+      --danger: #e53935;
+      --radius-lg: 12px;
+      --shadow-soft: 0 8px 24px rgba(15, 0, 40, 0.08);
+      --transition-fast: 0.16s ease-out;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: radial-gradient(circle at top left, #fff 0, #f3edff 40%, #f6f6fb 100%);
+      color: var(--text-main);
+    }
+
+    .page {
+      max-width: 1120px;
+      margin: 32px auto;
+      padding: 0 16px 40px;
+    }
+
+    .page-header {
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-subtle);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    /* Sidebar steps */
+    .steps-card {
+      background: rgba(255, 255, 255, 0.94);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 14px;
+      border: 1px solid rgba(128, 0, 255, 0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    .steps-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-subtle);
+      margin-bottom: 8px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--text-subtle);
+      cursor: default;
+    }
+
+    .step-item.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .step-badge {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      border: 1px solid rgba(128, 0, 255, 0.2);
+      color: var(--text-subtle);
+      background: #fff;
+    }
+
+    .step-item.active .step-badge {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+    }
+
+    /* Main card */
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      box-shadow: var(--shadow-soft);
+      padding: 20px 22px 22px;
+      border: 1px solid rgba(128, 0, 255, 0.08);
+      backdrop-filter: blur(6px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .section {
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      padding: 14px 14px 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .section-subtitle {
+      font-size: 12px;
+      color: var(--text-subtle);
+    }
+
+    .field-group {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: var(--text-main);
+    }
+
+    .input, .select {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      font-size: 13px;
+      outline: none;
+      background: #fafafa;
+      transition: border var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast);
+    }
+
+    .input:focus, .select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(128, 0, 255, 0.25);
+      background: #fff;
+    }
+
+    .days-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border-subtle);
+      cursor: pointer;
+      background: #fafafa;
+      color: var(--text-subtle);
+      transition: background var(--transition-fast), color var(--transition-fast),
+        border var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 10px rgba(128, 0, 255, 0.25);
+    }
+
+    .inline-helper {
+      font-size: 11px;
+      color: var(--text-subtle);
+      margin-top: 4px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      transition: background var(--transition-fast), box-shadow var(--transition-fast),
+        transform var(--transition-fast), border var(--transition-fast);
+    }
+
+    .btn:hover {
+      background: #6b00d6;
+      box-shadow: 0 6px 14px rgba(15, 0, 40, 0.18);
+      transform: translateY(-0.5px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border-subtle);
+      color: var(--text-main);
+      box-shadow: none;
+    }
+
+    .btn-ghost:hover {
+      background: #f5f5ff;
+      border-color: rgba(128, 0, 255, 0.4);
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      background: #fff;
+    }
+
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+
+    .btn-text {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: 11px;
+      color: var(--text-subtle);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+
+    .btn-text:hover {
+      color: var(--primary);
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    /* Holiday summary preview inside the main form */
+    .holiday-preview {
+      margin-top: 6px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: #faf9ff;
+      border: 1px dashed rgba(128, 0, 255, 0.25);
+      font-size: 11px;
+      color: var(--text-subtle);
+      max-height: 68px;
+      overflow-y: auto;
+    }
+
+    .holiday-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid rgba(128, 0, 255, 0.25);
+      margin: 2px;
+      font-size: 11px;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .holiday-pill span {
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 0, 32, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-fast);
+      z-index: 999;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      width: 780px;
+      max-width: calc(100vw - 32px);
+      max-height: calc(100vh - 40px);
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: slideInUp 0.18s ease-out;
+    }
+
+    @keyframes slideInUp {
+      from { transform: translateY(10px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 14px 18px 10px;
+      border-bottom: 1px solid #f0f0ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-subtitle {
+      font-size: 12px;
+      color: var(--text-subtle);
+    }
+
+    .modal-body {
+      padding: 14px 16px 4px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 16px;
+    }
+
+    .modal-footer {
+      padding: 10px 16px 12px;
+      border-top: 1px solid #f0f0ff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .body-section-title {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .body-section-subtitle {
+      font-size: 11px;
+      color: var(--text-subtle);
+      margin-bottom: 10px;
+    }
+
+    /* Calendar */
+    .calendar-shell {
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      padding: 10px;
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .calendar-month-label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .calendar-controls {
+      display: flex;
+      gap: 4px;
+    }
+
+    .icon-button {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: #fff;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-subtle);
+    }
+
+    .icon-button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    .calendar-weekday {
+      text-align: center;
+      color: var(--text-subtle);
+      padding-bottom: 2px;
+    }
+
+    .calendar-day {
+      height: 30px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-main);
+      background: #f7f7ff;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        border var(--transition-fast), box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+    }
+
+    .calendar-day.empty {
+      visibility: hidden;
+      cursor: default;
+    }
+
+    .calendar-day:hover:not(.empty) {
+      background: #ebe6ff;
+      transform: translateY(-0.5px);
+    }
+
+    .calendar-day.selected {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(128, 0, 255, 0.26);
+    }
+
+    .calendar-legend {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-subtle);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--primary);
+      margin-right: 4px;
+    }
+
+    /* Holiday list */
+    .holiday-list-shell {
+      border-radius: 14px;
+      border: 1px solid var(--border-subtle);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 180px;
+    }
+
+    .holiday-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr) auto;
+      gap: 6px;
+      align-items: center;
+      font-size: 11px;
+      padding: 4px 4px 4px 0;
+      border-bottom: 1px dashed #f0f0ff;
+    }
+
+    .holiday-row:last-child {
+      border-bottom: none;
+    }
+
+    .holiday-dates {
+      font-weight: 500;
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .holiday-label-input {
+      width: 100%;
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid #ececff;
+      font-size: 11px;
+      outline: none;
+      background: #faf9ff;
+    }
+
+    .holiday-label-input:focus {
+      border-color: rgba(128, 0, 255, 0.5);
+      background: #fff;
+    }
+
+    .holiday-empty-state {
+      font-size: 11px;
+      color: var(--text-subtle);
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .badge-soft {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(252, 186, 3, 0.35);
+      background: #fff8e6;
+      font-size: 10px;
+      color: #9b5a00;
+      gap: 6px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #f6a800;
+    }
+
+    @media (max-width: 860px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 720px) {
+      .modal-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+  <header class="page-header">
+    <div class="page-title">Create schedule</div>
+    <div class="page-subtitle">
+      Configure your general availability and mark any holiday closures in one go.
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: Schedule creation steps -->
+    <aside class="steps-card">
+      <div class="steps-title">Schedule setup</div>
+      <div class="step-item">
+        <div class="step-badge">1</div>
+        Basic details
+      </div>
+      <div class="step-item">
+        <div class="step-badge">2</div>
+        Operating days
+      </div>
+      <div class="step-item active">
+        <div class="step-badge">3</div>
+        Holiday closures
+      </div>
+      <div class="step-item">
+        <div class="step-badge">4</div>
+        Slots & times
+      </div>
+      <div class="step-item">
+        <div class="step-badge">5</div>
+        Review & save
+      </div>
+    </aside>
+
+    <!-- RIGHT: Main schedule card -->
+    <main class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Holiday closures</div>
+          <div class="page-subtitle">
+            Your schedule is open on selected days, except for the holidays you define here.
+          </div>
+        </div>
+        <div class="pill">Step 3 of 5</div>
+      </div>
+
+      <!-- Mock previous sections -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Schedule name & validity</div>
+            <div class="section-subtitle">Pulled from previous step.</div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div>
+            <label>Schedule name</label>
+            <input class="input" placeholder="e.g. Regular season (Jan–Jun)" disabled />
+          </div>
+          <div>
+            <label>Valid for</label>
+            <select class="select" disabled>
+              <option>01 Jan 2026 → 30 Jun 2026</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Operating days</div>
+            <div class="section-subtitle">
+              These are the days you usually run the experience.
+            </div>
+          </div>
+        </div>
+
+        <div class="days-chips">
+          <button type="button" class="chip active">Mon</button>
+          <button type="button" class="chip active">Tue</button>
+          <button type="button" class="chip active">Wed</button>
+          <button type="button" class="chip active">Thu</button>
+          <button type="button" class="chip active">Fri</button>
+          <button type="button" class="chip">Sat</button>
+          <button type="button" class="chip">Sun</button>
+        </div>
+        <div class="inline-helper">
+          You’ll configure specific slots and timings in the next step.
+        </div>
+      </section>
+
+      <!-- HOLIDAY CONFIG SECTION -->
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Holiday closures (optional)</div>
+            <div class="section-subtitle">
+              Mark any dates when this experience should be closed — single days or multi-day ranges.
+            </div>
+          </div>
+          <button type="button" class="btn btn-small" id="openHolidayModalBtn">
+            <span class="btn-icon">＋</span>
+            Add holidays
+          </button>
+        </div>
+
+        <div class="inline-helper">
+          You can configure all holidays in one go. We’ll apply them on top of your operating days.
+        </div>
+
+        <!-- Preview of holidays selected in modal -->
+        <div id="holidayPreview" class="holiday-preview" style="display: none;"></div>
+      </section>
+
+      <div class="footer-actions">
+        <button class="btn btn-ghost">Back</button>
+        <button class="btn">Continue to slots</button>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- HOLIDAY PICKER MODAL -->
+<div class="modal-backdrop" id="holidayModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="holidayModalTitle">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="holidayModalTitle">Holiday picker</div>
+        <div class="modal-subtitle">
+          Click to select single days or drag/select multiple dates to create ranges.
+        </div>
+      </div>
+      <button type="button" class="icon-button" id="closeHolidayModalBtn" aria-label="Close">
+        ✕
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <!-- LEFT: Calendar -->
+      <div>
+        <div class="body-section-title">Select holiday dates</div>
+        <div class="body-section-subtitle">
+          Choose all closed days for this schedule — across the season. You can always edit later.
+        </div>
+
+        <div class="calendar-shell">
+          <div class="calendar-header">
+            <div class="calendar-month-label" id="calendarMonthLabel">January 2026</div>
+            <div class="calendar-controls">
+              <button type="button" class="icon-button" id="prevMonthBtn" disabled>‹</button>
+              <button type="button" class="icon-button" id="nextMonthBtn">›</button>
+            </div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid">
+            <!-- Weekday labels -->
+          </div>
+          <div class="calendar-legend">
+            <span class="legend-dot"></span>
+            Selected days will be closed for this schedule.
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Summary list -->
+      <div>
+        <div class="body-section-title">Holiday summary</div>
+        <div class="body-section-subtitle">
+          We group consecutive dates into a single range. Add labels to keep things clear.
+        </div>
+
+        <div class="holiday-list-shell" id="holidayList">
+          <div class="holiday-empty-state">
+            No holidays yet. Start by clicking on the calendar.
+          </div>
+        </div>
+
+        <div style="margin-top: 8px; display:flex; justify-content: space-between; align-items:center; gap:8px;">
+          <span class="badge-soft">
+            <span class="badge-dot"></span>
+            We’ll ignore holidays on days you’re already closed.
+          </span>
+          <button type="button" class="btn-text" id="clearAllHolidaysBtn" style="display:none;">
+            Clear all holidays
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <span class="modal-subtitle">
+        Your changes apply only to this schedule. You can create different holidays for other seasons.
+      </span>
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn-ghost btn-small" id="cancelHolidayBtn">Cancel</button>
+        <button type="button" class="btn btn-small" id="applyHolidayBtn">Apply holidays</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --- State ---
+  const selectedDates = new Set(); // stores 'YYYY-MM-DD'
+  let currentMonthIndex = 0; // 0: Jan 2026, 1: Feb 2026 (demo)
+
+  // --- Elements ---
+  const holidayModal = document.getElementById("holidayModal");
+  const openHolidayModalBtn = document.getElementById("openHolidayModalBtn");
+  const closeHolidayModalBtn = document.getElementById("closeHolidayModalBtn");
+  const cancelHolidayBtn = document.getElementById("cancelHolidayBtn");
+  const applyHolidayBtn = document.getElementById("applyHolidayBtn");
+  const holidayPreview = document.getElementById("holidayPreview");
+  const calendarGrid = document.getElementById("calendarGrid");
+  const calendarMonthLabel = document.getElementById("calendarMonthLabel");
+  const prevMonthBtn = document.getElementById("prevMonthBtn");
+  const nextMonthBtn = document.getElementById("nextMonthBtn");
+  const holidayList = document.getElementById("holidayList");
+  const clearAllHolidaysBtn = document.getElementById("clearAllHolidaysBtn");
+
+  const MONTHS = ["January", "February"];
+  const YEAR = 2026;
+  const MONTH_CONFIGS = [
+    { month: 0, days: 31, firstWeekday: 3 }, // Jan 2026 starts on Thu (3 if 0=Sun)
+    { month: 1, days: 28, firstWeekday: 6 }  // Feb 2026 starts on Sun (6)
+  ];
+
+  // --- Modal open/close ---
+  function openHolidayModal() {
+    holidayModal.classList.add("open");
+  }
+
+  function closeHolidayModal() {
+    holidayModal.classList.remove("open");
+  }
+
+  openHolidayModalBtn.addEventListener("click", openHolidayModal);
+  closeHolidayModalBtn.addEventListener("click", closeHolidayModal);
+  cancelHolidayBtn.addEventListener("click", closeHolidayModal);
+
+  // Click backdrop to close
+  holidayModal.addEventListener("click", (e) => {
+    if (e.target === holidayModal) {
+      closeHolidayModal();
+    }
+  });
+
+  // --- Calendar rendering ---
+  function buildCalendarSkeleton() {
+    calendarGrid.innerHTML = "";
+
+    const weekdays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+    weekdays.forEach((wd) => {
+      const div = document.createElement("div");
+      div.className = "calendar-weekday";
+      div.textContent = wd;
+      calendarGrid.appendChild(div);
+    });
+  }
+
+  function renderCalendar() {
+    // Rebuild from scratch for simplicity
+    buildCalendarSkeleton();
+
+    const config = MONTH_CONFIGS[currentMonthIndex];
+    const monthName = MONTHS[currentMonthIndex];
+    calendarMonthLabel.textContent = monthName + " " + YEAR;
+
+    const totalCells = config.firstWeekday + config.days;
+    const totalRows = Math.ceil(totalCells / 7);
+    const totalGridCells = totalRows * 7;
+
+    // create empty cells before first weekday
+    for (let i = 0; i < config.firstWeekday; i++) {
+      const cell = document.createElement("button");
+      cell.className = "calendar-day empty";
+      cell.tabIndex = -1;
+      calendarGrid.appendChild(cell);
+    }
+
+    // create days
+    for (let day = 1; day <= config.days; day++) {
+      const dateStr = formatDate(YEAR, config.month + 1, day);
+      const cell = document.createElement("button");
+      cell.className = "calendar-day";
+      cell.textContent = String(day);
+      cell.dataset.date = dateStr;
+
+      if (selectedDates.has(dateStr)) {
+        cell.classList.add("selected");
+      }
+
+      cell.addEventListener("click", () => {
+        toggleDateSelection(dateStr);
+      });
+
+      calendarGrid.appendChild(cell);
+    }
+
+    // trailing empties
+    const usedCells = config.firstWeekday + config.days;
+    for (let i = usedCells; i < totalGridCells; i++) {
+      const cell = document.createElement("button");
+      cell.className = "calendar-day empty";
+      cell.tabIndex = -1;
+      calendarGrid.appendChild(cell);
+    }
+
+    // prev/next controls (demo: only two months)
+    prevMonthBtn.disabled = currentMonthIndex === 0;
+    nextMonthBtn.disabled = currentMonthIndex === MONTHS.length - 1;
+  }
+
+  prevMonthBtn.addEventListener("click", () => {
+    if (currentMonthIndex > 0) {
+      currentMonthIndex--;
+      renderCalendar();
+    }
+  });
+
+  nextMonthBtn.addEventListener("click", () => {
+    if (currentMonthIndex < MONTHS.length - 1) {
+      currentMonthIndex++;
+      renderCalendar();
+    }
+  });
+
+  // --- Helper: date formatting ---
+  function formatDate(year, month, day) {
+    const m = String(month).padStart(2, "0");
+    const d = String(day).padStart(2, "0");
+    return `${year}-${m}-${d}`;
+  }
+
+  function parseDateStr(dateStr) {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  // --- Selection logic ---
+  function toggleDateSelection(dateStr) {
+    if (selectedDates.has(dateStr)) {
+      selectedDates.delete(dateStr);
+    } else {
+      selectedDates.add(dateStr);
+    }
+    renderCalendar();
+    renderHolidayList();
+  }
+
+  function clearAllHolidays() {
+    selectedDates.clear();
+    renderCalendar();
+    renderHolidayList();
+  }
+
+  clearAllHolidaysBtn.addEventListener("click", clearAllHolidays);
+
+  // --- Holiday range grouping ---
+  function getSortedDateStrings() {
+    return Array.from(selectedDates).sort();
+  }
+
+  function buildRanges() {
+    const sorted = getSortedDateStrings();
+    if (sorted.length === 0) return [];
+
+    const ranges = [];
+    let rangeStart = sorted[0];
+    let prev = sorted[0];
+
+    for (let i = 1; i < sorted.length; i++) {
+      const cur = sorted[i];
+      if (isNextDay(prev, cur)) {
+        // continue range
+        prev = cur;
+      } else {
+        // end current range
+        ranges.push({ start: rangeStart, end: prev });
+        rangeStart = cur;
+        prev = cur;
+      }
+    }
+    // last range
+    ranges.push({ start: rangeStart, end: prev });
+
+    return ranges;
+  }
+
+  function isNextDay(dateStrA, dateStrB) {
+    const dA = parseDateStr(dateStrA);
+    const dB = parseDateStr(dateStrB);
+    const diffMs = dB - dA;
+    const ONE_DAY = 24 * 60 * 60 * 1000;
+    return diffMs === ONE_DAY;
+  }
+
+  function friendlyDate(dateStr) {
+    const d = parseDateStr(dateStr);
+    const day = d.getDate();
+    const month = d.toLocaleString("default", { month: "short" });
+    return `${day} ${month}`;
+  }
+
+  function friendlyRange(range) {
+    const startLabel = friendlyDate(range.start);
+    const endLabel = friendlyDate(range.end);
+    if (range.start === range.end) return startLabel;
+    return `${startLabel}–${endLabel}`;
+  }
+
+  // --- Render holiday list (inside modal) ---
+  function renderHolidayList() {
+    holidayList.innerHTML = "";
+
+    const ranges = buildRanges();
+
+    if (ranges.length === 0) {
+      const empty = document.createElement("div");
+      empty.className = "holiday-empty-state";
+      empty.textContent = "No holidays yet. Start by clicking on the calendar.";
+      holidayList.appendChild(empty);
+      clearAllHolidaysBtn.style.display = "none";
+      return;
+    }
+
+    clearAllHolidaysBtn.style.display = "inline-flex";
+
+    ranges.forEach((range) => {
+      const row = document.createElement("div");
+      row.className = "holiday-row";
+      row.dataset.dates = getDatesInRange(range.start, range.end).join(",");
+
+      const dates = document.createElement("div");
+      dates.className = "holiday-dates";
+      dates.textContent = friendlyRange(range);
+
+      const label = document.createElement("input");
+      label.className = "holiday-label-input";
+      label.placeholder = "Optional label (e.g. Christmas week)";
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.type = "button";
+      deleteBtn.className = "icon-button";
+      deleteBtn.style.borderColor = "rgba(229,57,53,0.35)";
+      deleteBtn.style.color = "#b71c1c";
+      deleteBtn.textContent = "✕";
+      deleteBtn.title = "Remove this range";
+
+      deleteBtn.addEventListener("click", () => {
+        const datesStr = row.dataset.dates;
+        if (datesStr) {
+          datesStr.split(",").forEach((d) => selectedDates.delete(d));
+        }
+        renderCalendar();
+        renderHolidayList();
+      });
+
+      row.appendChild(dates);
+      row.appendChild(label);
+      row.appendChild(deleteBtn);
+      holidayList.appendChild(row);
+    });
+  }
+
+  function getDatesInRange(startStr, endStr) {
+    const dates = [];
+    let cur = parseDateStr(startStr);
+    const end = parseDateStr(endStr);
+
+    while (cur <= end) {
+      const y = cur.getFullYear();
+      const m = String(cur.getMonth() + 1).padStart(2, "0");
+      const d = String(cur.getDate()).padStart(2, "0");
+      dates.push(`${y}-${m}-${d}`);
+      cur = new Date(cur.getTime() + 24 * 60 * 60 * 1000);
+    }
+    return dates;
+  }
+
+  // --- Apply to preview inside main form ---
+  applyHolidayBtn.addEventListener("click", () => {
+    const ranges = buildRanges();
+    holidayPreview.innerHTML = "";
+
+    if (ranges.length === 0) {
+      holidayPreview.style.display = "none";
+      closeHolidayModal();
+      return;
+    }
+
+    ranges.forEach((range) => {
+      const pill = document.createElement("span");
+      pill.className = "holiday-pill";
+
+      const labelSpan = document.createElement("span");
+      labelSpan.textContent = friendlyRange(range);
+
+      pill.appendChild(labelSpan);
+      holidayPreview.appendChild(pill);
+    });
+
+    holidayPreview.style.display = "block";
+    closeHolidayModal();
+  });
+
+  // --- Init ---
+  buildCalendarSkeleton();
+  renderCalendar();
+  renderHolidayList();
+</script>
+</body>
+</html>
