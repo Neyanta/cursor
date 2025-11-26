@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Schedule – Simple Table Prototype</title>
+
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    padding: 24px;
+    background: #f5f5f5;
+  }
+
+  .section-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    margin-top: 10px;
+  }
+
+  .day-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .day-chip {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 2px solid #444;
+    background: #fff;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .day-chip.selected {
+    background: #e0e7ff;
+    border-color: #1e40af;
+    color: #1e40af;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 12px;
+  }
+
+  th {
+    text-align: left;
+    font-size: 13px;
+    color: #555;
+    padding-bottom: 8px;
+  }
+
+  .day-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #aaa;
+    padding: 12px 14px;
+  }
+
+  .day-card-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+
+  .slot-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 4px;
+  }
+
+  .slot-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .time-select {
+    border-radius: 10px;
+    border: 1px solid #aaa;
+    padding: 8px 10px;
+    min-width: 120px;
+    background: #fff;
+    font-size: 13px;
+  }
+
+  .btn {
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #fff;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .btn:hover {
+    background: #f3f3f3;
+  }
+
+  .btn-small {
+    padding: 4px 8px;
+  }
+
+  .muted {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="section-title">Select days (for copy)</div>
+<div id="daySelector" class="day-selector"></div>
+
+<div class="section-title">Weekly schedule</div>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 60px;">Day</th>
+      <th colspan="3">Slots</th>
+    </tr>
+  </thead>
+  <tbody id="weekBody"></tbody>
+</table>
+
+<script>
+  const DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const selectedDays = new Set();
+  const daySlots = {};
+  DAYS.forEach(d => daySlots[d] = []);
+
+  const timeOptions = [];
+  for (let h = 6; h <= 22; h++) {
+    for (let m of [0,30]) {
+      timeOptions.push(`${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`);
+    }
+  }
+
+  function renderDaySelector() {
+    const container = document.getElementById("daySelector");
+    container.innerHTML = "";
+    DAYS.forEach(day => {
+      const chip = document.createElement("button");
+      chip.className = "day-chip" + (selectedDays.has(day) ? " selected" : "");
+      chip.textContent = day;
+      chip.onclick = () => {
+        selectedDays.has(day) ? selectedDays.delete(day) : selectedDays.add(day);
+        renderDaySelector();
+      };
+      container.appendChild(chip);
+    });
+  }
+
+  function createTimeSelect(initial, onChange) {
+    const sel = document.createElement("select");
+    sel.className = "time-select";
+
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "Select";
+    sel.appendChild(placeholder);
+
+    timeOptions.forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t;
+      opt.textContent = t;
+      sel.appendChild(opt);
+    });
+
+    sel.value = initial || "";
+    sel.onchange = () => onChange(sel.value);
+
+    return sel;
+  }
+
+  function renderWeek() {
+    const tbody = document.getElementById("weekBody");
+    tbody.innerHTML = "";
+
+    DAYS.forEach(day => {
+      const tr = document.createElement("tr");
+
+      const labelCell = document.createElement("td");
+      labelCell.textContent = day;
+      tr.appendChild(labelCell);
+
+      const cell = document.createElement("td");
+      cell.colSpan = 3;
+
+      const card = document.createElement("div");
+      card.className = "day-card";
+
+      const header = document.createElement("div");
+      header.className = "day-card-header";
+
+      const title = document.createElement("div");
+      title.textContent = "Time slots";
+
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn btn-small";
+      addBtn.textContent = "+ Add slot";
+      addBtn.onclick = () => {
+        daySlots[day].push({ start:"", end:"" });
+        renderWeek();
+      };
+
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "btn btn-small";
+      copyBtn.textContent = "Copy to selected";
+      copyBtn.onclick = () => {
+        selectedDays.forEach(target => {
+          if (target === day) return;
+          // append new copies (not replace)
+          daySlots[target] = [
+            ...daySlots[target],
+            ...daySlots[day].map(s => ({ ...s }))
+          ];
+        });
+        renderWeek();
+      };
+
+      header.appendChild(title);
+      header.appendChild(addBtn);
+      header.appendChild(copyBtn);
+      card.appendChild(header);
+
+      const slotContainer = document.createElement("div");
+      slotContainer.className = "slot-rows";
+
+      if (daySlots[day].length === 0) {
+        const hint = document.createElement("div");
+        hint.className = "muted";
+        hint.textContent = "No slots yet.";
+        slotContainer.appendChild(hint);
+      }
+
+      daySlots[day].forEach((slot, idx) => {
+        const row = document.createElement("div");
+        row.className = "slot-row";
+
+        const startSel = createTimeSelect(slot.start, (v)=>{
+          daySlots[day][idx].start = v;
+        });
+        const endSel = createTimeSelect(slot.end, (v)=>{
+          daySlots[day][idx].end = v;
+        });
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "btn btn-small";
+        delBtn.textContent = "×";
+        delBtn.onclick = () => {
+          daySlots[day].splice(idx,1);
+          renderWeek();
+        };
+
+        row.appendChild(startSel);
+        row.appendChild(endSel);
+        row.appendChild(delBtn);
+
+        slotContainer.appendChild(row);
+      });
+
+      card.appendChild(slotContainer);
+      cell.appendChild(card);
+      tr.appendChild(cell);
+      tbody.appendChild(tr);
+    });
+  }
+
+  renderDaySelector();
+  renderWeek();
+</script>
+
+</body>
+</html>

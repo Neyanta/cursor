@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Headout Voucher Redesign</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+      color: #222;
+    }
+    .voucher {
+      max-width: 420px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    header {
+      background: #8000FF;
+      color: #fff;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 1.25rem;
+      margin: 0;
+    }
+    section {
+      padding: 1.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      color: #8000FF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    h2 span {
+      font-size: 1.25rem;
+    }
+    ul {
+      margin: 0.5rem 0 0 1.2rem;
+      padding: 0;
+    }
+    .qr-section {
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    .qr-section img {
+      width: 150px;
+      height: 150px;
+    }
+    .booking-details p {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+    }
+    .map {
+      margin-top: 0.5rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="voucher">
+    <header>
+      <h1>Guided Tour of the Vatican Museums, Sistine Chapel & St. Peter’s Basilica</h1>
+    </header>
+
+    <section class="qr-section">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?data=HeadoutTicket12345&size=150x150" alt="QR Code" />
+      <p>Show this code at entry</p>
+    </section>
+
+    <section class="booking-details">
+      <h2><span>🎟</span> Booking Details</h2>
+      <p><strong>Booking ID:</strong> HDT-987654</p>
+      <p><strong>Date & Time:</strong> 24 Nov 2025, 10:30 AM</p>
+      <p><strong>Guests:</strong> 2 Adults</p>
+    </section>
+
+    <section class="meeting-point">
+      <h2><span>📍</span> Meeting Point</h2>
+      <p>Via Germanico 8, 00192 Roma RM, Italy</p>
+      <div class="map">
+        <img src="https://maps.googleapis.com/maps/api/staticmap?center=Rome,Italy&zoom=15&size=400x200&key=YOUR_API_KEY" alt="Map preview" />
+      </div>
+    </section>
+
+    <section class="redemption-instructions">
+      <h2><span>🧭</span> Redemption Instructions</h2>
+      <ul>
+        <li>Arrive at the meeting point 15 minutes before your scheduled time.</li>
+        <li>Show this voucher (printed or mobile) to your guide.</li>
+        <li>Carry a valid photo ID for verification.</li>
+      </ul>
+    </section>
+
+    <section class="smartpickup">
+      <h2><span>🚐</span> SmartPickup</h2>
+      <p>Pickup is available from central Rome hotels. You’ll receive driver details 1 hour before pickup.</p>
+    </section>
+
+    <section class="additional-info">
+      <h2><span>ℹ️</span> Additional Info</h2>
+      <ul>
+        <li>Comfortable clothing recommended.</li>
+        <li>Entry is free for children under 6 years.</li>
+        <li>Tour duration: 3 hours.</li>
+      </ul>
+    </section>
+
+    <div class="footer">
+      Powered by Headout • Download the app for seamless entry
+    </div>
+  </div>
+</body>
+</html>
