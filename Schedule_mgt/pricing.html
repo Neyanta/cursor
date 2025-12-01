@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Price Setup — Final Spec</title>
+
+<style>
+/* ----------------- BASE ----------------- */
+:root {
+  --purple: #5C31FF;
+  --purple-light: #F3F0FF;
+  --border: #E5E7EB;
+  --text: #1F2937;
+  --text-light: #6B7280;
+  --radius: 10px;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: system-ui, sans-serif;
+  background: #FAFAFA;
+  color: var(--text);
+}
+
+.section {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+/* ----------------- EXTRA FEES BANNER ----------------- */
+.fee-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.fee-name {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.fee-value {
+  color: var(--text-light);
+}
+
+/* ----------------- GUEST TYPE CARDS ----------------- */
+.guest-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: white;
+  margin-bottom: 14px;
+}
+
+.guest-header {
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.guest-header:hover {
+  background: var(--purple-light);
+}
+
+.guest-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.guest-meta {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+.guest-body {
+  padding: 18px;
+  border-top: 1px solid var(--border);
+  display: none;
+}
+
+/* ----------------- FORM ----------------- */
+label {
+  font-size: 13px;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 4px;
+}
+
+input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+input:disabled {
+  background: #F3F4F6;
+  color: var(--text-light);
+}
+
+input:focus {
+  border-color: var(--purple);
+  outline: none;
+}
+
+.twocol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 16px;
+  row-gap: 20px;
+}
+
+.section-header {
+  margin-top: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  color: var(--text-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* ----------------- ACTIONS ----------------- */
+.action-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-delete {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+
+.btn-free {
+  background: var(--purple-light);
+  color: var(--purple);
+}
+
+.add-btn {
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 1px dashed var(--purple);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--purple);
+  cursor: pointer;
+}
+</style>
+</head>
+
+
+
+<body>
+
+<h2>Price setup</h2>
+
+<!-- ---------------- EXTRA FEES ---------------- -->
+<div class="section">
+  <div class="label">Extra fees</div>
+  
+  <div class="fee-grid">
+    <div class="fee-name">Peak day</div>
+    <div class="fee-value">5%</div>
+
+    <div class="fee-name">Service charge</div>
+    <div class="fee-value">$3</div>
+
+    <div class="fee-name">Holiday uplift</div>
+    <div class="fee-value">10%</div>
+  </div>
+</div>
+
+
+
+<!-- ---------------- GUEST TYPES ---------------- -->
+<div class="section">
+  <div class="label">Guest types</div>
+
+  <!-- ADULT (expanded) -->
+  <div class="guest-card">
+    <div class="guest-header" onclick="toggleCard(this)">
+      <div>
+        <div class="guest-title">Adult</div>
+        <div class="guest-meta">RP $100 • Net $80 • Comm 20% • Age 12–60 • Discount 20%</div>
+      </div>
+      <span>›</span>
+    </div>
+
+    <div class="guest-body" style="display:block;">
+
+      <div class="section-header">Pricing</div>
+
+      <!-- FIELD ORDER WHEN DISCOUNT EXISTS -->
+      <div class="twocol">
+        <div>
+          <label>Retail price</label>
+          <input type="number" value="100">
+        </div>
+        <div>
+          <label>Discount (%)</label>
+          <input type="number" value="20" disabled>
+        </div>
+      </div>
+
+      <div class="twocol">
+        <div>
+          <label>Listing price (after discount)</label>
+          <input type="number" value="80" disabled>
+        </div>
+        <div>
+          <label>Commission (%)</label>
+          <input type="number" value="20">
+        </div>
+      </div>
+
+      <div class="twocol">
+        <div>
+          <label>Net price</label>
+          <input type="number" value="80" disabled>
+        </div>
+        <div>
+          <label>Take rate</label>
+          <input type="number" value="20" disabled>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-free">Mark as free</button>
+        <button class="btn btn-delete">Delete</button>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <!-- CHILD (collapsed, NO discount present) -->
+  <div class="guest-card">
+    <div class="guest-header" onclick="toggleCard(this)">
+      <div>
+        <div class="guest-title">Child</div>
+        <div class="guest-meta">No pricing added yet</div>
+      </div>
+      <span>›</span>
+    </div>
+
+    <div class="guest-body">
+
+      <div class="section-header">Pricing</div>
+
+      <!-- NO DISCOUNT CASE -->
+      <div class="twocol">
+        <div>
+          <label>Retail price</label>
+          <input type="number" value="50">
+        </div>
+        <div>
+          <label>Commission (%)</label>
+          <input type="number" value="20">
+        </div>
+      </div>
+
+      <div class="twocol">
+        <div>
+          <label>Net price</label>
+          <input type="number" value="40" disabled>
+        </div>
+        <div>
+          <label>Take rate</label>
+          <input type="number" value="10" disabled>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-free">Mark as free</button>
+        <button class="btn btn-delete">Delete</button>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <!-- INFANT (collapsed, free example) -->
+  <div class="guest-card">
+    <div class="guest-header" onclick="toggleCard(this)">
+      <div>
+        <div class="guest-title">Infant</div>
+        <div class="guest-meta">No pricing added yet</div>
+      </div>
+      <span>›</span>
+    </div>
+
+    <div class="guest-body">
+
+      <div class="section-header">Pricing</div>
+
+      <!-- FREE CASE (RP = 0) -->
+      <div class="twocol">
+        <div>
+          <label>Retail price</label>
+          <input type="number" value="0">
+        </div>
+        <div>
+          <label>Commission (%)</label>
+          <input type="number" value="0">
+        </div>
+      </div>
+
+      <div class="twocol">
+        <div>
+          <label>Net price</label>
+          <input type="number" value="0" disabled>
+        </div>
+        <div>
+          <label>Take rate</label>
+          <input type="number" value="0" disabled>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn btn-free">Unmark free</button>
+        <button class="btn btn-delete">Delete</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="add-btn">+ Add pax type</div>
+
+</div>
+
+
+
+<script>
+function toggleCard(header) {
+  const body = header.nextElementSibling;
+  body.style.display = body.style.display === "block" ? "none" : "block";
+}
+</script>
+
+</body>
+</html>
