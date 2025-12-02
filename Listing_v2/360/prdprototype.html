@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Magic Listing – Multi-Step Wizard</title>
+<style>
+:root {
+  --purple: #6b3cff;
+  --purple-soft: #f4f0ff;
+  --purple-border: #d9caff;
+  --bg: #fafafa;
+  --text: #202124;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 6px 16px rgba(0,0,0,0.06);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.wrapper {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 18px;
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 20px;
+}
+
+/* Stepper */
+.stepper {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+}
+
+.stepper h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.step {
+  display: flex;
+  gap: 10px;
+  padding: 9px 8px;
+  border-radius: var(--radius);
+  align-items: center;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.step.active {
+  background: var(--purple-soft);
+  border-left: 3px solid var(--purple);
+}
+
+.step.done {
+  opacity: 0.7;
+}
+
+.step-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.step.active .step-number {
+  background: var(--purple);
+  color: #fff;
+  border-color: var(--purple);
+}
+
+/* Cards / Step content */
+.card {
+  display: none;
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card.active {
+  display: block;
+}
+
+.card h2 {
+  font-size: 19px;
+  margin-bottom: 6px;
+}
+
+.card p {
+  margin-top: 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 0 16px;
+}
+
+/* Form controls */
+label {
+  font-size: 13px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--purple);
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.helper {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--purple);
+  color: #fff;
+}
+
+.btn-secondary {
+  background: #f2f2f2;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* Preview / RMS product */
+.preview-box {
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: var(--radius);
+  background: #fafafa;
+  margin-bottom: 14px;
+}
+
+.flex {
+  display: flex;
+}
+
+.preview-img {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  background: linear-gradient(135deg,#dcdcff,#ffdada);
+  flex-shrink: 0;
+}
+
+.preview-meta {
+  margin-left: 12px;
+  font-size: 13px;
+}
+
+.pill {
+  display: inline-block;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  margin-right: 6px;
+}
+
+/* CE classification */
+.ce-box {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  background: #fafafa;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.ce-success {
+  background: #f0fdf4;
+  color: #166534;
+  border-left: 3px solid #16a34a;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
+.ce-option {
+  padding: 8px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.ce-option input {
+  margin-right: 6px;
+}
+
+/* AI suggestion cards */
+.section-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fafafa;
+}
+
+.section-header {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.section-block {
+  margin-bottom: 6px;
+}
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.section-text {
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.section-choice {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.section-choice label {
+  font-weight: 400;
+}
+
+/* Review summary */
+.summary-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.summary-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--purple);
+  margin-top: 6px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1>Add New Listing (Magic / 360 Flow)</h1>
+
+  <div class="layout">
+    <!-- STEPPER -->
+    <div class="stepper">
+      <h3>Steps</h3>
+      <div class="step active" data-step="1"><div class="step-number">1</div>Magic Listing Eligibility</div>
+      <div class="step" data-step="2"><div class="step-number">2</div>Product Code</div>
+      <div class="step" data-step="3"><div class="step-number">3</div>RMS Verification</div>
+      <div class="step" data-step="4"><div class="step-number">4</div>Classification</div>
+      <div class="step" data-step="5"><div class="step-number">5</div>AI Suggestions</div>
+      <div class="step" data-step="6"><div class="step-number">6</div>Review Listing</div>
+      <div class="step" data-step="7"><div class="step-number">7</div>Submit</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div>
+
+      <!-- STEP 1: Eligibility -->
+      <div class="card active" id="step-1">
+        <h2>Magic Listing Eligibility</h2>
+        <p>We checked your connected RMS and confirmed that this account can use Magic Listing.</p>
+        <div class="preview-box">
+          <strong>Connected RMS:</strong> SampleRMS<br>
+          <span style="font-size:12px;">Found in <code>vendor_rms_table</code> and supported by 360.</span><br><br>
+          <span class="pill" style="background:#ecfdf5;color:#166534;">Magic Listing available</span>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" onclick="goTo(2)">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: Product Code ONLY -->
+      <div class="card" id="step-2">
+        <h2>Product Code</h2>
+        <p>Enter the RMS product code for the experience you want to list.</p>
+
+        <div>
+          <label>RMS Product Code</label>
+          <input id="productCode" placeholder="e.g. BCN-12345" />
+          <div class="helper">We’ll use this to fetch the product from your RMS via 360.</div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="goTo(1)">Back</button>
+          <button class="btn-primary" onclick="goTo(3)">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: RMS Product Verification -->
+      <div class="card" id="step-3">
+        <h2>RMS Product Verification</h2>
+        <p>We fetched this product from your RMS. Please confirm it’s the one you want to list.</p>
+
+        <div class="preview-box flex">
+          <div class="preview-img"></div>
+          <div class="preview-meta">
+            <strong>Sagrada Família Skip-the-Line Tour</strong><br>
+            SampleRMS · Product code: <span id="pc-label">BCN-12345</span><br>
+            <div style="margin-top:6px;">
+              <span class="pill">3 options</span>
+              <span class="pill">2.5 hrs</span>
+              <span class="pill">English guide</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="goTo(2)">Back</button>
+          <button class="btn-primary" onclick="goTo(4)">Yes, this is correct</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Classification -->
+      <div class="card" id="step-4">
+        <h2>Classification & Workflow</h2>
+        <p>Using the experience name, city, and subcategory, we map this listing to a CE and workflow.</p>
+
+        <!-- Subcategory ask ONLY if not from RMS -->
+        <div id="subcategory-block" style="margin-bottom:14px; display:none;">
+          <label>Subcategory</label>
+          <input placeholder="e.g. Landmark Entry" />
+          <div class="helper">We couldn’t get this from your RMS. Please choose the closest fit.</div>
+        </div>
+
+        <!-- CE scenarios rendered here -->
+        <div id="ce-container"></div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="goTo(3)">Back</button>
+          <button class="btn-primary" onclick="goTo(5)">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 5: AI Suggestions -->
+      <div class="card" id="step-5">
+        <h2>AI Suggestions</h2>
+        <p>We fetched the content from your RMS and prepared AI suggestions in Headout’s tone. Choose what you want to keep.</p>
+
+        <!-- Section: Title & short description -->
+        <div class="section-card">
+          <div class="section-header">Title & short description</div>
+          <div class="section-block">
+            <div class="section-label">Original from RMS</div>
+            <div class="section-text">
+              “Sagrada Família skip-the-line guided tour with headset and side gate access.”
+            </div>
+          </div>
+          <div class="section-block">
+            <div class="section-label">AI suggestion</div>
+            <div class="section-text">
+              “Fast-Track Guided Tour of the Sagrada Família with Local Expert.”
+            </div>
+          </div>
+          <div class="section-choice">
+            <label><input type="radio" name="titleChoice" value="original"> Keep original</label>
+            <label><input type="radio" name="titleChoice" value="ai" checked> Use AI suggestion</label>
+          </div>
+        </div>
+
+        <!-- Section: Highlights -->
+        <div class="section-card">
+          <div class="section-header">Highlights</div>
+          <div class="section-block">
+            <div class="section-label">Original from RMS</div>
+            <div class="section-text">
+              • Skip-the-line via side gate<br>
+              • Guided visit to church and museum<br>
+              • Optional tower access (extra)
+            </div>
+          </div>
+          <div class="section-block">
+            <div class="section-label">AI suggestion</div>
+            <div class="section-text">
+              • Enter quickly with fast-track access<br>
+              • Hear stories and context from a licensed local guide<br>
+              • Discover key facades, interiors, and ongoing construction
+            </div>
+          </div>
+          <div class="section-choice">
+            <label><input type="radio" name="highlightsChoice" value="original"> Keep original</label>
+            <label><input type="radio" name="highlightsChoice" value="ai" checked> Use AI suggestion</label>
+          </div>
+        </div>
+
+        <!-- Section: Inclusions -->
+        <div class="section-card">
+          <div class="section-header">Inclusions</div>
+          <div class="section-block">
+            <div class="section-label">Original from RMS</div>
+            <div class="section-text">
+              Included: guided tour, headset, skip-the-line entry.<br>
+              Not included: transport, food & drinks.
+            </div>
+          </div>
+          <div class="section-block">
+            <div class="section-label">AI suggestion</div>
+            <div class="section-text">
+              Included: expert English-speaking guide, fast-track ticket, personal audio headset.<br>
+              Not included: hotel transfers, meals, tower access (available on-site).
+            </div>
+          </div>
+          <div class="section-choice">
+            <label><input type="radio" name="incChoice" value="original"> Keep original</label>
+            <label><input type="radio" name="incChoice" value="ai" checked> Use AI suggestion</label>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="goTo(4)">Back</button>
+          <button class="btn-primary" onclick="goTo(6)">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 6: Review Listing -->
+      <div class="card" id="step-6">
+        <h2>Review Listing</h2>
+        <p>Check the final content before submitting.</p>
+
+        <div class="grid-2">
+          <div>
+            <label>Final Title</label>
+            <input id="finalTitle" value="Fast-Track Guided Tour of the Sagrada Família">
+          </div>
+          <div>
+            <label>Workflow Type</label>
+            <input id="workflowFinal" disabled value="">
+          </div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <label>Final Description (summary)</label>
+          <textarea rows="5">Join a licensed guide for a fast-track, in-depth tour of Gaudí’s Sagrada Família, with priority entry and clear commentary throughout.</textarea>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="goTo(5)">Back</button>
+          <button class="btn-primary" onclick="goTo(7)">Continue</button>
+        </div>
+      </div>
+
+      <!-- STEP 7: Submit -->
+      <div class="card" id="step-7">
+        <h2>Submit Listing</h2>
+        <p>Here’s a quick summary of what will be sent for go-live.</p>
+
+        <div class="summary-item">
+          <div class="summary-dot"></div>
+          <div><strong>Source:</strong> RMS content via 360, cleaned with AI suggestions.</div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-dot"></div>
+          <div><strong>Workflow:</strong> <span id="summaryWorkflow"></span></div>
+        </div>
+
+        <div class="summary-item">
+          <div class="summary-dot"></div>
+          <div><strong>CE Mapping:</strong> <span id="summaryCE"></span></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-secondary" onclick="goTo(6)">Back</button>
+          <button class="btn-primary">Submit Listing</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- Step navigation ----------
+function goTo(n) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  document.getElementById('step-' + n).classList.add('active');
+
+  document.querySelectorAll('.step').forEach(s => {
+    const num = Number(s.dataset.step);
+    s.classList.remove('active', 'done');
+    if (num === n) s.classList.add('active');
+    if (num < n) s.classList.add('done');
+  });
+}
+
+// sync product code label in step 3
+const productCodeInput = document.getElementById('productCode');
+const pcLabel = document.getElementById('pc-label');
+if (productCodeInput && pcLabel) {
+  productCodeInput.addEventListener('input', () => {
+    pcLabel.textContent = productCodeInput.value || 'BCN-12345';
+  });
+}
+
+// ---------- CE classification scenarios ----------
+// Change these two variables to simulate behaviour:
+let ceScenario = "partial";          // "perfect" | "partial" | "none"
+let subcategoryFromRMS = false;      // true => hide subcategory field; false => show
+
+const ceContainer = document.getElementById('ce-container');
+const workflowField = document.getElementById('workflowFinal');
+const summaryWorkflow = document.getElementById('summaryWorkflow');
+const summaryCE = document.getElementById('summaryCE');
+const subcategoryBlock = document.getElementById('subcategory-block');
+
+function renderCEScenario() {
+  // Subcategory visibility
+  subcategoryBlock.style.display = subcategoryFromRMS ? 'none' : 'block';
+
+  ceContainer.innerHTML = "";
+
+  if (ceScenario === "perfect") {
+    ceContainer.innerHTML = `
+      <div class="ce-success">
+        🎉 Congrats! Your experience perfectly matches <strong>CE-BCN-SAGRADA-001</strong> and is eligible to go live instantly.
+      </div>
+      <div class="ce-box">
+        <strong>CE ID:</strong> CE-BCN-SAGRADA-001<br>
+        <strong>Collection:</strong> Barcelona · Sagrada Família<br>
+        <strong>Workflow:</strong> Unmanaged (eligible for instant go-live)
+      </div>
+      <div style="margin-top:10px;">
+        <label>Commission (%)</label>
+        <input placeholder="e.g. 15">
+        <div class="helper">Since this is eligible for an unmanaged flow, you can set a commission threshold here.</div>
+      </div>
+    `;
+    workflowField.value = "Unmanaged – Instant go-live";
+    summaryWorkflow.textContent = "Unmanaged – Instant go-live";
+    summaryCE.textContent = "CE-BCN-SAGRADA-001 (Sagrada Família)";
+  }
+
+  if (ceScenario === "partial") {
+    ceContainer.innerHTML = `
+      <div class="ce-box">
+        <strong>We found more than one possible CE match.</strong><br>
+        Please choose the closest one for this experience.
+        <div style="margin-top:8px;">
+          <div class="ce-option">
+            <input type="radio" name="cePick" checked />
+            CE-BCN-SAGRADA-001 – Sagrada Família tours
+          </div>
+          <div class="ce-option">
+            <input type="radio" name="cePick" />
+            CE-BCN-LANDMARK-004 – Barcelona landmark experiences
+          </div>
+        </div>
+        <div class="helper">Final workflow: Managed Light (our team will do a quick check before go-live).</div>
+      </div>
+    `;
+    workflowField.value = "Managed Light";
+    summaryWorkflow.textContent = "Managed Light";
+    summaryCE.textContent = "Multiple options – to be confirmed";
+  }
+
+  if (ceScenario === "none") {
+    // No CE match: stay almost silent, but set workflow internally
+    ceContainer.innerHTML = `
+      <div class="ce-box">
+        <strong>No direct CE match found.</strong><br>
+        We’ll handle this as a standard Managed Light listing in the background.
+      </div>
+    `;
+    workflowField.value = "Managed Light (default)";
+    summaryWorkflow.textContent = "Managed Light (default)";
+    summaryCE.textContent = "No direct CE match";
+  }
+}
+
+renderCEScenario();
+</script>
+</body>
+</html>
