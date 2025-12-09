@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voucher - Headout</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root {
+    --brand: #7B2CFF;
+    --text-main: #111827;
+    --text-muted: #6B7280;
+    --border: #E5E7EB;
+    --border-dark: #D1D5DB;
+    --bg: #ffffff;
+    --bg-soft: #F9FAFB;
+
+    --radius-md: 10px;
+    --radius-lg: 14px;
+
+    --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #F3F4F6;
+    padding: 28px 12px;
+    font-family: var(--font);
+    color: var(--text-main);
+  }
+
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--bg);
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  @media(max-width:680px) {
+    .wrapper { padding: 22px 18px; border-radius: 0; }
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--brand);
+  }
+
+  .brand-dot {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--brand);
+  }
+
+  .meta {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
+  .meta strong { color: var(--text-main); font-size: 13px; }
+
+  /* EXPERIENCE + BOOKING ID */
+  .exp-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .exp-option {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+
+  .booking-id-block {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .booking-id {
+    text-align: left;
+  }
+
+  .booking-id-label {
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .booking-id-value {
+    margin-top: 4px;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: ui-monospace, Menlo, monospace;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .copy-icon {
+    font-size: 17px;
+    color: var(--brand);
+    cursor: pointer;
+  }
+
+  /* DETAILS GRID */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  @media(max-width:680px) {
+    .detail-grid {
+      grid-template-columns: repeat(2,1fr);
+    }
+  }
+
+  .d-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-bottom: 4px;
+  }
+
+  .d-value {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* BANNER (only when needed) */
+  .banner {
+    margin-top: 22px;
+    padding: 16px 18px;
+    border-radius: var(--radius-md);
+    border: 1px solid #FDEFCB;
+    background: #FFFDF5;
+    font-size: 14px;
+    margin-bottom: 32px;
+  }
+
+  .banner strong { font-weight: 600; }
+
+  /* SECTION */
+  .section {
+    padding: 26px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+
+  .section-text {
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+
+  /* STEPPER */
+  .stepper {
+    margin-top: 16px;
+    border-left: 2px solid var(--border-dark);
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .step {
+    position: relative;
+  }
+
+  .step-number {
+    position: absolute;
+    left: -31px;
+    top: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--border-dark);
+    font-size: 12px;
+    font-weight: 600;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: white;
+  }
+
+  .loc-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .address {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .map-link {
+    color: var(--brand);
+    font-size: 14px;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .guide-info {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .photos {
+    margin-top: 12px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .photo {
+    flex: 1;
+    height: 130px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* HELP BOX */
+  .help-box {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    padding: 18px;
+    border-radius: var(--radius-lg);
+    font-size: 14px;
+  }
+
+  .help-link { color: var(--brand); font-weight: 500; text-decoration:none; }
+
+  .guest-types {
+    padding: 16px 0;
+  }
+
+  .guest-inline {
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  .date-time-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .dt-card {
+    background: var(--bg-soft);
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+  }
+
+  .dt-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .dt-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .location-variants { margin: 20px 0; display: flex; flex-direction: column; gap: 20px; }
+
+  .loc-block { padding: 16px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--bg-soft); }
+
+  .loc-header { font-size: 15px; font-weight: 600; margin-bottom: 10px; }
+
+  .ordered-item, .unordered-item, .choose-item { margin-bottom: 12px; }
+
+  .order-num { width: 22px; height: 22px; border: 1px solid var(--border-dark); border-radius: 50%; display: inline-flex; align-items:center; justify-content:center; font-size: 12px; margin-right: 8px; }
+
+  .qr-section { margin: 24px 0; text-align: center; }
+
+  .qr-title { font-weight: 600; margin-bottom: 10px; }
+
+  .qr-image { width: 160px; height: 160px; margin: 0 auto 12px; }
+
+  .barcode img { width: 100%; max-width: 260px; margin: 10px auto; display: block; }
+
+  .qr-ref { font-size: 14px; color: var(--text-muted); margin-top: 8px; }
+
+  .route-type { margin: 16px 0; }
+
+  .route-badge { padding: 6px 10px; border-radius: 6px; background: var(--bg-soft); font-size: 13px; font-weight: 600; border: 1px solid var(--border); }
+</style>
+
+<!--
+  SUPPORT FOR MULTIPLE VERSIONS & CONDITIONAL LOGIC
+  This template includes logic placeholders for:
+  - Multiple guest types
+  - Date/time conditional logic
+  - Location variants
+  - QR/Barcode section
+  - Route type component
+-->
+</head>
+
+<body>
+
+<!-- VERSION LOGIC PLACEHOLDERS -->
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand"><div class="brand-dot"></div>headout</div>
+    <!-- <div class="meta">
+      <strong>Voucher</strong><br>
+      Booking reference for your experience
+    </div> -->
+  </div>
+
+  <!-- EXPERIENCE -->
+  <div class="exp-title">Prague Astronomical Clock Tower Tickets</div>
+  <div class="exp-option">Selected option: Astronomical Clock Tower Tickets</div>
+
+  <!-- BOOKING ID (Option A refined: top-right hero, no strip) -->
+  <div class="booking-id-block">
+    <div class="booking-id">
+      <div class="booking-id-label">Booking ID</div>
+      <div class="booking-id-value">
+        22771564 <span class="copy-icon">⧉</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS GRID -->
+  <div class="detail-grid">
+    <div><div class="d-label">Purchased by</div><div class="d-value">Leonie Sophie Auerbach</div></div>
+    <div>
+      <div class="d-label">Guests</div>
+      <div class="d-value">2 Adults · 1 Child · 1 Infant</div>
+    </div>
+    <div><div class="d-label">Experience date</div><div class="d-value">Jan 10, 2025</div></div>
+    <div><div class="d-label">Time</div><div class="d-value">02:00 PM</div></div>
+  </div>
+
+  <!-- ADAPTIVE DATE/TIME CARD (Option B) -->
+  <div class="date-time-container">
+
+    <div class="dt-card" data-show="validUntil">
+      <div class="dt-label">Valid Until</div>
+      <div class="dt-value">{{validUntil}}</div>
+    </div>
+
+    <div class="dt-card" data-show="experienceDate">
+      <div class="dt-label">Experience Date</div>
+      <div class="dt-value">{{experienceDate}}</div>
+    </div>
+
+    <div class="dt-card" data-show="startTime">
+      <div class="dt-label">{{tourStartTimeHeader}}</div>
+      <div class="dt-value">{{tourStartTime}}</div>
+    </div>
+
+    <div class="dt-card" data-show="timePrimary">
+      <div class="dt-label">Time</div>
+      <div class="dt-value">{{tourStartTime}}</div>
+    </div>
+
+    <div class="dt-card" data-show="timeSecondary">
+      <div class="dt-label">Time</div>
+      <div class="dt-value">{{tourStartTime}}</div>
+    </div>
+
+    <div class="dt-card" data-show="endTime">
+      <div class="dt-label">{{tourEndTimeHeader}}</div>
+      <div class="dt-value">{{tourEndTimeOrDuration}}</div>
+    </div>
+
+  </div>
+
+  <!-- ROUTE TYPE BADGE -->
+  <div class="route-type">
+    <span class="route-badge" data-type="{{routeType}}">
+      {{#ifEquals routeType "ordered"}}In Order{{/ifEquals}}
+      {{#ifEquals routeType "unordered"}}Visit All{{/ifEquals}}
+      {{#ifEquals routeType "choose-one"}}Choose One{{/ifEquals}}
+      {{#ifEquals routeType "single"}}Single Location{{/ifEquals}}
+    </span>
+  </div>
+
+  <!-- LOCATION VARIANTS -->
+  <div class="location-variants">
+
+    <div class="loc-block" data-variant="single">
+      <div class="loc-header">Location</div>
+      <div class="loc-address">{{singleLocationAddress}}</div>
+      <a class="map-link" href="{{singleLocationMapLink}}">Get directions</a>
+    </div>
+
+    <div class="loc-block" data-variant="ordered">
+      <div class="loc-header">Your route</div>
+      <div class="ordered-list">
+        {{#each orderedLocations}}
+        <div class="ordered-item">
+          <span class="order-num">{{this.index}}</span>
+          <div>
+            <div class="loc-title">{{this.title}}</div>
+            <div class="loc-address">{{this.address}}</div>
+            <a class="map-link" href="{{this.mapLink}}">Get directions</a>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="loc-block" data-variant="unordered">
+      <div class="loc-header">Locations you must visit</div>
+      <div class="unordered-list">
+        {{#each unorderedLocations}}
+        <div class="unordered-item">
+          <div class="loc-title">{{this.title}}</div>
+          <div class="loc-address">{{this.address}}</div>
+          <a class="map-link" href="{{this.mapLink}}">Get directions</a>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="loc-block" data-variant="choose-one">
+      <div class="loc-header">Choose any one location</div>
+      <div class="choose-one-list">
+        {{#each chooseOneLocations}}
+        <div class="choose-item">
+          <div class="loc-title">{{this.title}}</div>
+          <div class="loc-address">{{this.address}}</div>
+          <a class="map-link" href="{{this.mapLink}}">Get directions</a>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+
+  </div>
+
+  <!-- QR / BARCODE SECTION -->
+  <div class="qr-section">
+    <div class="qr-title">Scan at entry</div>
+    <img class="qr-image" src="{{qrCodeUrl}}" alt="QR Code">
+    <div class="barcode">
+      <img src="{{barcodeUrl}}" alt="Barcode">
+    </div>
+    <div class="qr-ref">{{qrReference}}</div>
+  </div>
+
+  <!-- CONDITIONAL BANNER -->
+  <div class="banner">
+    <strong>Important:</strong> Do not go directly to the venue entrance. Please follow the instructions in the <strong>Where to go</strong> section.
+  </div>
+
+  <!-- ESSENTIAL INFO -->
+  <div class="section">
+    <div class="section-title">Essential information</div>
+    <div class="section-text">
+      Arrive at least <strong>15 minutes early</strong> to make the most of your visit. Late arrivals may not be eligible for a refund.
+    </div>
+  </div>
+
+  <!-- WHERE TO GO -->
+  <div class="section">
+    <div class="section-title">Where to go</div>
+    <div class="section-text">Your experience begins at the locations below.</div>
+
+    <div style="margin-top:10px; font-size:13px; color:var(--text-muted);">
+      <strong style="color:var(--text-main);">Route type:</strong> Visit these locations in order
+    </div>
+
+    <div class="stepper">
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="loc-title">GetPragueGuide Office</div>
+        <div class="address">Maiselova 59/5, 110 00 Staré Město, Prague</div>
+        <a class="map-link" href="#" target="_blank">Get directions</a>
+        <div class="guide-info">
+          <strong>Guide details:</strong> Your guide will be waiting here holding a <strong>blue and white umbrella</strong>.
+        </div>
+
+        <div class="photos">
+          <div class="photo"><img src="https://via.placeholder.com/300x200?text=Photo+1"></div>
+          <div class="photo"><img src="https://via.placeholder.com/300x200?text=Photo+2"></div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="loc-title">Clock Tower Entrance</div>
+        <div class="address">Old Town Hall, Staroměstské náměstí 1/3, Prague</div>
+        <a class="map-link" href="#">Get directions</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ADDITIONAL INFO -->
+  <div class="section">
+    <div class="section-title">Additional information</div>
+    <div class="section-text">You will receive a 20-minute introduction and your ticket from the guide.</div>
+  </div>
+
+  <!-- CANCELLATION -->
+  <div class="section">
+    <div class="section-title">Cancellation policy</div>
+    <div class="section-text">Free cancellation until <strong>02:00 PM on 9 January 2025</strong>.</div>
+  </div>
+
+  <!-- HELP -->
+  <div class="section">
+    <div class="section-title">Need help?</div>
+    <div class="help-box">
+      <div style="font-weight:600; margin-bottom:6px;">We’re here for you 24×7.</div>
+      Visit our <a href="https://www.headout.com/help" class="help-link">Help Center</a><br><br>
+      Germany: +49 30 23921233<br>
+      United States: +1 347 897 9100
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

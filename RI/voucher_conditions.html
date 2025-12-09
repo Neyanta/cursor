@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Headout Voucher Prototype</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    :root {
+      --brand: #7b2cff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --border-dark: #d1d5db;
+      --bg: #ffffff;
+      --bg-soft: #f9fafb;
+
+      --radius-md: 10px;
+      --radius-lg: 14px;
+
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f3f4f6;
+      font-family: var(--font);
+      color: var(--text-main);
+      padding: 16px 12px 32px;
+    }
+
+    /* Top controls (prototype only) */
+    .controls {
+      max-width: 480px;
+      margin: 0 auto 16px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #e5e7eb3a;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .controls label {
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .controls select {
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-dark);
+      font-size: 14px;
+      background: #fff;
+    }
+
+    /* Voucher wrapper */
+    .wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      background: var(--bg);
+      border-radius: 18px;
+      padding: 20px 16px 24px;
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .brand-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--brand);
+    }
+
+    /* EXPERIENCE + BOOKING */
+    .exp-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .exp-option {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .booking-id-block {
+      margin-bottom: 16px;
+    }
+
+    .booking-id-label {
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .booking-id-value {
+      margin-top: 4px;
+      font-size: 18px;
+      font-weight: 700;
+      font-family: ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .copy-icon {
+      font-size: 15px;
+      color: var(--brand);
+    }
+
+    /* DETAIL GRID (summary row) */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .d-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+
+    .d-value {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .guest-extra {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Date / time cards */
+    .date-time-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 16px 0 8px;
+    }
+
+    .dt-card {
+      background: var(--bg-soft);
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .dt-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .dt-value {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Route badge + locations */
+    .route-type {
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .route-badge {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .location-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .loc-card {
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      font-size: 13px;
+    }
+
+    .loc-header {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .loc-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .loc-step {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1px solid var(--border-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      background: #fff;
+    }
+
+    .loc-title {
+      font-weight: 600;
+    }
+
+    .loc-address {
+      margin-bottom: 4px;
+    }
+
+    .map-link {
+      color: var(--brand);
+      font-size: 13px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .guide-info {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* QR / Barcode */
+    .qr-section {
+      margin: 18px 0 10px;
+      text-align: center;
+    }
+
+    .qr-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .qr-image {
+      width: 130px;
+      height: 130px;
+      margin-bottom: 8px;
+      background: #e5e7eb;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .barcode {
+      width: 100%;
+      max-width: 260px;
+      height: 40px;
+      margin: 0 auto 4px;
+      background: repeating-linear-gradient(
+        to right,
+        #111 0,
+        #111 2px,
+        #fff 2px,
+        #fff 4px
+      );
+      border-radius: 4px;
+    }
+
+    .qr-ref {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Sections */
+    .section {
+      padding: 18px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .section-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .banner {
+      margin-top: 16px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid #fde68a;
+      background: #fffbeb;
+      font-size: 13px;
+    }
+
+    .banner strong {
+      font-weight: 600;
+    }
+
+    .help-box {
+      margin-top: 4px;
+      padding: 10px 12px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      background: var(--bg-soft);
+      font-size: 13px;
+    }
+
+    .help-link {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    @media (min-width: 768px) {
+      body {
+        padding-top: 24px;
+      }
+      .wrapper {
+        max-width: 640px;
+        padding: 24px 24px 28px;
+      }
+      .detail-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    /* Media scroll (horizontal) */
+    .media-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-top: 10px;
+      padding-bottom: 4px;
+    }
+
+    .media-scroll::-webkit-scrollbar {
+      height: 5px;
+    }
+
+    .media-scroll::-webkit-scrollbar-thumb {
+      background: #d1d5db;
+      border-radius: 4px;
+    }
+
+    .media-img {
+      width: 160px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Prototype-only controls (hidden in real product) -->
+  <div class="controls">
+    <label for="scenarioSelect">Voucher scenario (prototype only)</label>
+    <select id="scenarioSelect">
+      <option value="fixedSingle">Fixed date – Single location</option>
+      <option value="fixedOrdered">Fixed date – Multi-location (ordered)</option>
+      <option value="fixedUnordered">Fixed date – Multi-location (visit all)</option>
+      <option value="fixedChooseOne">Fixed date – Choose one location</option>
+      <option value="openStartNoDuration">Open-dated – Start time only</option>
+      <option value="openValidityDuration">Open-dated – Validity + duration</option>
+      <option value="fixedTimeInGuestRow">Fixed date – Time with guests (special)</option>
+    </select>
+  </div>
+
+  <!-- Voucher -->
+  <div class="wrapper">
+    <!-- Header -->
+    <div class="header">
+      <div class="brand-dot"></div>
+      <div class="brand">headout</div>
+    </div>
+
+    <!-- Experience -->
+    <div class="exp-title" id="expTitle">Prague Astronomical Clock Tower Tickets</div>
+    <div class="exp-option" id="expOption">
+      Selected option: Astronomical Clock Tower Tickets
+    </div>
+
+    <!-- Booking ID -->
+    <div class="booking-id-block">
+      <div class="booking-id-label">Booking ID</div>
+      <div class="booking-id-value">
+        <span id="bookingId">22771564</span>
+        <span class="copy-icon">⧉</span>
+      </div>
+    </div>
+
+    <!-- Summary row -->
+    <div class="detail-grid">
+      <div>
+        <div class="d-label">Purchased by</div>
+        <div class="d-value" id="purchasedBy">Leonie Sophie Auerbach</div>
+      </div>
+      <div>
+        <div class="d-label">Guests</div>
+        <div class="d-value" id="guestSummary">2 Adults · 1 Child · 1 Infant</div>
+        <div class="guest-extra" id="guestExtra"></div>
+      </div>
+      <div>
+        <div class="d-label" id="summaryDateLabel">Experience Date</div>
+        <div class="d-value" id="summaryDateValue">Jan 10, 2025</div>
+      </div>
+      <div>
+        <div class="d-label" id="summaryTimeLabel">Time</div>
+        <div class="d-value" id="summaryTimeValue">02:00 PM</div>
+      </div>
+    </div>
+
+    <!-- Adaptive date/time cards -->
+    <div id="dateTimeContainer" class="date-time-container"></div>
+
+    <!-- QR / Barcode -->
+    <div class="qr-section">
+      <div class="qr-title">Scan at entry</div>
+      <div class="qr-image"></div>
+      <!-- <div class="barcode"></div> -->
+      <div class="qr-ref" id="qrRef">Ref: HQ-22771564</div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner" id="banner">
+      <strong>Important:</strong> Do not go directly to the main venue entrance.
+      Please follow the instructions in the <strong>Where to go</strong> section.
+    </div>
+
+    <!-- Essential info -->
+    <div class="section">
+      <div class="section-title">Essential information</div>
+      <div class="section-text" id="essentialText">
+        Arrive at least <strong>15 minutes early</strong> to make the most of your visit.
+        Late arrivals may not be eligible for a refund.
+      </div>
+    </div>
+
+    <!-- Where to go -->
+    <div class="section">
+      <div class="section-title">Where to go</div>
+      <div class="section-text" id="whereIntro">
+        Your experience begins at the locations below.
+      </div>
+
+      <div class="route-type">
+        <span class="route-badge" id="routeBadge">Single location</span>
+      </div>
+
+      <div id="locationList" class="location-list"></div>
+    </div>
+
+    <!-- Additional information -->
+    <div class="section">
+      <div class="section-title">Additional information</div>
+      <div class="section-text" id="additionalInfo">
+        You will receive a 20-minute introduction and your ticket from the guide.
+      </div>
+    </div>
+
+    <!-- Cancellation -->
+    <div class="section">
+      <div class="section-title">Cancellation policy</div>
+      <div class="section-text" id="cancellationText">
+        Free cancellation until <strong>02:00 PM on 9 January 2025</strong>.
+      </div>
+    </div>
+
+    <!-- Help -->
+    <div class="section">
+      <div class="section-title">Need help?</div>
+      <div class="help-box">
+        <div style="font-weight:600; margin-bottom:4px;">We’re here for you 24×7.</div>
+        Visit our <a href="https://www.headout.com/help" class="help-link">Help Center</a><br /><br />
+        Germany: +49 30 23921233<br />
+        United States: +1 347 897 9100
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Scenario data -------------------------------------------------------
+    const scenarios = {
+      fixedSingle: {
+        name: "Fixed date – Single location",
+        isOpenDated: false,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "2 Adults · 1 Child · 1 Infant",
+        summaryDateLabel: "Experience Date",
+        summaryDate: "Jan 10, 2025",
+        summaryTime: "02:00 PM",
+        bookingId: "22771564",
+        qrRef: "Ref: HQ-22771564",
+        validity: null,
+        tourStartTimeHeader: "Time",
+        tourStartTime: "02:00 PM",
+        duration: null,
+        tourEndTimeHeader: null,
+        tourEndTime: null,
+        locationsMode: "single",
+        locations: [
+          {
+            title: "Clock Tower Entrance",
+            address: "Old Town Hall, Staroměstské náměstí 1/3, Prague",
+            mapLink: "#"
+          }
+        ]
+      },
+
+      fixedOrdered: {
+        name: "Fixed date – Multi-location (ordered)",
+        isOpenDated: false,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "2 Adults · 1 Child",
+        summaryDateLabel: "Experience Date",
+        summaryDate: "Jan 10, 2025",
+        summaryTime: "02:00 PM",
+        bookingId: "22771565",
+        qrRef: "Ref: HQ-22771565",
+        validity: null,
+        tourStartTimeHeader: "Time",
+        tourStartTime: "02:00 PM",
+        duration: null,
+        tourEndTimeHeader: null,
+        tourEndTime: null,
+        locationsMode: "ordered",
+        locations: [
+          {
+            step: 1,
+            title: "GetPragueGuide Office",
+            address: "Maiselova 59/5, 110 00 Staré Město, Prague",
+            mapLink: "#",
+            guide: "Your guide will be waiting here holding a blue and white umbrella."
+          },
+          {
+            step: 2,
+            title: "Clock Tower Entrance",
+            address: "Old Town Hall, Staroměstské náměstí 1/3, Prague",
+            mapLink: "#"
+          }
+        ]
+      },
+
+      fixedUnordered: {
+        name: "Fixed date – Multi-location (visit all)",
+        isOpenDated: false,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "3 Adults",
+        summaryDateLabel: "Experience Date",
+        summaryDate: "Feb 05, 2025",
+        summaryTime: "11:00 AM",
+        bookingId: "22800001",
+        qrRef: "Ref: HQ-22800001",
+        validity: null,
+        tourStartTimeHeader: "Time",
+        tourStartTime: "11:00 AM",
+        duration: null,
+        tourEndTimeHeader: null,
+        tourEndTime: null,
+        locationsMode: "unordered",
+        locations: [
+          {
+            title: "Museum Entrance",
+            address: "Main Square 1, Prague",
+            mapLink: "#"
+          },
+          {
+            title: "Exhibition Hall",
+            address: "River Street 12, Prague",
+            mapLink: "#"
+          }
+        ]
+      },
+
+      fixedChooseOne: {
+        name: "Fixed date – Choose one location",
+        isOpenDated: false,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "2 Adults",
+        summaryDateLabel: "Experience Date",
+        summaryDate: "Mar 02, 2025",
+        summaryTime: "04:00 PM",
+        bookingId: "22810001",
+        qrRef: "Ref: HQ-22810001",
+        validity: null,
+        tourStartTimeHeader: "Time",
+        tourStartTime: "04:00 PM",
+        duration: null,
+        tourEndTimeHeader: null,
+        tourEndTime: null,
+        locationsMode: "choose-one",
+        locations: [
+          {
+            title: "Main Entrance",
+            address: "Central Plaza 5, Prague",
+            mapLink: "#"
+          },
+          {
+            title: "Side Entrance",
+            address: "Back Street 9, Prague",
+            mapLink: "#"
+          }
+        ]
+      },
+
+      openStartNoDuration: {
+        name: "Open-dated – Start time only",
+        isOpenDated: true,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "2 Adults",
+        summaryDateLabel: "Valid for visit",
+        summaryDate: "Any day until Dec 31, 2025",
+        summaryTime: "10:00 AM",
+        bookingId: "22900001",
+        qrRef: "Ref: HQ-22900001",
+        validity: "Dec 31, 2025",
+        tourStartTimeHeader: "Start Time",
+        tourStartTime: "10:00 AM",
+        duration: null,
+        tourEndTimeHeader: null,
+        tourEndTime: null,
+        locationsMode: "single",
+        locations: [
+          {
+            title: "Main Entrance",
+            address: "City Center 11, Prague",
+            mapLink: "#"
+          }
+        ]
+      },
+
+      openValidityDuration: {
+        name: "Open-dated – Validity + duration",
+        isOpenDated: true,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "2 Adults · 1 Child",
+        summaryDateLabel: "Valid for visit",
+        summaryDate: "Any day until Dec 31, 2025",
+        summaryTime: "10:00 AM",
+        bookingId: "22900002",
+        qrRef: "Ref: HQ-22900002",
+        validity: "Dec 31, 2025",
+        tourStartTimeHeader: "Tour start",
+        tourStartTime: "10:00 AM",
+        duration: "2 hours",
+        tourEndTimeHeader: "End Time",
+        tourEndTime: "12:00 PM",
+        locationsMode: "single",
+        locations: [
+          {
+            title: "Meeting Point",
+            address: "Old Town Square, in front of the fountain",
+            mapLink: "#",
+            guide: "Look for a guide with a purple Headout umbrella."
+          }
+        ]
+      },
+
+      fixedTimeInGuestRow: {
+        name: "Fixed date – Time with guests (special)",
+        isOpenDated: false,
+        purchasedBy: "Leonie Sophie Auerbach",
+        guestSummary: "2 Adults · 2 Children",
+        summaryDateLabel: "Experience Date",
+        summaryDate: "Jan 15, 2025",
+        summaryTime: "", // main time suppressed
+        bookingId: "22779999",
+        qrRef: "Ref: HQ-22779999",
+        validity: "Jan 15, 2025",
+        tourStartTimeHeader: "Time",
+        tourStartTime: "03:30 PM",
+        duration: null,
+        tourEndTimeHeader: null,
+        tourEndTime: null,
+        locationsMode: "ordered",
+        locations: [
+          {
+            step: 1,
+            title: "Check-in Desk",
+            address: "Lobby, Ground Floor",
+            mapLink: "#"
+          },
+          {
+            step: 2,
+            title: "Tour Start Point",
+            address: "Courtyard Entrance",
+            mapLink: "#"
+          }
+        ]
+      }
+    };
+
+    // --- DOM references ------------------------------------------------------
+    const selectEl = document.getElementById("scenarioSelect");
+    const expTitleEl = document.getElementById("expTitle");
+    const expOptionEl = document.getElementById("expOption");
+    const bookingIdEl = document.getElementById("bookingId");
+    const purchasedByEl = document.getElementById("purchasedBy");
+    const guestSummaryEl = document.getElementById("guestSummary");
+    const guestExtraEl = document.getElementById("guestExtra");
+    const summaryDateLabelEl = document.getElementById("summaryDateLabel");
+    const summaryDateValueEl = document.getElementById("summaryDateValue");
+    const summaryTimeValueEl = document.getElementById("summaryTimeValue");
+    const qrRefEl = document.getElementById("qrRef");
+    const dateTimeContainerEl = document.getElementById("dateTimeContainer");
+    const routeBadgeEl = document.getElementById("routeBadge");
+    const locationListEl = document.getElementById("locationList");
+
+    function addDtCard(label, value) {
+      const card = document.createElement("div");
+      card.className = "dt-card";
+      card.innerHTML = `
+        <div class="dt-label">${label}</div>
+        <div class="dt-value">${value}</div>
+      `;
+      dateTimeContainerEl.appendChild(card);
+    }
+
+    function applyScenario(key) {
+      const s = scenarios[key];
+      if (!s) return;
+
+      // Summary info
+      expTitleEl.textContent = "Prague Astronomical Clock Tower Tickets";
+      expOptionEl.textContent = s.name;
+      bookingIdEl.textContent = s.bookingId;
+      purchasedByEl.textContent = s.purchasedBy;
+      guestSummaryEl.textContent = s.guestSummary;
+      guestExtraEl.textContent = "";
+      summaryDateLabelEl.textContent = s.summaryDateLabel;
+      summaryDateValueEl.textContent = s.summaryDate;
+      summaryTimeValueEl.textContent = s.summaryTime || "—";
+      qrRefEl.textContent = s.qrRef;
+
+      // Date/time cards (apply your conditional logic)
+      dateTimeContainerEl.innerHTML = "";
+
+      if (s.isOpenDated) {
+        // Open-dated
+        if (s.validity) {
+          addDtCard("Valid Until", s.validity);
+        }
+        if (s.tourStartTime && !s.duration) {
+          addDtCard(s.tourStartTimeHeader, s.tourStartTime);
+        }
+      }  else {
+  // Fixed-date
+  // Do NOT duplicate Experience Date or Time here.
+  // Only show Valid Until if it exists.
+  if (s.validity) addDtCard("Valid Until", s.validity);
+}
+
+      // Second-row style logic
+      if (!s.isOpenDated || s.duration) {
+        if (s.tourStartTimeHeader !== "Time" && s.tourStartTime) {
+          addDtCard(s.tourStartTimeHeader, s.tourStartTime);
+        }
+        if (s.tourEndTimeHeader && (s.duration || s.tourEndTime)) {
+          addDtCard(
+            s.tourEndTimeHeader,
+            s.duration ? s.duration : s.tourEndTime
+          );
+        }
+      }
+
+      // Special case: time with guest info
+      if (s.tourStartTimeHeader === "Time" && s.validity && s.tourStartTime) {
+        // Time goes with guest row instead of card
+        guestExtraEl.textContent = `Time: ${s.tourStartTime}`;
+        // And suppress main summary time
+        summaryTimeValueEl.textContent = "—";
+      }
+
+      // Route badge + locations
+      let badgeText = "";
+      if (s.locationsMode === "ordered") badgeText = "Visit these in order";
+      if (s.locationsMode === "unordered") badgeText = "Visit all locations";
+      if (s.locationsMode === "choose-one") badgeText = "Choose any one";
+
+      routeBadgeEl.textContent = badgeText;
+      routeBadgeEl.style.display = badgeText ? "inline-block" : "none";
+
+      // Build location cards
+      locationListEl.innerHTML = "";
+      s.locations.forEach((loc) => {
+        const card = document.createElement("div");
+        card.className = "loc-card";
+
+        let stepMarkup = "";
+        if (s.locationsMode === "ordered" && loc.step) {
+          stepMarkup = `<div class="loc-step">${loc.step}</div>`;
+        }
+
+        card.innerHTML = `
+  ${loc.guide ? `
+    <div class="guide-info" style="margin-bottom:6px; font-size:12px; color:#6b7280;">
+      <strong style="color:#111;">Guide / Host:</strong> ${loc.guide}
+    </div>
+  ` : ""}
+
+  <div class="loc-title-row">
+    ${stepMarkup}
+    <div class="loc-title">${loc.title}</div>
+  </div>
+
+  <div class="loc-address">${loc.address}</div>
+  <a href="${loc.mapLink}" class="map-link">Get directions</a>
+
+  ${
+    loc.media && loc.media.length
+      ? `
+        <div class="media-scroll">
+          ${loc.media.map(m => `
+            <img src="${m}" class="media-img" />
+          `).join("")}
+        </div>
+      `
+      : ""
+  }
+`;
+        locationListEl.appendChild(card);
+      });
+    }
+
+    // Initial render
+    applyScenario(selectEl.value);
+
+    // Listen to dropdown
+    selectEl.addEventListener("change", (e) => {
+      applyScenario(e.target.value);
+    });
+  </script>
+</body>
+</html>
