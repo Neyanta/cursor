@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Headout Voucher - Full Mobile Version</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #7c3aed;
+    --accent-light: #f3e8ff;
+    --radius: 14px;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: system-ui, sans-serif;
+    color: var(--text);
+  }
+
+  .shell {
+    max-width: 480px;
+    margin: auto;
+    padding: 16px;
+  }
+
+  /* HERO */
+
+  .hero {
+    background: var(--card);
+    padding: 18px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .logo {
+    height: 26px;
+    margin-bottom: 12px;
+  }
+
+  .booking-id {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .exp-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .exp-option {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    font-size: 12px;
+  }
+
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: repeating-linear-gradient(
+      45deg,
+      #e5e7eb,
+      #e5e7eb 4px,
+      #f9fafb 4px,
+      #f9fafb 8px
+    );
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+  }
+
+  /* IMPORTANT INFO BANNER */
+
+  .important-banner {
+    background: #fff8e6;
+    border-left: 4px solid #d97706;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    color: #92400e;
+  }
+
+  /* GENERAL CARD */
+
+  .card {
+    background: var(--card);
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-top: 16px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-bottom: 12px;
+  }
+
+  /* BOOKING DETAILS */
+
+  .details-grid div {
+    margin-bottom: 6px;
+    font-size: 14px;
+  }
+
+  /* LOCATION CARD */
+
+  .location-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  .loc-name {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .loc-address {
+    font-size: 14px;
+    white-space: pre-line;
+    margin-bottom: 14px;
+    color: #374151;
+  }
+
+  .map-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+
+  .media-thumb {
+    height: 130px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* DIVIDER + SUBLABELS */
+
+  .divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 14px 0;
+  }
+
+  .detail-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .detail-text {
+    font-size: 14px;
+    color: #1f2937;
+    margin-bottom: 10px;
+  }
+
+  /* LISTS */
+
+  .list {
+    padding-left: 20px;
+    font-size: 14px;
+    color: #374151;
+  }
+  .list li {
+    margin-bottom: 6px;
+  }
+
+</style>
+</head>
+
+<body>
+<div class="shell">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="LOGO_SRC" class="logo">
+    <div class="booking-id">HD-778899</div>
+    <span class="status-pill">Confirmed</span>
+
+    <div class="exp-title">Louvre Museum: Exclusive Skip-the-Line Tour</div>
+    <div class="exp-option">Expert-Led Guided Experience</div>
+
+    <div class="chips">
+      <span class="chip">Tue, 18 Nov 2025</span>
+      <span class="chip">Entry: 2:00 PM</span>
+      <span class="chip">Duration: 2 hrs</span>
+    </div>
+
+    <div class="qr-box"></div>
+    <button class="btn-primary">Show Ticket</button>
+  </section>
+
+  <!-- IMPORTANT INFO (NEW) -->
+  <div class="important-banner">
+    <strong>Important:</strong> Do <strong>not</strong> go directly to the Louvre entrance.  
+    Please head to the address listed below where your guide will meet you.
+  </div>
+
+  <!-- BOOKING DETAILS -->
+  <section class="card">
+    <div class="card-title">Booking Details</div>
+
+    <div class="details-grid">
+      <div><strong>Purchased by:</strong> Ashwani Sharma</div>
+      <div><strong>Email:</strong> ashwani@example.com</div>
+      <div><strong>Guests:</strong> Adult × 2</div>
+      <div><strong>Booked on:</strong> 10 Oct 2025</div>
+    </div>
+  </section>
+
+  <!-- WHERE TO GO -->
+  <section class="card">
+    <div class="card-title">Where to go</div>
+
+    <div class="location-card">
+
+      <div class="loc-name">Carousel Arch – Northwest Side</div>
+
+      <div class="loc-address">
+Arc de Triomphe du Carrousel  
+75001 Paris  
+France
+      </div>
+
+      <button class="map-btn">Open in Google Maps</button>
+      <div class="media-thumb"></div>
+
+      <div class="divider"></div>
+
+      <div class="detail-label">Guide</div>
+      <div class="detail-text">Marie Dupont · +33 6 12 34 56 78</div>
+
+      <div class="detail-label">Instructions</div>
+      <div class="detail-text">
+        Meet Marie near the large central fountain beside the Carousel Arch.  
+        She will be holding a blue Headout badge.
+      </div>
+
+      <div class="detail-label">Notes</div>
+      <div class="detail-text">
+        Bring a valid photo ID.  
+        This is not the museum entrance — your guide will escort you inside.
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE YOU GO -->
+  <section class="card">
+    <div class="card-title">Before You Go</div>
+
+    <ul class="list">
+      <li>Arrive at least 15 minutes before your scheduled time.</li>
+      <li>Carry a valid photo ID for verification.</li>
+      <li>Wear comfortable walking shoes.</li>
+      <li>Large bags are not allowed in the museum.</li>
+    </ul>
+  </section>
+
+  <!-- GOOD TO KNOW -->
+  <!-- <section class="card">
+    <div class="card-title">Good to Know</div>
+
+    <ul class="list">
+      <li>The tour runs rain or shine.</li>
+      <li>Photography is allowed in most areas except special exhibitions.</li>
+      <li>Food and drinks are not permitted inside the galleries.</li>
+    </ul>
+  </section> -->
+
+  <!-- CANCELLATION -->
+  <section class="card">
+    <div class="card-title">Cancellation & Changes</div>
+
+    <ul class="list">
+      <li>Free cancellation up to 24 hours before the experience.</li>
+      <li>No refund for late arrivals or no-shows.</li>
+    </ul>
+  </section>
+
+  <!-- PARTNER DETAILS -->
+  <section class="card">
+    <div class="card-title">Operated By</div>
+
+    <div class="details-grid">
+      <div><strong>Local Partner:</strong> Paris Guided Tours</div>
+      <div><strong>Reference:</strong> PGT-99231</div>
+    </div>
+  </section>
+
+  <!-- HELP -->
+  <section class="card">
+    <div class="card-title">Need Help?</div>
+    <div style="font-size:14px; color:#374151;">
+      Having trouble finding your guide?  
+      <br><a href="#" style="color:var(--accent);">Chat with us</a>
+      <br><br>
+      For cancellations or date changes, visit the Help Center and keep your booking ID <strong>HD-778899</strong> handy.
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
