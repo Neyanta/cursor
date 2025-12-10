@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Headout Voucher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border-subtle: #e5e7eb;
+      --accent: #7c3aed; /* swap with Headout brand */
+      --accent-soft: #f3e8ff;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px 12px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Inter", sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+
+    .voucher-shell {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .voucher-header {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .voucher-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .logo {
+      height: 28px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border-subtle);
+      background: #ffffff;
+    }
+
+    .pill.status {
+      border-color: transparent;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .voucher-hero {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 20px 20px 20px 20px;
+      box-shadow: var(--shadow-soft);
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .voucher-hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-main h1 {
+      font-size: 22px;
+      margin: 0 0 4px;
+    }
+
+    .hero-main h2 {
+      font-size: 15px;
+      margin: 0 0 14px;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+
+    .chip {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .hero-booking-id {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .hero-qr {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border-subtle);
+      padding: 12px;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .hero-qr-box {
+      width: 120px;
+      height: 120px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: repeating-linear-gradient(
+        45deg,
+        #e5e7eb,
+        #e5e7eb 4px,
+        #f9fafb 4px,
+        #f9fafb 8px
+      );
+    }
+
+    .hero-qr label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      border: 1px solid var(--border-subtle);
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      border-color: transparent;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    /* CARD LAYOUT */
+
+    .voucher-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.25fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 900px) {
+      .voucher-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 18px 18px 16px;
+      box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .card + .card {
+      margin-top: 12px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #4b5563;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .card-body {
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .definition-list {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.7fr);
+      gap: 6px 16px;
+      font-size: 13px;
+    }
+
+    .definition-term {
+      color: var(--text-muted);
+    }
+
+    .definition-value {
+      font-weight: 500;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .badge {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
+
+    .list {
+      margin: 6px 0 0;
+      padding-left: 18px;
+      font-size: 13px;
+      color: #374151;
+    }
+
+    .list li + li {
+      margin-top: 3px;
+    }
+
+    /* LOCATIONS */
+
+    .location-rule-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .location-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      padding: 12px 12px 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr);
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 640px) {
+      .location-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .location-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .location-seq {
+      font-size: 11px;
+      text-transform: uppercase;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #4f46e5;
+      letter-spacing: 0.05em;
+    }
+
+    .location-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .location-type {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      color: #6b7280;
+    }
+
+    .location-address {
+      font-size: 13px;
+      color: #374151;
+      margin-bottom: 6px;
+      white-space: pre-line;
+    }
+
+    .location-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .location-media {
+      border-radius: 10px;
+      overflow: hidden;
+      height: 120px;
+      background: #e5e7eb;
+      position: relative;
+      font-size: 11px;
+      color: #6b7280;
+      display: flex;
+      align-items: flex-end;
+      padding: 6px 8px;
+    }
+
+    .location-notes {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* SUPPORT CARD */
+
+    .support-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .support-line strong {
+      font-weight: 600;
+    }
+
+    .support-link {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .support-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="voucher-shell">
+
+    <!-- HEADER -->
+    <header class="voucher-header">
+      <div class="voucher-topbar">
+        <img src="LOGO_SRC" alt="Headout" class="logo" />
+        <div class="topbar-right">
+          <span class="pill status">Confirmed</span>
+          <span class="pill">Booking ID: HD-ABC123</span>
+        </div>
+      </div>
+
+      <section class="voucher-hero">
+        <div class="hero-main">
+          <h1>Colosseum, Roman Forum &amp; Palatine Hill</h1>
+          <h2>Guided tour with priority entry</h2>
+
+          <div class="hero-meta">
+            <span class="chip">Tue, 5 Aug 2025</span>
+            <span class="chip">Entry: 10:00 AM</span>
+            <span class="chip">Duration: 3 hours</span>
+            <span class="chip">Local time: Rome (CET)</span>
+          </div>
+
+          <div class="hero-booking-id">
+            Booked by <strong>Ashwani Sharma</strong> • ashwani@example.com
+          </div>
+        </div>
+
+        <aside class="hero-qr">
+          <div class="hero-qr-box"><!-- QR image here --></div>
+          <label>Show this code at entry</label>
+          <div class="hero-actions">
+            <button class="btn-primary btn">Show ticket</button>
+            <button class="btn">Add to calendar</button>
+          </div>
+        </aside>
+      </section>
+    </header>
+
+    <!-- BODY GRID -->
+    <main class="voucher-grid">
+      <!-- LEFT COLUMN -->
+      <div>
+        <!-- Booking details -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Booking details</div>
+              <div class="card-subtitle">Who this booking is for</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="definition-list">
+              <div class="definition-term">Purchased by</div>
+              <div class="definition-value">Ashwani Sharma</div>
+
+              <div class="definition-term">Email</div>
+              <div class="definition-value">ashwani@example.com</div>
+
+              <div class="definition-term">Guests</div>
+              <div class="definition-value">Adult × 2, Child × 1</div>
+
+              <div class="definition-term">Booked on</div>
+              <div class="definition-value">20 Jul 2025</div>
+            </div>
+            <div class="badge-row">
+              <span class="badge">Mobile ticket</span>
+              <span class="badge">ID required</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Before you go -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Before you go</div>
+              <div class="card-subtitle">Essential information</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="list">
+              <li>Arrive at least 15 minutes before your entry time.</li>
+              <li>Bring a valid photo ID for verification.</li>
+              <li>Wear comfortable shoes; the tour includes walking on uneven surfaces.</li>
+              <li>Mobile ticket accepted. No printout required.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Where to go -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Where to go</div>
+              <div class="card-subtitle">Meeting, redemption &amp; boarding points</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="location-rule-row">
+              <span class="pill">Visit all locations in this order</span>
+              <span class="card-subtitle">Follow the sequence below on the day of your experience.</span>
+            </div>
+
+            <!-- Location 1 -->
+            <article class="location-card">
+              <div>
+                <div class="location-header">
+                  <span class="location-seq">Stop 1</span>
+                  <span class="location-name">Main meeting point – Arch of Constantine</span>
+                  <span class="location-type">Meeting point</span>
+                </div>
+                <div class="location-address">
+Arch of Constantine
+Piazza dell'Arco di Costantino
+00184 Roma RM, Italy
+                </div>
+                <div class="location-actions">
+                  <button class="btn">Open in Google Maps</button>
+                  <button class="btn">View directions</button>
+                </div>
+                <div class="location-notes">
+                  Meet your guide next to the Arch of Constantine, holding a purple "Headout" flag.
+                  Show this voucher and a valid photo ID.
+                </div>
+                <div class="hint">
+                  Guide (on the day): Maria Rossi • +39 123 456 789
+                </div>
+              </div>
+              <div>
+                <div class="location-media">
+                  Entrance photo / landmark image here
+                </div>
+              </div>
+            </article>
+
+            <!-- Location 2 -->
+            <article class="location-card">
+              <div>
+                <div class="location-header">
+                  <span class="location-seq">Stop 2</span>
+                  <span class="location-name">Colosseum main entrance</span>
+                  <span class="location-type">Redemption point</span>
+                </div>
+                <div class="location-address">
+Colosseum
+Piazza del Colosseo, 1
+00184 Roma RM, Italy
+                </div>
+                <div class="location-notes">
+                  Your guide will accompany you to the entrance and handle ticket redemption.
+                  Security checks may cause waiting times.
+                </div>
+              </div>
+              <div>
+                <div class="location-media">
+                  Ticket gate / security check image here
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Good to know -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Good to know</div>
+              <div class="card-subtitle">Make the most of your visit</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="list">
+              <li>Large bags and luggage are not allowed inside the Colosseum.</li>
+              <li>The experience runs in all weather conditions; bring rain protection if needed.</li>
+              <li>Moderate walking required; the tour is not fully wheelchair accessible.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Cancellation & changes -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Cancellation &amp; changes</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <ul class="list">
+              <li>Free cancellation up to 24 hours before your scheduled start time.</li>
+              <li>No refund or reschedule for late arrivals or no-shows.</li>
+              <li>To request a change, go to your booking page on Headout.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <aside>
+        <!-- At a glance -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">At a glance</div>
+              <div class="card-subtitle">Your trip summary</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="definition-list">
+              <div class="definition-term">Date</div>
+              <div class="definition-value">Tue, 5 Aug 2025</div>
+
+              <div class="definition-term">Entry time</div>
+              <div class="definition-value">10:00 AM</div>
+
+              <div class="definition-term">Guests</div>
+              <div class="definition-value">3 total</div>
+
+              <div class="definition-term">Status</div>
+              <div class="definition-value">Confirmed</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Operated by -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Operated by</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="definition-list">
+              <div class="definition-term">Local partner</div>
+              <div class="definition-value">Roma Guided Tours</div>
+
+              <div class="definition-term">Partner reference</div>
+              <div class="definition-value">RGT-54321</div>
+            </div>
+            <div class="hint">
+              Headout partners with trusted local operators to deliver your experience.
+            </div>
+          </div>
+        </section>
+
+        <!-- Help -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Need help?</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="support-options">
+              <div class="support-line">
+                <strong>Struggling to find the meeting point?</strong><br />
+                <a href="#" class="support-link">Chat with us</a>
+              </div>
+              <div class="support-line">
+                For changes &amp; cancellations, visit the
+                <a href="#" class="support-link">Help Center</a> and keep your
+                booking ID <strong>HD-ABC123</strong> handy.
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </main>
+  </div>
+</body>
+</html>

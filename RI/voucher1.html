@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Headout Voucher - Mobile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #7c3aed;
+    --accent-light: #f3e8ff;
+    --radius: 14px;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    font-family: system-ui, sans-serif;
+    color: var(--text);
+  }
+
+  .shell {
+    max-width: 480px;
+    margin: auto;
+    padding: 16px;
+  }
+
+  /* HERO AREA */
+
+  .hero {
+    background: var(--card);
+    padding: 18px;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .logo {
+    height: 26px;
+    margin-bottom: 12px;
+  }
+
+  .booking-id {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 4px 0;
+    padding: 6px 0;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 999px;
+    background: var(--accent-light);
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .exp-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 4px 0;
+  }
+
+  .exp-option {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    font-size: 12px;
+  }
+
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    margin: 12px auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: repeating-linear-gradient(
+      45deg,
+      #e5e7eb,
+      #e5e7eb 4px,
+      #f9fafb 4px,
+      #f9fafb 8px
+    );
+  }
+
+  .hero-cta {
+    margin-top: 14px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* CARD SECTIONS */
+
+  .card {
+    background: var(--card);
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #4b5563;
+    text-transform: uppercase;
+  }
+
+  .definition-list {
+    margin-top: 8px;
+    font-size: 14px;
+  }
+
+  .definition-list div {
+    margin-bottom: 6px;
+  }
+
+  .address-card {
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #ffffff;
+  }
+
+  .stop-seq {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #eef2ff;
+    color: #4f46e5;
+    font-size: 11px;
+    border-radius: 8px;
+    margin-bottom: 6px;
+  }
+
+  .loc-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .loc-type {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .loc-address {
+    white-space: pre-line;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .media-thumb {
+    height: 120px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 8px;
+  }
+
+  .map-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+  }
+
+  .notes {
+    font-size: 13px;
+    margin-top: 8px;
+    color: #374151;
+  }
+
+  .list {
+    margin-top: 8px;
+    padding-left: 18px;
+    font-size: 14px;
+  }
+</style>
+
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img class="logo" src="LOGO_SRC" alt="Headout">
+
+    <div class="booking-id">HD-ABC123</div>
+
+    <span class="status-pill">Confirmed</span>
+
+    <div class="exp-title">Colosseum, Roman Forum & Palatine Hill</div>
+    <div class="exp-option">Guided Tour with Priority Entry</div>
+
+    <div class="chips">
+      <span class="chip">Tue, 5 Aug 2025</span>
+      <span class="chip">Entry: 10:00 AM</span>
+      <span class="chip">Duration: 3 hrs</span>
+    </div>
+
+    <div class="qr-box"></div>
+
+    <div class="hero-cta">
+      <button class="btn-primary">Show Ticket</button>
+    </div>
+  </section>
+
+  <!-- WHERE TO GO -->
+  <section class="card">
+    <div class="card-title">Where to go</div>
+
+    <div class="definition-list">
+      <div><strong>Visit rule:</strong> Visit all locations in order</div>
+    </div>
+
+    <!-- Address Card -->
+    <div class="address-card">
+      <div class="stop-seq">Stop 1</div>
+      <div class="loc-name">Main meeting point – Arch of Constantine</div>
+      <div class="loc-type">Meeting Point</div>
+
+      <div class="loc-address">
+Arch of Constantine
+Piazza dell'Arco di Costantino
+00184 Roma RM, Italy
+      </div>
+
+      <button class="map-btn">Open in Google Maps</button>
+
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        Meet your guide next to the Arch of Constantine holding a purple “Headout” flag.  
+        Guide: Maria Rossi • +39 123 456 789
+      </div>
+    </div>
+
+  </section>
+
+  <!-- BOOKING DETAILS -->
+  <section class="card">
+    <div class="card-title">Booking Details</div>
+
+    <div class="definition-list">
+      <div><strong>Purchased by:</strong> Ashwani Sharma</div>
+      <div><strong>Email:</strong> ashwani@example.com</div>
+      <div><strong>Guests:</strong> Adult ×2, Child ×1</div>
+      <div><strong>Booked on:</strong> 20 Jul 2025</div>
+    </div>
+  </section>
+
+  <!-- BEFORE YOU GO -->
+  <section class="card">
+    <div class="card-title">Before you go</div>
+    <ul class="list">
+      <li>Arrive 15 minutes before your entry time.</li>
+      <li>Carry a valid photo ID.</li>
+      <li>Wear comfortable shoes.</li>
+      <li>Mobile ticket accepted.</li>
+    </ul>
+  </section>
+
+  <!-- GOOD TO KNOW -->
+  <section class="card">
+    <div class="card-title">Good to know</div>
+    <ul class="list">
+      <li>Large bags not allowed inside Colosseum.</li>
+      <li>Experience runs in all weather conditions.</li>
+      <li>Tour includes moderate walking.</li>
+    </ul>
+  </section>
+
+  <!-- PARTNER DETAILS -->
+  <section class="card">
+    <div class="card-title">Operated by</div>
+    <div class="definition-list">
+      <div><strong>Partner:</strong> Roma Guided Tours</div>
+      <div><strong>Reference:</strong> RGT-54321</div>
+    </div>
+  </section>
+
+  <!-- HELP -->
+  <section class="card">
+    <div class="card-title">Need help?</div>
+    <div>
+      <p><strong>Can't find the meeting point?</strong></p>
+      <p><a href="#">Chat with us</a></p>
+      <p>Visit Help Center and keep booking ID <strong>HD-ABC123</strong> handy.</p>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
