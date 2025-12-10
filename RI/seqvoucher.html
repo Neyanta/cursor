@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Headout Voucher - Multi Address: Ordered Sequence</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #7c3aed;
+    --accent-light: #f3e8ff;
+    --radius: 14px;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    font-family: system-ui, sans-serif;
+  }
+
+  .shell {
+    max-width: 480px;
+    margin: auto;
+    padding: 16px;
+  }
+
+  /* HEADER BLOCK */
+
+  .hero {
+    background: var(--card);
+    padding: 18px;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .logo {
+    height: 26px;
+    margin-bottom: 12px;
+  }
+
+  .booking-id {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .exp-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .exp-option {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    font-size: 12px;
+  }
+
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+    border-radius: 12px;
+    background: repeating-linear-gradient(
+      45deg,
+      #e5e7eb,
+      #e5e7eb 4px,
+      #f9fafb 4px,
+      #f9fafb 8px
+    );
+    border: 1px solid var(--border);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+  }
+
+  /* SECTION CARDS */
+
+  .card {
+    background: var(--card);
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    color: #4b5563;
+  }
+
+  /* ORDER SEQUENCE HEADER */
+
+  .sequence-header {
+    background: #eef2ff;
+    padding: 12px;
+    border-radius: 12px;
+    border-left: 4px solid var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .sequence-header strong {
+    color: var(--accent);
+  }
+
+  /* ADDRESS CARDS */
+
+  .address-card {
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #ffffff;
+    margin-top: 14px;
+  }
+
+  .seq-number {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 15px;
+  }
+
+  .loc-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .loc-type {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .loc-address {
+    white-space: pre-line;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .map-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    margin-bottom: 10px;
+  }
+
+  .media-thumb {
+    height: 110px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .notes {
+    font-size: 13px;
+    color: #374151;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="LOGO_SRC" class="logo">
+
+    <div class="booking-id">HD-ABC123</div>
+    <span class="status-pill">Confirmed</span>
+
+    <div class="exp-title">Rome Catacombs + Basilica Tour</div>
+    <div class="exp-option">Guided Experience</div>
+
+    <div class="chips">
+      <span class="chip">Thu, 12 Sep 2025</span>
+      <span class="chip">Start: 9:00 AM</span>
+      <span class="chip">Duration: 4 hrs</span>
+    </div>
+
+    <div class="qr-box"></div>
+    <button class="btn-primary">Show Ticket</button>
+  </section>
+
+  <!-- WHERE TO GO -->
+  <section class="card">
+    <div class="card-title">Where to go</div>
+
+    <div class="sequence-header">
+      <strong>You must visit all locations in the exact order shown below.</strong><br>
+      Your guide may move with you between stops.
+    </div>
+
+    <!-- STOP 1 -->
+    <div class="address-card">
+      <div class="seq-number">1</div>
+
+      <div class="loc-name">Catacombs Entrance - Via Appia</div>
+      <div class="loc-type">Meeting Point</div>
+
+      <div class="loc-address">
+Via Appia Antica 110
+00179 Roma RM
+Italy
+      </div>
+
+      <button class="map-btn">Open in Google Maps</button>
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        Look for a guide holding a Headout purple flag near the Appia entrance.
+      </div>
+    </div>
+
+    <!-- STOP 2 -->
+    <div class="address-card">
+      <div class="seq-number">2</div>
+
+      <div class="loc-name">Underground Catacombs - Galerie A</div>
+      <div class="loc-type">Tour Location</div>
+
+      <div class="loc-address">
+Catacombs Level A  
+Via Appia  
+Roman Underground Sector
+      </div>
+
+      <button class="map-btn">Open Map</button>
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        Flashlights provided by guide. Photography may be restricted.
+      </div>
+    </div>
+
+    <!-- STOP 3 -->
+    <div class="address-card">
+      <div class="seq-number">3</div>
+
+      <div class="loc-name">Basilica of San Sebastiano</div>
+      <div class="loc-type">Final Stop</div>
+
+      <div class="loc-address">
+Via Appia Antica 136  
+00179 Roma
+      </div>
+
+      <button class="map-btn">Get Directions</button>
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        Tour concludes at the basilica. You may stay and explore after the guided portion.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
