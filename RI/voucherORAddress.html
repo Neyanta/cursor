@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Headout Voucher - Choose Any One Address</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --accent: #7c3aed;
+    --accent-light: #f3e8ff;
+    --radius: 14px;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    font-family: system-ui, sans-serif;
+  }
+
+  .shell {
+    max-width: 480px;
+    margin: auto;
+    padding: 16px;
+  }
+
+  /* HERO SECTION */
+
+  .hero {
+    background: var(--card);
+    padding: 18px;
+    border-radius: var(--radius);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+
+  .logo {
+    height: 26px;
+    margin-bottom: 12px;
+  }
+
+  .booking-id {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--accent);
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 12px;
+    margin-bottom: 10px;
+  }
+
+  .exp-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .exp-option {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .chip {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #f3f4f6;
+    font-size: 12px;
+  }
+
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: repeating-linear-gradient(
+      45deg,
+      #e5e7eb,
+      #e5e7eb 4px,
+      #f9fafb 4px,
+      #f9fafb 8px
+    );
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border-radius: 10px;
+    margin-top: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+  }
+
+  /* CARD SECTIONS */
+
+  .card {
+    background: var(--card);
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-bottom: 10px;
+  }
+
+  /* MULTIPLE ADDRESS SELECTOR */
+
+  .choice-header {
+    background: #f3f4f6;
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #374151;
+    border-left: 4px solid var(--accent);
+  }
+
+  .address-card {
+    padding: 14px;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-top: 14px;
+  }
+
+  .loc-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .loc-type {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .loc-address {
+    white-space: pre-line;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+
+  .map-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: #fff;
+    margin-bottom: 10px;
+  }
+
+  .media-thumb {
+    height: 110px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    margin-bottom: 10px;
+  }
+
+  .notes {
+    font-size: 13px;
+    color: #374151;
+  }
+</style>
+</head>
+
+<body>
+<div class="shell">
+
+  <!-- HERO -->
+  <section class="hero">
+    <img src="LOGO_SRC" class="logo">
+
+    <div class="booking-id">HD-556677</div>
+    <span class="status-pill">Confirmed</span>
+
+    <div class="exp-title">Sydney Harbour Sunset Cruise</div>
+    <div class="exp-option">90-Minute Cruise</div>
+
+    <div class="chips">
+      <span class="chip">Sat, 14 Jun 2025</span>
+      <span class="chip">Departure: 6:00 PM</span>
+      <span class="chip">Duration: 1.5 hrs</span>
+    </div>
+
+    <div class="qr-box"></div>
+    <button class="btn-primary">Show Ticket</button>
+  </section>
+
+  <!-- WHERE TO GO -->
+  <section class="card">
+    <div class="card-title">Where to go</div>
+
+    <div class="choice-header">
+      <strong>You may check in at ANY ONE of the following meeting points.</strong><br>
+      Choose whichever is most convenient.
+    </div>
+
+    <!-- LOCATION 1 -->
+    <div class="address-card">
+      <div class="loc-name">King Street Wharf 4</div>
+      <div class="loc-type">Meeting Point</div>
+
+      <div class="loc-address">
+King Street Wharf 4  
+Darling Harbour  
+Sydney NSW 2000
+      </div>
+
+      <button class="map-btn">Open in Google Maps</button>
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        Look for the white cruise vessel docked at Wharf 4.
+      </div>
+    </div>
+
+    <!-- LOCATION 2 -->
+    <div class="address-card">
+      <div class="loc-name">Circular Quay – Wharf 6</div>
+      <div class="loc-type">Alternate Meeting Point</div>
+
+      <div class="loc-address">
+Wharf 6  
+Circular Quay  
+Sydney NSW 2000
+      </div>
+
+      <button class="map-btn">Get Directions</button>
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        Arrive 15 minutes early. Staff in red jackets will assist.
+      </div>
+    </div>
+
+    <!-- LOCATION 3 -->
+    <div class="address-card">
+      <div class="loc-name">Barangaroo Ferry Terminal</div>
+      <div class="loc-type">Alternate Meeting Point</div>
+
+      <div class="loc-address">
+Barangaroo Ferry Wharf  
+Barangaroo Reserve  
+Sydney NSW 2000
+      </div>
+
+      <button class="map-btn">View on Map</button>
+      <div class="media-thumb"></div>
+
+      <div class="notes">
+        This location may have higher foot traffic during weekends.
+      </div>
+    </div>
+
+  </section>
+
+</div>
+</body>
+</html>
