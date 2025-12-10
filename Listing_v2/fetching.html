@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fetching Details – Wireframe</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 40px 0;
+    }
+
+    .container {
+      max-width: 480px;
+      margin: auto;
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 24px;
+    }
+
+    .title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .description {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .loader-box {
+      border: 1px dashed #bbb;
+      background: #fafafa;
+      padding: 16px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 10px 8px;
+      background: #fff;
+      border: 1px solid #333;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      border-color: black;
+      background: black;
+      color: white;
+    }
+
+    .helper-text {
+      margin-top: 12px;
+      color: #666;
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+<div class="container">
+
+  <div class="title">Hang tight, we’re fetching your experience…</div>
+
+  <div class="description">
+    We’re pulling your experience details from your connected system.  
+    This usually takes a few seconds, but it may take a little longer at times.
+  </div>
+
+  <div class="loader-box">
+    Fetching details…<br>
+    (Product Code: <strong>BCN-12345</strong>)
+  </div>
+
+  <div class="description">
+    You can stay on this page and we’ll let you know as soon as it’s ready.<br><br>
+    Or, if you prefer, you can return to your Experiences page — we’ll continue
+    preparing everything in the background, and you’ll find the progress in the
+    <strong>Activity Panel</strong> at the top of the page.
+  </div>
+
+  <div class="button-row">
+    <button class="btn">Stay here</button>
+
+    <!-- LINK TO EXPERIENCES PAGE -->
+    <a href="experiences.html" style="flex:1; text-decoration:none;">
+      <button class="btn btn-primary" style="width:100%;">Go to my Experiences</button>
+    </a>
+  </div>
+
+  <div class="helper-text">
+    Your progress is saved. You can return anytime.
+  </div>
+
+</div>
+</body>
+</html>

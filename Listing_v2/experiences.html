@@ -1,0 +1,348 @@
+=<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Magic Listing – Enhanced Demo (With Experiences List)</title>
+<style>
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f7f7f7;
+    padding: 40px;
+  }
+
+  h2 { margin-top: 0; }
+
+  /* DEMO BUTTONS */
+  .demo-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .demo-btn {
+    padding: 8px 14px;
+    background: #fff;
+    border: 1px solid #333;
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .reset-btn {
+    margin-left: auto;
+    background: #eee;
+  }
+
+  /* COLLAPSIBLE PANEL */
+  .activity-panel {
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 0;
+    max-width: 1100px;
+    margin-bottom: 32px;
+  }
+
+  .panel-header {
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+    background: #fafafa;
+  }
+
+  .panel-title {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .panel-body {
+    padding: 0 16px 16px 16px;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  /* ACTIVITY ROW */
+  .activity-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 180px;
+    gap: 12px;
+    padding: 10px;
+    margin-top: 12px;
+    border: 1px dashed #bbb;
+    background: #fafafa;
+    align-items: center;
+  }
+
+  /* LOADER */
+  .loader {
+    width: 18px;
+    height: 18px;
+    border: 3px solid #ccc;
+    border-top-color: #333;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: auto;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* THUMB */
+  .thumb {
+    width: 50px;
+    height: 36px;
+    background: #eee;
+    border: 1px solid #ccc;
+  }
+
+  /* CHIP */
+  .status-chip {
+    padding: 4px 6px;
+    font-size: 11px;
+    border: 1px solid #aaa;
+  }
+
+  /* SUCCESS CHECKMARK */
+  .checkmark {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid green;
+    position: relative;
+    animation: pop 0.2s ease-out;
+  }
+
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 0px;
+    width: 5px;
+    height: 10px;
+    border-right: 2px solid green;
+    border-bottom: 2px solid green;
+    transform: rotate(45deg);
+  }
+
+  @keyframes pop {
+    from { transform: scale(0.4); opacity: 0.4; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .cta button {
+    margin-top: 4px;
+    padding: 4px 8px;
+    border: 1px solid #333;
+    font-size: 11px;
+    cursor: pointer;
+    background: white;
+  }
+
+  /* EXPERIENCES LIST */
+  .experience-list {
+    max-width: 1100px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 16px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 12px;
+  }
+
+  th, td {
+    padding: 8px;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background: #f0f0f0;
+  }
+
+  /* TOASTS */
+  #toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    z-index: 9999;
+  }
+  .toast {
+    background: #fff;
+    border: 1px solid #333;
+    padding: 12px 16px;
+    font-size: 13px;
+    width: 280px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    animation: fadeIn 0.3s forwards;
+    cursor: pointer;
+  }
+  .toast.error {
+    border-color: #b00020;
+    color: #b00020;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+
+<body>
+
+<h2>Magic Listing Activity Panel – Enhanced Demo</h2>
+
+<!-- DEMO TRIGGER BUTTONS -->
+<div class="demo-buttons">
+  <button class="demo-btn" onclick="markSuccess('job1', 'BCN-12345')">Success BCN-12345</button>
+  <button class="demo-btn" onclick="markSuccess('job2', 'PAR-22010')">Success PAR-22010</button>
+  <button class="demo-btn" onclick="markError('job3', 'ROM-77889')">Error ROM-77889</button>
+  <button class="demo-btn reset-btn" onclick="resetDemo()">Reset Demo</button>
+</div>
+
+<!-- ACTIVITY PANEL -->
+<div class="activity-panel">
+  <div class="panel-header" onclick="togglePanel()">
+    <div class="panel-title">In Progress</div>
+    <div id="collapse-indicator">▾</div>
+  </div>
+
+  <div id="panel-body" class="panel-body">
+
+    <!-- JOB 1 -->
+    <div id="job1" class="activity-row">
+      <div class="thumb"></div>
+      <div>
+        <strong>BCN-12345</strong><br>
+        Fetching details…
+      </div>
+      <div class="cta">
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <!-- JOB 2 -->
+    <div id="job2" class="activity-row">
+      <div class="thumb"></div>
+      <div>
+        <strong>PAR-22010</strong><br>
+        Fetching details…
+      </div>
+      <div class="cta">
+        <div class="loader"></div>
+      </div>
+    </div>
+
+    <!-- JOB 3 -->
+    <div id="job3" class="activity-row">
+      <div class="thumb"></div>
+      <div>
+        <strong>ROM-77889</strong><br>
+        Fetching details…
+      </div>
+      <div class="cta">
+        <div class="loader"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- EXPERIENCES LIST (RESTORED) -->
+<div class="experience-list">
+  <h3>Your Experiences</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Experience Name</th>
+        <th>Status</th>
+        <th>City</th>
+        <th>Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sagrada Família Fast-Track Tour</td>
+        <td>Live</td>
+        <td>Barcelona</td>
+        <td>Manual</td>
+      </tr>
+      <tr>
+        <td>Colosseum Entry Ticket</td>
+        <td>Draft</td>
+        <td>Rome</td>
+        <td>Magic Listing</td>
+      </tr>
+      <tr>
+        <td>Dubai Desert Safari</td>
+        <td>Live</td>
+        <td>Dubai</td>
+        <td>Manual</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TOASTS -->
+<div id="toast-container"></div>
+
+<script>
+/* COLLAPSE ACTIVITY PANEL */
+function togglePanel() {
+  const body = document.getElementById("panel-body");
+  const icon = document.getElementById("collapse-indicator");
+  const isHidden = body.classList.toggle("hidden");
+  icon.innerText = isHidden ? "▸" : "▾";
+}
+
+/* SHOW TOAST */
+function showToast(message, type="success") {
+  const toast = document.createElement("div");
+  toast.className = type === "error" ? "toast error" : "toast";
+  toast.innerHTML = message;
+  toast.onclick = () => toast.remove();
+  document.getElementById("toast-container").appendChild(toast);
+  setTimeout(() => toast.remove(), 5000);
+}
+
+/* SUCCESS STATE */
+function markSuccess(id, name) {
+  const row = document.getElementById(id);
+  row.querySelector(".cta").innerHTML = `
+    <div class="checkmark"></div>
+    <button onclick="alert('Open review flow')">Review</button>
+  `;
+  showToast(`${name} is ready for review.`);
+}
+
+/* ERROR STATE */
+function markError(id, name) {
+  const row = document.getElementById(id);
+  row.querySelector(".cta").innerHTML = `
+    <span class="status-chip" style="border-color:#b00020;color:#b00020;">Error</span>
+    <button onclick="alert('Retry flow')">Fix & resume</button>
+  `;
+  showToast(`Could not fetch details for ${name}. Needs attention.`, "error");
+}
+
+/* RESET DEMO */
+function resetDemo() {
+  ["job1", "job2", "job3"].forEach(id => {
+    const row = document.getElementById(id);
+    row.querySelector(".cta").innerHTML = `<div class="loader"></div>`;
+  });
+  document.getElementById("toast-container").innerHTML = "";
+}
+</script>
+
+</body>
+</html>
