@@ -357,5 +357,78 @@ France
   </section>
 
 </div>
+
+  <!-- FULL-SCREEN TICKET PAGE -->
+  <div id="ticket-page" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      z-index: 9999;
+    ">
+
+    <div style="font-size: 18px; font-weight: 600; margin-bottom: 16px; text-align:center;">
+      Your Ticket
+    </div>
+
+    <div style="
+        width: 220px;
+        height: 220px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: repeating-linear-gradient(
+          45deg,
+          #e5e7eb,
+          #e5e7eb 4px,
+          #f9fafb 4px,
+          #f9fafb 8px
+        );
+        margin-bottom: 20px;
+      ">
+      <!-- QR image will go here -->
+    </div>
+
+    <div style="font-size: 16px; margin-bottom: 8px; text-align:center;">
+      Louvre Museum: Exclusive Skip-the-Line Tour
+    </div>
+
+    <div style="font-size: 14px; color:#6b7280; margin-bottom: 16px; text-align:center;">
+      Tue, 18 Nov 2025 • 2:00 PM
+    </div>
+
+    <div style="font-size: 14px; margin-bottom: 24px; color:#374151; text-align:center;">
+      Guests: 2 Adults  
+      <br>Booking ID: HD-778899
+    </div>
+
+    <button onclick="closeTicket()" style="
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        background: #ffffff;
+        font-size: 14px;
+      ">
+      Close
+    </button>
+  </div>
+
+  <script>
+    // Open ticket page
+    document.querySelector('.btn-primary').addEventListener('click', function() {
+      document.getElementById('ticket-page').style.display = 'flex';
+    });
+
+    // Close ticket page
+    function closeTicket() {
+      document.getElementById('ticket-page').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
