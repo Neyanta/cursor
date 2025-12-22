@@ -1,0 +1,19 @@
+0 verbose cli /Users/neyantasharma/.nvm/versions/node/v22.19.0/bin/node /Users/neyantasharma/.nvm/versions/node/v22.19.0/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@11.6.4
+2 info using node@v22.19.0
+3 silly config load:file:/Users/neyantasharma/.nvm/versions/node/v22.19.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/neyantasharma/Desktop/Cursor repo/Random/.npmrc
+5 silly config load:file:/Users/neyantasharma/.npmrc
+6 silly config load:file:/Users/neyantasharma/.nvm/versions/node/v22.19.0/etc/npmrc
+7 verbose title npm exec create-next-app@latest sp-research-copilot --typescript --tailwind --eslint --app --src-dir --import-alias @/*
+8 verbose argv "exec" "--" "create-next-app@latest" "sp-research-copilot" "--typescript" "--tailwind" "--eslint" "--app" "--src-dir" "--import-alias" "@/*"
+9 verbose logfile logs-max:10 dir:/Users/neyantasharma/Desktop/Cursor repo/Random/.npm-cache/_logs/2025-12-19T06_28_23_080Z-
+10 verbose logfile /Users/neyantasharma/Desktop/Cursor repo/Random/.npm-cache/_logs/2025-12-19T06_28_23_080Z-debug-0.log
+11 silly logfile done cleaning log files
+12 verbose cwd /Users/neyantasharma/Desktop/Cursor repo/Random
+13 verbose os Darwin 25.0.0
+14 verbose node v22.19.0
+15 verbose npm  v11.6.4
+16 verbose exit 1
+17 verbose code 1
+18 error A complete log of this run can be found in: /Users/neyantasharma/Desktop/Cursor repo/Random/.npm-cache/_logs/2025-12-19T06_28_23_080Z-debug-0.log
