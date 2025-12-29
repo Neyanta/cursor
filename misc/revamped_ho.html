@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marrakesh – Hero + Discovery (Lo-Fi Wireframe)</title>
+  <style>
+    :root{
+      --bg:#f6f6f7;
+      --card:#ffffff;
+      --ink:#111827;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --chip:#f3f4f6;
+      --chipOn:#111827;
+      --chipOnText:#ffffff;
+      --shadow:0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06);
+      --radius:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.35;
+    }
+    a{color:inherit; text-decoration:none}
+    .page{max-width:1120px; margin:0 auto; padding:18px;}
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:12px 0;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700}
+    .pill{display:inline-flex; align-items:center; gap:8px; padding:10px 12px; border:1px solid var(--line); background:var(--card); border-radius:999px;}
+    .search{
+      flex:1; display:flex; align-items:center; gap:10px;
+      padding:12px 14px; border:1px solid var(--line); border-radius:999px; background:var(--card);
+    }
+    .search input{border:none; outline:none; width:100%; font-size:14px; background:transparent}
+    .layout{
+      display:grid; grid-template-columns: 1fr; gap:16px;
+    }
+
+    /* HERO */
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .heroGrid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:0;
+      min-height:320px;
+    }
+    .heroLeft{padding:22px;}
+    .heroRight{
+      border-left:1px dashed var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:linear-gradient(180deg,#fafafa,#f3f4f6);
+      color:var(--muted);
+      font-weight:600;
+    }
+    .kicker{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:8px}
+    h1{margin:0 0 10px 0; font-size:28px;}
+    .sub{color:var(--muted); font-size:14px; max-width:56ch;}
+
+    .intentGrid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    .intent{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:12px;
+      padding:14px;
+      cursor:pointer;
+      transition:transform .06s ease;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .intent:hover{transform:translateY(-1px)}
+    .intent.active{
+      outline:2px solid #111827;
+      outline-offset:0;
+    }
+    .icon{
+      width:34px; height:34px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px;
+      background:#fafafa;
+      flex:0 0 auto;
+    }
+    .intent .title{font-weight:700; font-size:14px; margin:0 0 4px 0}
+    .intent .desc{margin:0; color:var(--muted); font-size:12px}
+
+    .qualRow{
+      margin-top:14px;
+      padding-top:14px;
+      border-top:1px dashed var(--line);
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .qualRow .label{color:var(--muted); font-size:13px}
+    .chips{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      border:1px solid var(--line);
+      background:var(--chip);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.on{
+      background:var(--chipOn);
+      color:var(--chipOnText);
+      border-color:var(--chipOn);
+    }
+
+    /* SECTIONS */
+    .section{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .sectionHead{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:12px; margin-bottom:12px;
+    }
+    .sectionTitle{margin:0; font-size:18px;}
+    .sectionMeta{color:var(--muted); font-size:13px}
+    .hidden{display:none !important;}
+
+    /* CARDS */
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:12px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      background:#fff;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:150px;
+    }
+    .thumb{
+      border:1px dashed var(--line);
+      border-radius:10px;
+      height:84px;
+      display:flex; align-items:center; justify-content:center;
+      color:var(--muted);
+      background:#fafafa;
+      font-size:12px;
+    }
+    .card h3{margin:0; font-size:14px}
+    .why{margin:0; color:var(--muted); font-size:12px}
+    .row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-top:auto;
+    }
+    .badges{display:flex; gap:6px; flex-wrap:wrap}
+    .badge{
+      border:1px solid var(--line);
+      padding:6px 8px;
+      border-radius:999px;
+      font-size:11px;
+      color:#374151;
+      background:#fff;
+    }
+    .price{
+      font-weight:800;
+      font-size:13px;
+    }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#111827;
+      color:#fff;
+      font-weight:700;
+      font-size:13px;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .btn.ghost{
+      background:#fff;
+      color:#111827;
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .heroGrid{grid-template-columns:1fr}
+      .heroRight{display:none}
+      .cards{grid-template-columns: repeat(2, minmax(0,1fr));}
+    }
+    @media (max-width: 560px){
+      .intentGrid{grid-template-columns: 1fr;}
+      .cards{grid-template-columns: 1fr;}
+      h1{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- TOP BAR (lo-fi) -->
+    <div class="topbar">
+      <div class="brand">
+        <span style="width:28px;height:28px;border-radius:8px;border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;background:#fff;">HO</span>
+        <span>Headout</span>
+      </div>
+      <div class="search" aria-label="Search">
+        <span style="color:var(--muted)">⌕</span>
+        <input placeholder="Search experiences and cities" />
+      </div>
+      <div class="pill" aria-label="Language and currency">
+        English / EUR
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <!-- HERO -->
+      <section class="hero" aria-label="Hero">
+        <div class="heroGrid">
+          <div class="heroLeft">
+            <div class="kicker">Marrakesh • Things to do</div>
+            <h1>Planning Marrakesh? Start with what fits your trip.</h1>
+            <p class="sub">Handpicked experiences that make it easy to choose—whether you’re short on time, here for culture, or chasing the desert.</p>
+
+            <!-- Intent cards -->
+            <div class="intentGrid" role="list" aria-label="Intent choices">
+              <div class="intent active" role="listitem" data-intent="first_time">
+                <div class="icon">🌍</div>
+                <div>
+                  <p class="title">First time in Marrakesh</p>
+                  <p class="desc">Must-dos, no guesswork</p>
+                </div>
+              </div>
+              <div class="intent" role="listitem" data-intent="short_time">
+                <div class="icon">⏱</div>
+                <div>
+                  <p class="title">Short on time</p>
+                  <p class="desc">Half-day & 1-day highlights</p>
+                </div>
+              </div>
+              <div class="intent" role="listitem" data-intent="desert_nature">
+                <div class="icon">🐪</div>
+                <div>
+                  <p class="title">Desert & nature</p>
+                  <p class="desc">Agafay, Atlas, waterfalls</p>
+                </div>
+              </div>
+              <div class="intent" role="listitem" data-intent="culture_food">
+                <div class="icon">🍽</div>
+                <div>
+                  <p class="title">Culture & food</p>
+                  <p class="desc">Medina walks, palaces, shows</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Optional qualifiers -->
+            <div class="qualRow" aria-label="Qualifiers">
+              <div class="label">Traveling with:</div>
+              <div class="chips" id="travelWith">
+                <div class="chip" data-chip="family">Family</div>
+                <div class="chip" data-chip="couple">Couple</div>
+                <div class="chip" data-chip="solo">Solo</div>
+                <div class="chip" data-chip="friends">Friends</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="heroRight" aria-label="Hero image placeholder">
+            Image / video placeholder
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Start here (curated) -->
+      <section class="section" id="startHere">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle">Start here: if you only do a few things</h2>
+            <div class="sectionMeta">Curated essentials • high confidence picks</div>
+          </div>
+          <button class="btn ghost" type="button">See all</button>
+        </div>
+
+        <div class="cards" id="curatedCards">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- SECTION: Choose by time -->
+      <section class="section" id="byTime">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle">Choose by time</h2>
+            <div class="sectionMeta">Quickly narrow options based on your day</div>
+          </div>
+          <div class="chips" id="timeChips">
+            <div class="chip on" data-time="any">Any</div>
+            <div class="chip" data-time="1_2h">1–2 hours</div>
+            <div class="chip" data-time="half_day">Half day</div>
+            <div class="chip" data-time="full_day">Full day</div>
+            <div class="chip" data-time="overnight">Overnight</div>
+          </div>
+        </div>
+
+        <div class="cards" id="timeCards">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- SECTION: Explore more -->
+      <section class="section" id="exploreMore">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle">Explore more</h2>
+            <div class="sectionMeta">Browse by interest (optional)</div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="thumb">Category tile</div>
+            <h3>Gardens & Palaces</h3>
+            <p class="why">Majorelle, Bahia, Medina highlights</p>
+            <div class="row">
+              <div class="badges">
+                <span class="badge">⏱ 1–3 hrs</span>
+                <span class="badge">🚶 Easy</span>
+              </div>
+              <button class="btn" type="button">View</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="thumb">Category tile</div>
+            <h3>Desert Experiences</h3>
+            <p class="why">Agafay sunset, quad rides, camps</p>
+            <div class="row">
+              <div class="badges">
+                <span class="badge">⏱ Half-day+</span>
+                <span class="badge">🚗 Transfers</span>
+              </div>
+              <button class="btn" type="button">View</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="thumb">Category tile</div>
+            <h3>Food & Shows</h3>
+            <p class="why">Dinner shows, tastings, local nights</p>
+            <div class="row">
+              <div class="badges">
+                <span class="badge">⏱ Evening</span>
+                <span class="badge">✨ Popular</span>
+              </div>
+              <button class="btn" type="button">View</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Safety net -->
+      <section class="section" id="helpMeChoose">
+        <div class="sectionHead">
+          <div>
+            <h2 class="sectionTitle">Still unsure?</h2>
+            <div class="sectionMeta">Pick a plan or talk to an expert—no endless scrolling</div>
+          </div>
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <div class="thumb">Mini plan</div>
+            <h3>See a 2-day Marrakesh plan</h3>
+            <p class="why">A simple itinerary with bookable slots</p>
+            <div class="row">
+              <div class="badges">
+                <span class="badge">🗺 Curated</span>
+                <span class="badge">⏱ 2 days</span>
+              </div>
+              <button class="btn" type="button">Open</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="thumb">Assisted</div>
+            <h3>Chat with a local expert</h3>
+            <p class="why">Get a shortlist based on your time + vibe</p>
+            <div class="row">
+              <div class="badges">
+                <span class="badge">💬 Live help</span>
+                <span class="badge">🌙 24/7</span>
+              </div>
+              <button class="btn" type="button">Chat</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="thumb">Social proof</div>
+            <h3>Most booked this week</h3>
+            <p class="why">Fast picks with high completion rate</p>
+            <div class="row">
+              <div class="badges">
+                <span class="badge">🔥 Trending</span>
+                <span class="badge">⭐ High rated</span>
+              </div>
+              <button class="btn" type="button">View</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer style="color:var(--muted); font-size:12px; padding:10px 2px;">
+        Lo-fi wireframe • Intent → Guided curation → Time-based narrowing → Explore → Safety net
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // Lo-fi dataset (swap with real SKUs later)
+    const DATA = {
+      curated: {
+        first_time: [
+          mk("Jardin Majorelle", "Iconic calm escape in the city", "1–2 hrs", "🚶 Easy", "⭐ 4.6", "From €25"),
+          mk("Bahia Palace (guided)", "Best intro to Marrakesh architecture", "1–2 hrs", "🚶 Easy", "⭐ 4.6", "From €7"),
+          mk("Medina essentials walk", "Navigate souks with confidence", "2–3 hrs", "🚶 Easy", "⭐ 4.7", "From €18"),
+        ],
+        short_time: [
+          mk("Half-day city highlights", "Cover the essentials fast", "Half day", "🚶 Easy", "⭐ 4.7", "From €22"),
+          mk("Evening dinner show", "Culture + food in one night", "Evening", "✨ Relaxed", "⭐ 4.8", "From €28"),
+          mk("Majorelle + Medina combo", "Two icons, minimal planning", "Half day", "🚶 Easy", "⭐ 4.6", "From €34"),
+        ],
+        desert_nature: [
+          mk("Agafay sunset + dinner", "Desert vibes without an overnight", "Half day", "🚗 Transfers", "⭐ 4.8", "From €27"),
+          mk("Ourika Valley day trip", "Mountains + waterfalls", "Full day", "⛰ Moderate", "⭐ 4.3", "From €12"),
+          mk("Ouzoud waterfalls hike", "Big falls + boat ride", "Full day", "⛰ Moderate", "⭐ 4.3", "From €19"),
+        ],
+        culture_food: [
+          mk("Traditional dinner show", "Classic Moroccan night out", "Evening", "✨ Relaxed", "⭐ 5.0", "From €28"),
+          mk("Palace + madrasa tour", "History + photo-friendly stops", "Half day", "🚶 Easy", "⭐ 4.7", "From €20"),
+          mk("Food tasting walk", "Try the best local bites", "2–3 hrs", "🚶 Easy", "⭐ 4.8", "From €24"),
+        ],
+      },
+      byTime: [
+        mk("Jardin Majorelle", "Easy, iconic, low effort", "1–2 hrs", "🚶 Easy", "⭐ 4.6", "From €25", "1_2h"),
+        mk("Bahia Palace tour", "Fast cultural win", "1–2 hrs", "🚶 Easy", "⭐ 4.6", "From €7", "1_2h"),
+        mk("Agafay desert tea + camel", "Desert sampler", "Half day", "🚗 Transfers", "⭐ 4.8", "From €35", "half_day"),
+        mk("Agafay sunset + dinner", "Best evening vibe", "Half day", "🚗 Transfers", "⭐ 4.8", "From €27", "half_day"),
+        mk("Ourika Valley day trip", "Mountains escape", "Full day", "⛰ Moderate", "⭐ 4.3", "From €12", "full_day"),
+        mk("Ouzoud waterfalls hike", "Most popular falls trip", "Full day", "⛰ Moderate", "⭐ 4.3", "From €19", "full_day"),
+      ],
+    };
+
+    function mk(name, why, duration, effort, rating, price, timeTag="any"){
+      return { name, why, duration, effort, rating, price, timeTag };
+    }
+
+    const state = {
+      intent: "first_time",
+      travelWith: null,
+      time: "any",
+    };
+
+    const intentEls = Array.from(document.querySelectorAll(".intent"));
+    const travelChips = Array.from(document.querySelectorAll("#travelWith .chip"));
+    const timeChips = Array.from(document.querySelectorAll("#timeChips .chip"));
+
+    const curatedWrap = document.getElementById("curatedCards");
+    const timeWrap = document.getElementById("timeCards");
+
+    intentEls.forEach(el=>{
+      el.addEventListener("click", ()=>{
+        intentEls.forEach(x=>x.classList.remove("active"));
+        el.classList.add("active");
+        state.intent = el.dataset.intent;
+        render();
+        // Small UX touch: bring the "Start here" section into view
+        document.getElementById("startHere").scrollIntoView({behavior:"smooth", block:"start"});
+      });
+    });
+
+    travelChips.forEach(ch=>{
+      ch.addEventListener("click", ()=>{
+        const on = ch.classList.toggle("on");
+        travelChips.forEach(x=>{ if(x!==ch) x.classList.remove("on"); });
+        state.travelWith = on ? ch.dataset.chip : null;
+        // Lo-fi: doesn't change data, but you can add filtering later
+      });
+    });
+
+    timeChips.forEach(ch=>{
+      ch.addEventListener("click", ()=>{
+        timeChips.forEach(x=>x.classList.remove("on"));
+        ch.classList.add("on");
+        state.time = ch.dataset.time;
+        render();
+      });
+    });
+
+    function cardHTML(item){
+      return `
+        <div class="card">
+          <div class="thumb">Image placeholder</div>
+          <h3>${item.name}</h3>
+          <p class="why">${item.why}</p>
+          <div class="row">
+            <div class="badges">
+              <span class="badge">⏱ ${item.duration}</span>
+              <span class="badge">${item.effort}</span>
+              <span class="badge">${item.rating}</span>
+            </div>
+            <div class="price">${item.price}</div>
+          </div>
+          <div class="row" style="margin-top:6px;">
+            <button class="btn" type="button">View</button>
+            <button class="btn ghost" type="button">Save</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function render(){
+      // Curated section
+      const curated = DATA.curated[state.intent] || [];
+      curatedWrap.innerHTML = curated.map(cardHTML).join("");
+
+      // Time section
+      const list = DATA.byTime.filter(x => state.time === "any" ? true : x.timeTag === state.time);
+      timeWrap.innerHTML = list.map(cardHTML).join("");
+
+      // Optional: update the meta line subtly based on intent
+      const meta = document.querySelector("#startHere .sectionMeta");
+      const intentLabel = ({
+        first_time: "First time picks • high confidence",
+        short_time: "Quick wins • low planning",
+        desert_nature: "Nature & desert essentials",
+        culture_food: "Culture & food favorites",
+      })[state.intent] || "Curated essentials";
+      meta.textContent = intentLabel;
+    }
+
+    render();
+  </script>
+</body>
+</html>
