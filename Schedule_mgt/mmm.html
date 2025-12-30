@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Slot Manager (Lo-Fi)</title>
+  <style>
+    :root { --b:#d9d9d9; --bg:#fafafa; --t:#111; --m:#666; }
+    *{box-sizing:border-box;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;}
+    body{margin:0;background:var(--bg);color:var(--t);}
+    .wrap{max-width:1100px;margin:24px auto;padding:0 16px;}
+    .bar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:12px;}
+    .title{font-weight:700;font-size:18px;}
+    .pill{border:1px solid var(--b);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--m);background:#fff;}
+    .grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:12px;}
+    .card{background:#fff;border:1px solid var(--b);border-radius:10px;padding:12px;}
+    .card h3{margin:0 0 10px;font-size:14px;}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0;}
+    .row > *{min-height:34px;}
+    label{font-size:12px;color:var(--m);}
+    .muted{color:var(--m);font-size:12px;}
+    .btn{border:1px solid var(--b);background:#fff;border-radius:8px;padding:8px 10px;font-size:12px;cursor:pointer;}
+    .btn.primary{background:#111;color:#fff;border-color:#111;}
+    .btn.danger{border-color:#e0b4b4;color:#8b1e1e;}
+    .btn:disabled{opacity:.5;cursor:not-allowed;}
+    .seg{display:flex;border:1px solid var(--b);border-radius:10px;overflow:hidden;}
+    .seg button{border:0;background:#fff;padding:8px 10px;font-size:12px;cursor:pointer;}
+    .seg button.active{background:#111;color:#fff;}
+    .days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+    .day{border:1px solid var(--b);border-radius:8px;padding:8px 6px;text-align:center;font-size:12px;cursor:pointer;background:#fff;}
+    .day.on{outline:2px solid #111;outline-offset:-2px;}
+    .hr{height:1px;background:var(--b);margin:12px 0;}
+    .table{width:100%;border-collapse:collapse;font-size:12px;}
+    .table th,.table td{border-top:1px solid var(--b);padding:8px 6px;text-align:left;vertical-align:top;}
+    .table th{color:var(--m);font-weight:600;border-top:0;}
+    .k{display:flex;gap:6px;align-items:center;}
+    input[type="text"], input[type="time"], select{
+      border:1px solid var(--b);border-radius:8px;padding:8px 10px;font-size:12px;background:#fff;
+    }
+    .w120{width:120px;} .w160{width:160px;} .w200{width:200px;}
+    .rightCol{display:flex;flex-direction:column;gap:12px;}
+    .note{background:#fff7e6;border:1px solid #f0d7a6;border-radius:10px;padding:10px;font-size:12px;color:#6b4e16;}
+    .previewBox{border:1px dashed var(--b);border-radius:10px;padding:10px;background:#fff;}
+    .chip{display:inline-block;border:1px solid var(--b);border-radius:999px;padding:4px 8px;font-size:11px;margin:0 6px 6px 0;}
+    .flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="bar">
+      <div class="title">Slot Manager (Lo-Fi)</div>
+      <div class="pill">Bulk-first • Day multi-select • Same/Different controls</div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Main actions -->
+      <div class="card">
+        <h3>1) Pick days (multi-select)</h3>
+        <div class="days" id="days">
+          <button class="day" data-day="Mon">Mon</button>
+          <button class="day" data-day="Tue">Tue</button>
+          <button class="day" data-day="Wed">Wed</button>
+          <button class="day" data-day="Thu">Thu</button>
+          <button class="day" data-day="Fri">Fri</button>
+          <button class="day" data-day="Sat">Sat</button>
+          <button class="day" data-day="Sun">Sun</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="allDays">Select all</button>
+          <button class="btn" id="clearDays">Clear</button>
+          <span class="muted" id="dayHint">No days selected</span>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>2) Operating hours</h3>
+        <div class="row">
+          <label style="min-width:180px;">Apply operating hours</label>
+          <div class="seg" role="tablist" aria-label="Same or different">
+            <button class="active" data-mode="same" id="ohSame">Same for all selected days</button>
+            <button data-mode="diff" id="ohDiff">Different per day</button>
+          </div>
+        </div>
+
+        <!-- Same -->
+        <div id="ohSamePane">
+          <div class="row">
+            <div>
+              <label>Start</label><br/>
+              <input class="w160" type="time" value="09:00" />
+            </div>
+            <div>
+              <label>End</label><br/>
+              <input class="w160" type="time" value="18:00" />
+            </div>
+            <div class="flex" style="margin-left:auto;">
+              <button class="btn primary">Save hours</button>
+            </div>
+          </div>
+          <div class="muted">Creates/edits hours for all selected days in one go.</div>
+        </div>
+
+        <!-- Different -->
+        <div id="ohDiffPane" style="display:none;">
+          <table class="table">
+            <thead>
+              <tr><th>Day</th><th>Start</th><th>End</th><th></th></tr>
+            </thead>
+            <tbody id="ohRows">
+              <!-- populated by JS from selected days -->
+            </tbody>
+          </table>
+          <div class="row">
+            <button class="btn primary">Save hours</button>
+            <span class="muted">Only selected days show up here.</span>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <h3>3) Slots</h3>
+
+        <div class="note">
+          Tip: Select slots first → choose a bulk action → decide scope (same day / across days).
+        </div>
+
+        <!-- Slot actions -->
+        <div class="row">
+          <label style="min-width:120px;">Action</label>
+          <select class="w200" id="slotAction">
+            <option value="create">Create slots</option>
+            <option value="edit">Edit slot(s)</option>
+            <option value="remove">Remove slot(s)</option>
+            <option value="copy">Copy slot(s)</option>
+          </select>
+
+          <label style="min-width:90px;">Mode</label>
+          <select class="w160" id="slotMode">
+            <option value="bulk">Bulk</option>
+            <option value="individual">Individual</option>
+          </select>
+
+          <label style="min-width:90px;">Scope</label>
+          <select class="w160" id="slotScope">
+            <option value="sameDay">Same day</option>
+            <option value="acrossDays">Across days</option>
+          </select>
+
+          <button class="btn primary" id="applyBtn">Apply</button>
+        </div>
+
+        <!-- Create/Edit form -->
+        <div class="card" style="padding:10px;border-radius:12px;background:#fcfcfc;">
+          <div class="row">
+            <div>
+              <label>Time</label><br/>
+              <input class="w160" type="time" value="10:00" />
+            </div>
+            <div>
+              <label>Capacity</label><br/>
+              <input class="w160" type="text" value="20" />
+            </div>
+            <div>
+              <label>Status</label><br/>
+              <select class="w160">
+                <option>Open</option>
+                <option>Closed</option>
+              </select>
+            </div>
+            <div>
+              <label>Notes (optional)</label><br/>
+              <input class="w200" type="text" placeholder="e.g., extra guide at 10am" />
+            </div>
+          </div>
+          <div class="muted">In bulk mode, this applies to all selected slots (or creates for all selected days).</div>
+        </div>
+
+        <!-- Slot list -->
+        <div class="row" style="margin-top:10px;">
+          <span class="muted"><b>Selected day:</b> Mon</span>
+          <button class="btn" id="selectAllSlots">Select all slots</button>
+          <button class="btn" id="clearSlots">Clear slot selection</button>
+        </div>
+
+        <table class="table" aria-label="Slot list">
+          <thead>
+            <tr>
+              <th style="width:32px;"></th>
+              <th>Time</th>
+              <th>Capacity</th>
+              <th>Status</th>
+              <th>Last updated</th>
+              <th style="width:180px;">Individual actions</th>
+            </tr>
+          </thead>
+          <tbody id="slotRows">
+            <tr>
+              <td><input type="checkbox" class="slotChk"></td>
+              <td>10:00</td>
+              <td>20</td>
+              <td>Open</td>
+              <td class="muted">Today</td>
+              <td>
+                <button class="btn">Edit</button>
+                <button class="btn danger">Remove</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="slotChk"></td>
+              <td>12:00</td>
+              <td>20</td>
+              <td>Open</td>
+              <td class="muted">Today</td>
+              <td>
+                <button class="btn">Edit</button>
+                <button class="btn danger">Remove</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="slotChk"></td>
+              <td>15:00</td>
+              <td>15</td>
+              <td>Closed</td>
+              <td class="muted">Yesterday</td>
+              <td>
+                <button class="btn">Edit</button>
+                <button class="btn danger">Remove</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="rightCol">
+        <div class="card">
+          <h3>Preview</h3>
+          <div class="muted">Shows what will be affected before you apply.</div>
+          <div class="previewBox" id="previewBox" style="margin-top:10px;">
+            <div class="muted">Selected days</div>
+            <div id="previewDays" style="margin:6px 0 10px;">—</div>
+
+            <div class="muted">Selected slots</div>
+            <div id="previewSlots" style="margin-top:6px;">—</div>
+          </div>
+
+          <div class="row" style="justify-content:flex-end;margin-top:10px;">
+            <button class="btn">Cancel</button>
+            <button class="btn primary">Confirm changes</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Quick patterns</h3>
+          <div class="muted">Lo-fi shortcuts for bulk intent.</div>
+          <div class="row">
+            <button class="btn">Weekdays only</button>
+            <button class="btn">Weekend only</button>
+          </div>
+          <div class="row">
+            <button class="btn">Copy Mon → selected days</button>
+            <button class="btn">Remove all slots (selected days)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Day multi-select
+    const dayBtns = Array.from(document.querySelectorAll(".day"));
+    const dayHint = document.getElementById("dayHint");
+    const previewDays = document.getElementById("previewDays");
+    const previewSlots = document.getElementById("previewSlots");
+    const ohRows = document.getElementById("ohRows");
+
+    function selectedDays() {
+      return dayBtns.filter(b => b.classList.contains("on")).map(b => b.dataset.day);
+    }
+    function renderDays() {
+      const days = selectedDays();
+      dayHint.textContent = days.length ? `${days.length} day(s) selected: ${days.join(", ")}` : "No days selected";
+      previewDays.innerHTML = days.length ? days.map(d => `<span class="chip">${d}</span>`).join("") : "—";
+      renderOhDiffRows(days);
+    }
+    function renderOhDiffRows(days){
+      ohRows.innerHTML = days.length
+        ? days.map(d => `
+          <tr>
+            <td>${d}</td>
+            <td><input type="time" value="09:00"></td>
+            <td><input type="time" value="18:00"></td>
+            <td style="text-align:right;"><button class="btn">Reset</button></td>
+          </tr>
+        `).join("")
+        : `<tr><td colspan="4" class="muted">Select days to edit hours per day.</td></tr>`;
+    }
+
+    dayBtns.forEach(btn => btn.addEventListener("click", () => {
+      btn.classList.toggle("on");
+      renderDays();
+    }));
+    document.getElementById("allDays").onclick = () => { dayBtns.forEach(b => b.classList.add("on")); renderDays(); };
+    document.getElementById("clearDays").onclick = () => { dayBtns.forEach(b => b.classList.remove("on")); renderDays(); };
+
+    // Same/Diff toggle for operating hours
+    const ohSame = document.getElementById("ohSame");
+    const ohDiff = document.getElementById("ohDiff");
+    const ohSamePane = document.getElementById("ohSamePane");
+    const ohDiffPane = document.getElementById("ohDiffPane");
+    function setOhMode(mode){
+      const same = mode === "same";
+      ohSame.classList.toggle("active", same);
+      ohDiff.classList.toggle("active", !same);
+      ohSamePane.style.display = same ? "block" : "none";
+      ohDiffPane.style.display = same ? "none" : "block";
+    }
+    ohSame.onclick = () => setOhMode("same");
+    ohDiff.onclick = () => setOhMode("diff");
+
+    // Slot selection preview
+    function selectedSlots(){
+      const rows = Array.from(document.querySelectorAll("#slotRows tr"));
+      return rows
+        .filter(r => r.querySelector(".slotChk")?.checked)
+        .map(r => ({
+          time: r.children[1].textContent.trim(),
+          cap: r.children[2].textContent.trim(),
+          status: r.children[3].textContent.trim()
+        }));
+    }
+    function renderSlotPreview(){
+      const slots = selectedSlots();
+      previewSlots.innerHTML = slots.length
+        ? slots.map(s => `<span class="chip">${s.time} • cap ${s.cap} • ${s.status}</span>`).join("")
+        : "—";
+    }
+    document.querySelectorAll(".slotChk").forEach(c => c.addEventListener("change", renderSlotPreview));
+    document.getElementById("selectAllSlots").onclick = () => {
+      document.querySelectorAll(".slotChk").forEach(c => c.checked = true);
+      renderSlotPreview();
+    };
+    document.getElementById("clearSlots").onclick = () => {
+      document.querySelectorAll(".slotChk").forEach(c => c.checked = false);
+      renderSlotPreview();
+    };
+
+    // Apply button (lo-fi behaviour)
+    document.getElementById("applyBtn").onclick = () => {
+      const action = document.getElementById("slotAction").value;
+      const mode = document.getElementById("slotMode").value;
+      const scope = document.getElementById("slotScope").value;
+      const days = selectedDays();
+      const slots = selectedSlots();
+
+      alert(
+        `Applying: ${action}\nMode: ${mode}\nScope: ${scope}\nDays: ${days.length ? days.join(", ") : "—"}\nSelected slots: ${slots.length}`
+      );
+    };
+
+    // Init
+    renderDays();
+    renderSlotPreview();
+  </script>
+</body>
+</html>
