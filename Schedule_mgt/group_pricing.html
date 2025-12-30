@@ -1,239 +1,743 @@
-]<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Group Pricing – Refined Prototype</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Per-Group Pricing – Updated Prototype</title>
   <style>
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-      background: #0b0c10;
-      color: #f5f6ff;
+    :root{
+      --bg:#0b0c10;
+      --panel:#12131a;
+      --panel2:#0f1020;
+      --text:#f5f6ff;
+      --muted:#b8bbd0;
+      --border:rgba(255,255,255,.10);
+      --purple:#8000FF;
+      --shadow: 0 14px 40px rgba(0,0,0,.35);
+      --r:14px;
+      --r2:12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1000px 600px at 10% -10%, rgba(128,0,255,.25), transparent 60%),
+                  linear-gradient(180deg, #090a0f, #0b0c10 35%, #090a0f);
+      color:var(--text);
+    }
+    .wrap{max-width:980px; margin:0 auto; padding:28px 16px 60px;}
+    h1{margin:0 0 6px; font-size:20px;}
+    .sub{margin:0 0 20px; color:var(--muted); font-size:13px; line-height:1.4;}
+    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px;}
+    @media (max-width: 920px){ .grid{grid-template-columns:1fr;} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(128,0,255,.08), transparent 65%);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .title{margin:0; font-size:14px; font-weight:800;}
+    .small{margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.4;}
+    .tag{
+      font-size:11px; padding:6px 8px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .body{padding:14px;}
+    .row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; align-items:flex-start;}
+    .col{flex:1; min-width:220px;}
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px;}
+    input, select, textarea{
+      width:100%;
+      padding:10px 11px;
+      border-radius:var(--r2);
+      border:1px solid var(--border);
+      background: rgba(10,11,16,.55);
+      color: var(--text);
+      outline:none;
+    }
+    textarea{min-height:90px; resize:vertical;}
+    .hint{font-size:12px; color:var(--muted); margin-top:6px; line-height:1.4;}
+    .divider{height:1px; background:var(--border); margin:14px 0;}
+    .section{font-size:13px; font-weight:800; margin:0 0 10px;}
+    .toggle{
+      display:flex; gap:10px; align-items:center;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      border-radius:12px;
+      padding:10px 11px;
+    }
+    .toggle input{width:auto; margin:0;}
+    .toggle .tmain{font-weight:800; font-size:13px;}
+    .toggle .tmeta{font-size:12px; color:var(--muted); margin-top:2px;}
+    .toggle .text{display:flex; flex-direction:column; gap:2px;}
+    .box{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      border-radius:14px;
+      padding:12px;
     }
 
-    .wrap {
-      max-width: 960px;
-      margin: auto;
-      padding: 32px 16px 60px;
+    /* person type config list */
+    .pt-grid{display:grid; gap:10px;}
+    .pt-row{
+      display:grid;
+      grid-template-columns: 20px 1.1fr .9fr .8fr;
+      gap:10px;
+      align-items:center;
     }
+    @media (max-width: 720px){
+      .pt-row{grid-template-columns: 20px 1fr; gap:8px;}
+      .pt-row .mode, .pt-row .count {grid-column: 1 / -1;}
+    }
+    .pt-row .name{font-size:13px; font-weight:800;}
+    .pt-row .mode select{padding:9px 10px;}
+    .pt-row .count input{padding:9px 10px;}
+    .pt-row .muted{font-size:12px; color:var(--muted);}
 
-    h1 {
-      font-size: 20px;
-      margin-bottom: 4px;
+    /* Checkout preview */
+    .checkout{
+      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border:1px solid var(--border);
+      border-radius:var(--r);
+      overflow:hidden;
+      box-shadow: var(--shadow);
     }
-
-    .sub {
-      color: #b8bbd0;
-      font-size: 13px;
-      margin-bottom: 24px;
+    .chd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(37,211,102,.08), transparent 65%);
+      display:flex; justify-content:space-between; gap:10px; align-items:center;
     }
-
-    .card {
-      background: #12131a;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
+    .chd h2{margin:0; font-size:14px;}
+    .cbody{padding:14px;}
+    .pill{
+      display:inline-block;
+      font-size:11px;
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid rgba(128,0,255,.35);
+      background: rgba(128,0,255,.10);
+      color:#eeddff;
+      white-space:nowrap;
     }
-
-    .row {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+    .optList{display:grid; gap:10px;}
+    .opt{
+      border:1px solid var(--border);
+      background: rgba(10,11,16,.35);
+      border-radius:14px;
+      padding:12px;
+      display:flex; justify-content:space-between; gap:12px; align-items:flex-start;
     }
-
-    .col {
-      flex: 1;
-      min-width: 220px;
+    .opt .left{min-width:0;}
+    .opt .name{margin:0; font-weight:900; font-size:13px;}
+    .opt .desc{margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.35;}
+    .opt .right{
+      display:flex; flex-direction:column; gap:8px; align-items:flex-end;
+      min-width:120px;
     }
-
-    label {
-      display: block;
-      font-size: 12px;
-      color: #b8bbd0;
-      margin-bottom: 6px;
+    .stepper{
+      display:flex; align-items:center; gap:8px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.02);
+      border-radius:999px;
+      padding:6px 8px;
     }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.12);
-      background: #0b0c10;
-      color: #f5f6ff;
+    .stepper button{
+      width:26px; height:26px; border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      cursor:pointer;
+      font-weight:900;
+      line-height:1;
     }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
+    .stepper span{
+      font-family:var(--mono);
+      font-size:12px;
+      min-width:18px;
+      text-align:center;
+      display:inline-block;
     }
-
-    .hint {
-      font-size: 12px;
-      color: #9ca0c3;
-      margin-top: 6px;
-      line-height: 1.4;
+    .metaRow{
+      margin-top:12px;
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:space-between;
+      color:var(--muted); font-size:12px;
     }
-
-    .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    .checkout {
-      background: #0f1020;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 14px;
-      padding: 16px;
-    }
-
-    .checkout-title {
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-
-    .checkout-desc {
-      font-size: 13px;
-      color: #b8bbd0;
-    }
-
-    .pill {
-      display: inline-block;
-      margin-top: 10px;
-      font-size: 12px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(128,0,255,.15);
-      color: #e6d9ff;
-    }
+    .mono{font-family:var(--mono);}
   </style>
 </head>
 <body>
+  <div class="wrap">
+    <h1>Per-Group Pricing – Configuration (Updated)</h1>
+    <p class="sub">
+      Group pricing is configured as a <strong>unit</strong> (Group / Family / Vehicle). Checkout labels are <strong>system-generated</strong>.
+      Any eligibility constraints (age, height, etc.) should be communicated in the description.
+    </p>
 
-<div class="wrap">
-  <h1>Group Pricing Configuration</h1>
-  <div class="sub">
-    Configure how this experience is sold when pricing is applied per group.
-  </div>
+    <div class="grid">
+      <!-- CONFIG -->
+      <div class="card">
+        <div class="hd">
+          <div>
+            <p class="title">Configuration</p>
+            <p class="small">Group type controls which questions appear. Person types are optional metadata reused across per-person & per-group pricing.</p>
+          </div>
+          <span class="tag">Per Group</span>
+        </div>
 
-  <!-- CONFIG CARD -->
-  <div class="card">
-    <div class="section-title">Group type</div>
+        <div class="body">
+          <div class="row">
+            <div class="col">
+              <label>Group type</label>
+              <select id="groupType">
+                <option value="person_based" selected>Person-based group</option>
+                <option value="family">Family</option>
+                <option value="vehicle">Vehicle</option>
+              </select>
+              <div class="hint">This determines the group unit shown at checkout.</div>
+            </div>
+          </div>
 
-    <div class="row">
-      <div class="col">
-        <label>What does one unit represent?</label>
-        <select id="groupType" onchange="renderFields()">
-          <option value="person">Person-based group</option>
-          <option value="family">Family</option>
-          <option value="vehicle">Vehicle</option>
-        </select>
+          <div id="dynamicFields"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div class="col">
+              <label>Optional description (shown at checkout)</label>
+              <textarea id="descInput" placeholder="Add any eligibility notes or constraints guests should know (e.g., ages, height, ID required)."></textarea>
+              <div class="hint">No structured enforcement in V1. Use this field to communicate constraints.</div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Dynamic fields -->
-    <div id="dynamicFields"></div>
-
-    <div class="row">
-      <div class="col">
-        <label>Optional description (shown at checkout)</label>
-        <textarea placeholder="Add any age limits, eligibility notes, or constraints guests should know."></textarea>
-        <div class="hint">
-          Use this to explain conditions that apply to the group selection.
+      <!-- CHECKOUT -->
+      <div class="checkout">
+        <div class="chd">
+          <h2>Checkout preview</h2>
+          <span class="pill">System-generated</span>
+        </div>
+        <div class="cbody">
+          <div class="optList" id="checkoutOptions"></div>
+          <div class="metaRow">
+            <span id="previewHint"></span>
+            <span class="mono" id="previewMeta"></span>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CHECKOUT PREVIEW -->
-  <div class="card">
-    <div class="section-title">Checkout preview</div>
-
-    <div class="checkout" id="checkoutPreview">
-      <div class="checkout-title">Group of 1–4</div>
-      <div class="checkout-desc">
-        Valid for participants aged 12+
-      </div>
-      <span class="pill">System-generated label</span>
-    </div>
-  </div>
-</div>
-
 <script>
-  function renderFields() {
-    const type = document.getElementById('groupType').value;
-    const container = document.getElementById('dynamicFields');
-    const checkout = document.getElementById('checkoutPreview');
+  // Person types (system-defined + reused)
+  const PERSON_TYPES = ["Adult", "Child", "Infant", "Senior", "Other"];
 
-    if (type === 'person') {
-      container.innerHTML = `
-        <div class="section-title">Group size</div>
+  // Elements
+  const groupTypeEl = document.getElementById("groupType");
+  const dynamicFieldsEl = document.getElementById("dynamicFields");
+  const descInput = document.getElementById("descInput");
+  const checkoutOptions = document.getElementById("checkoutOptions");
+  const previewHint = document.getElementById("previewHint");
+  const previewMeta = document.getElementById("previewMeta");
+
+  // State
+  const state = {
+    groupType: "person_based",
+    // person-based group
+    minPeople: 1,
+    maxPeople: 4,
+    // family composition toggle + per-type config
+    familyCompositionEnabled: false,
+    family: initTypeConfig(), // {Adult:{enabled, mode, count}, ...}
+    // vehicle
+    minPassengers: 1,
+    maxPassengers: 6,
+    // eligibility person types (optional) for person_based and vehicle
+    eligibilityEnabled: false,
+    eligibility: initEligibility(), // {Adult:true/false...}
+    description: ""
+  };
+
+  function initTypeConfig(){
+    const cfg = {};
+    PERSON_TYPES.forEach(t => cfg[t] = { enabled:false, mode:"exact", count:0 });
+    return cfg;
+  }
+  function initEligibility(){
+    const cfg = {};
+    PERSON_TYPES.forEach(t => cfg[t] = false);
+    return cfg;
+  }
+
+  // Render dynamic config fields based on group type
+  function renderDynamicFields(){
+    const gt = state.groupType;
+
+    if(gt === "person_based"){
+      dynamicFieldsEl.innerHTML = `
+        <p class="section">Group size</p>
         <div class="row">
           <div class="col">
             <label>Minimum people</label>
-            <input type="number" value="1" min="1" />
+            <input id="minPeople" type="number" min="1" value="${state.minPeople}" />
           </div>
           <div class="col">
             <label>Maximum people</label>
-            <input type="number" value="4" min="1" />
+            <input id="maxPeople" type="number" min="1" value="${state.maxPeople}" />
           </div>
         </div>
-      `;
-      checkout.innerHTML = `
-        <div class="checkout-title">Group of 1–4</div>
-        <div class="checkout-desc">One ticket covers a group within this size range.</div>
-        <span class="pill">Auto-generated</span>
-      `;
-    }
 
-    if (type === 'family') {
-      container.innerHTML = `
-        <div class="section-title">Family composition</div>
-        <div class="row">
-          <div class="col">
-            <label>Adults included</label>
-            <input type="number" value="2" min="1" />
+        <div class="box">
+          <div class="toggle">
+            <input id="eligibilityToggle" type="checkbox" ${state.eligibilityEnabled ? "checked" : ""}/>
+            <div class="text">
+              <div class="tmain">Add allowed person types (optional)</div>
+              <div class="tmeta">This is metadata reused across pricing models. Not mandatory.</div>
+            </div>
           </div>
-          <div class="col">
-            <label>Children included</label>
-            <input type="number" value="2" min="0" />
-          </div>
+          <div id="eligibilityArea" style="margin-top:12px; ${state.eligibilityEnabled ? "" : "display:none;"}"></div>
         </div>
       `;
-      checkout.innerHTML = `
-        <div class="checkout-title">Family</div>
-        <div class="checkout-desc">Includes 2 adults and 2 children.</div>
-        <span class="pill">Auto-generated</span>
-      `;
+      wireCommonInputs();
+      renderEligibilityArea();
+      return;
     }
 
-    if (type === 'vehicle') {
-      container.innerHTML = `
-        <div class="section-title">Vehicle capacity</div>
+    if(gt === "family"){
+      dynamicFieldsEl.innerHTML = `
+        <p class="section">Family composition</p>
+
+        <div class="box">
+          <div class="toggle">
+            <input id="familyToggle" type="checkbox" ${state.familyCompositionEnabled ? "checked" : ""}/>
+            <div class="text">
+              <div class="tmain">Specify composition (optional)</div>
+              <div class="tmeta">Choose person types and define exact or maximum counts. Pricing remains per family unit.</div>
+            </div>
+          </div>
+          <div id="familyArea" style="margin-top:12px; ${state.familyCompositionEnabled ? "" : "display:none;"}"></div>
+        </div>
+      `;
+      wireCommonInputs();
+      renderFamilyArea();
+      return;
+    }
+
+    if(gt === "vehicle"){
+      dynamicFieldsEl.innerHTML = `
+        <p class="section">Vehicle capacity</p>
         <div class="row">
           <div class="col">
             <label>Minimum passengers</label>
-            <input type="number" value="1" min="1" />
+            <input id="minPassengers" type="number" min="1" value="${state.minPassengers}" />
           </div>
           <div class="col">
             <label>Maximum passengers</label>
-            <input type="number" value="6" min="1" />
+            <input id="maxPassengers" type="number" min="1" value="${state.maxPassengers}" />
           </div>
         </div>
+
+        <div class="box">
+          <div class="toggle">
+            <input id="eligibilityToggle" type="checkbox" ${state.eligibilityEnabled ? "checked" : ""}/>
+            <div class="text">
+              <div class="tmain">Add allowed person types (optional)</div>
+              <div class="tmeta">Helps communicate who can be included in a vehicle. Not enforced in V1.</div>
+            </div>
+          </div>
+          <div id="eligibilityArea" style="margin-top:12px; ${state.eligibilityEnabled ? "" : "display:none;"}"></div>
+        </div>
       `;
-      checkout.innerHTML = `
-        <div class="checkout-title">Vehicle</div>
-        <div class="checkout-desc">Each vehicle can accommodate up to 6 passengers.</div>
-        <span class="pill">Auto-generated</span>
-      `;
+      wireCommonInputs();
+      renderEligibilityArea();
+      return;
     }
   }
 
-  renderFields();
-</script>
+  function wireCommonInputs(){
+    // Person-based min/max
+    const minPeople = document.getElementById("minPeople");
+    const maxPeople = document.getElementById("maxPeople");
+    if(minPeople && maxPeople){
+      minPeople.addEventListener("input", () => {
+        state.minPeople = clampInt(minPeople.value, 1);
+        clampRanges("people");
+        updatePreview();
+      });
+      maxPeople.addEventListener("input", () => {
+        state.maxPeople = clampInt(maxPeople.value, 1);
+        clampRanges("people");
+        updatePreview();
+      });
+    }
 
+    // Vehicle min/max
+    const minPassengers = document.getElementById("minPassengers");
+    const maxPassengers = document.getElementById("maxPassengers");
+    if(minPassengers && maxPassengers){
+      minPassengers.addEventListener("input", () => {
+        state.minPassengers = clampInt(minPassengers.value, 1);
+        clampRanges("passengers");
+        updatePreview();
+      });
+      maxPassengers.addEventListener("input", () => {
+        state.maxPassengers = clampInt(maxPassengers.value, 1);
+        clampRanges("passengers");
+        updatePreview();
+      });
+    }
+
+    // Eligibility toggle (person-based + vehicle)
+    const eligibilityToggle = document.getElementById("eligibilityToggle");
+    if(eligibilityToggle){
+      eligibilityToggle.addEventListener("change", () => {
+        state.eligibilityEnabled = eligibilityToggle.checked;
+        const area = document.getElementById("eligibilityArea");
+        area.style.display = state.eligibilityEnabled ? "" : "none";
+        if(!state.eligibilityEnabled){
+          // keep selections but it's fine; leaving them preserved intentionally
+        }
+        renderEligibilityArea();
+        updatePreview();
+      });
+    }
+
+    // Family toggle
+    const familyToggle = document.getElementById("familyToggle");
+    if(familyToggle){
+      familyToggle.addEventListener("change", () => {
+        state.familyCompositionEnabled = familyToggle.checked;
+        const area = document.getElementById("familyArea");
+        area.style.display = state.familyCompositionEnabled ? "" : "none";
+        renderFamilyArea();
+        updatePreview();
+      });
+    }
+  }
+
+  function renderEligibilityArea(){
+    const area = document.getElementById("eligibilityArea");
+    if(!area) return;
+
+    area.innerHTML = `
+      <div class="pt-grid">
+        ${PERSON_TYPES.map(t => `
+          <div class="pt-row">
+            <input type="checkbox" data-pt="${t}" ${state.eligibility[t] ? "checked" : ""}/>
+            <div class="name">${t}</div>
+            <div class="muted mode">Allowed</div>
+            <div class="muted count"> </div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        Optional: selecting person types helps communicate eligibility at checkout. Constraints still belong in the description.
+      </div>
+    `;
+
+    area.querySelectorAll('input[type="checkbox"][data-pt]').forEach(cb => {
+      cb.addEventListener("change", () => {
+        const t = cb.getAttribute("data-pt");
+        state.eligibility[t] = cb.checked;
+        updatePreview();
+      });
+    });
+  }
+
+  function renderFamilyArea(){
+    const area = document.getElementById("familyArea");
+    if(!area) return;
+
+    area.innerHTML = `
+      <div class="pt-grid">
+        ${PERSON_TYPES.map(t => {
+          const cfg = state.family[t];
+          return `
+            <div class="pt-row">
+              <input type="checkbox" data-fpt="${t}" ${cfg.enabled ? "checked" : ""}/>
+              <div class="name">${t}</div>
+
+              <div class="mode">
+                <label style="margin:0 0 6px;">Count type</label>
+                <select data-mode="${t}" ${cfg.enabled ? "" : "disabled"}>
+                  <option value="exact" ${cfg.mode === "exact" ? "selected" : ""}>Exact</option>
+                  <option value="upto" ${cfg.mode === "upto" ? "selected" : ""}>Up to</option>
+                </select>
+              </div>
+
+              <div class="count">
+                <label style="margin:0 0 6px;">Count</label>
+                <input data-count="${t}" type="number" min="0" value="${cfg.count}" ${cfg.enabled ? "" : "disabled"} />
+              </div>
+            </div>
+          `;
+        }).join("")}
+      </div>
+      <div class="hint" style="margin-top:10px;">
+        Composition is optional. Pricing remains <strong>per family unit</strong> regardless of composition.
+      </div>
+    `;
+
+    area.querySelectorAll('input[type="checkbox"][data-fpt]').forEach(cb => {
+      cb.addEventListener("change", () => {
+        const t = cb.getAttribute("data-fpt");
+        state.family[t].enabled = cb.checked;
+        // enable/disable related inputs
+        const modeEl = area.querySelector(`select[data-mode="${t}"]`);
+        const countEl = area.querySelector(`input[data-count="${t}"]`);
+        modeEl.disabled = !cb.checked;
+        countEl.disabled = !cb.checked;
+        updatePreview();
+      });
+    });
+
+    area.querySelectorAll('select[data-mode]').forEach(sel => {
+      sel.addEventListener("change", () => {
+        const t = sel.getAttribute("data-mode");
+        state.family[t].mode = sel.value;
+        updatePreview();
+      });
+    });
+
+    area.querySelectorAll('input[data-count]').forEach(inp => {
+      inp.addEventListener("input", () => {
+        const t = inp.getAttribute("data-count");
+        state.family[t].count = clampInt(inp.value, 0);
+        updatePreview();
+      });
+    });
+  }
+
+  // Preview rendering
+  function updatePreview(){
+    state.description = descInput.value.trim();
+
+    checkoutOptions.innerHTML = "";
+    const gt = state.groupType;
+
+    if(gt === "person_based"){
+      clampRanges("people");
+      const min = state.minPeople, max = state.maxPeople;
+
+      for(let n=min; n<=max; n++){
+        checkoutOptions.appendChild(renderOption({
+          name: `Group of ${n}`,
+          desc: buildDescLine(gt),
+          mode: "stepper"
+        }));
+      }
+      previewHint.textContent = "Guests select a group size as separate options.";
+      previewMeta.textContent = `Range: ${min}–${max} people`;
+      return;
+    }
+
+    if(gt === "family"){
+      checkoutOptions.appendChild(renderOption({
+        name: "Family",
+        desc: buildDescLine(gt),
+        mode: "quantity" // quantity = number of families
+      }));
+      previewHint.textContent = "Guests select number of families.";
+      previewMeta.textContent = state.familyCompositionEnabled ? "Composition: configured" : "Composition: not specified";
+      return;
+    }
+
+    if(gt === "vehicle"){
+      clampRanges("passengers");
+      const min = state.minPassengers, max = state.maxPassengers;
+
+      checkoutOptions.appendChild(renderOption({
+        name: "Vehicle",
+        desc: buildDescLine(gt),
+        mode: "quantity" // quantity = number of vehicles
+      }));
+      previewHint.textContent = "Guests select number of vehicles.";
+      previewMeta.textContent = `Capacity: ${min}–${max} passengers`;
+      return;
+    }
+  }
+
+  function buildDescLine(gt){
+    const parts = [];
+
+    // type-specific summary
+    if(gt === "family"){
+      if(state.familyCompositionEnabled){
+        const comp = summarizeFamilyComposition();
+        if(comp) parts.push(comp);
+      }
+    }
+    if(gt === "vehicle"){
+      parts.push(`Capacity: ${state.minPassengers}–${state.maxPassengers} passengers`);
+    }
+
+    // optional eligibility (person-based & vehicle; could be used for others later)
+    if((gt === "person_based" || gt === "vehicle") && state.eligibilityEnabled){
+      const allowed = summarizeEligibility();
+      if(allowed) parts.push(`Allowed: ${allowed}`);
+    }
+
+    // description (free text)
+    if(state.description){
+      parts.push(state.description);
+    } else if(parts.length === 0){
+      parts.push("Optional description can explain constraints (age/height/ID) and eligibility details.");
+    }
+
+    return parts.join(" • ");
+  }
+
+  function summarizeEligibility(){
+    const chosen = PERSON_TYPES.filter(t => state.eligibility[t]);
+    if(chosen.length === 0) return "";
+    return chosen.join(", ");
+  }
+
+  function summarizeFamilyComposition(){
+    const entries = [];
+    PERSON_TYPES.forEach(t => {
+      const cfg = state.family[t];
+      if(cfg.enabled){
+        const n = Math.max(0, parseInt(cfg.count || 0, 10));
+        const label = cfg.mode === "upto" ? `up to ${n} ${t.toLowerCase()}(s)` : `${n} ${t.toLowerCase()}(s)`;
+        entries.push(label);
+      }
+    });
+    if(entries.length === 0) return "";
+    // Make it read nicer:
+    return entries.join(", ");
+  }
+
+  function renderOption({name, desc, mode}){
+    const wrap = document.createElement("div");
+    wrap.className = "opt";
+
+    const left = document.createElement("div");
+    left.className = "left";
+    left.innerHTML = `<p class="name">${escapeHtml(name)}</p><p class="desc">${escapeHtml(desc)}</p>`;
+
+    const right = document.createElement("div");
+    right.className = "right";
+
+    if(mode === "stepper"){
+      const step = document.createElement("div");
+      step.className = "stepper";
+      step.innerHTML = `<button type="button">–</button><span>0</span><button type="button">+</button>`;
+      const [minus, val, plus] = step.children;
+
+      minus.addEventListener("click", () => {
+        val.textContent = String(Math.max(0, parseInt(val.textContent,10)-1));
+      });
+      plus.addEventListener("click", () => {
+        val.textContent = String(Math.min(99, parseInt(val.textContent,10)+1));
+      });
+
+      right.appendChild(step);
+      const price = document.createElement("div");
+      price.className = "mono";
+      price.style.fontSize = "12px";
+      price.style.color = "var(--muted)";
+      price.textContent = "₹ — / unit";
+      right.appendChild(price);
+    } else {
+      // quantity selector (families/vehicles)
+      const sel = document.createElement("select");
+      sel.style.padding = "9px 10px";
+      sel.className = "input";
+      for(let i=0;i<=10;i++){
+        const o = document.createElement("option");
+        o.value = String(i);
+        o.textContent = String(i);
+        sel.appendChild(o);
+      }
+      right.appendChild(sel);
+
+      const price = document.createElement("div");
+      price.className = "mono";
+      price.style.fontSize = "12px";
+      price.style.color = "var(--muted)";
+      price.textContent = "₹ — / unit";
+      right.appendChild(price);
+    }
+
+    wrap.appendChild(left);
+    wrap.appendChild(right);
+    return wrap;
+  }
+
+  // Utilities
+  function clampInt(v, min){
+    const n = parseInt(v, 10);
+    if(Number.isNaN(n)) return min;
+    return Math.max(min, n);
+  }
+  function clampRanges(kind){
+    if(kind === "people"){
+      state.minPeople = clampInt(state.minPeople, 1);
+      state.maxPeople = clampInt(state.maxPeople, 1);
+      if(state.minPeople > state.maxPeople) state.maxPeople = state.minPeople;
+      // reflect into DOM if present
+      const minEl = document.getElementById("minPeople");
+      const maxEl = document.getElementById("maxPeople");
+      if(minEl) minEl.value = state.minPeople;
+      if(maxEl) maxEl.value = state.maxPeople;
+    }
+    if(kind === "passengers"){
+      state.minPassengers = clampInt(state.minPassengers, 1);
+      state.maxPassengers = clampInt(state.maxPassengers, 1);
+      if(state.minPassengers > state.maxPassengers) state.maxPassengers = state.minPassengers;
+      const minEl = document.getElementById("minPassengers");
+      const maxEl = document.getElementById("maxPassengers");
+      if(minEl) minEl.value = state.minPassengers;
+      if(maxEl) maxEl.value = state.maxPassengers;
+    }
+  }
+  function escapeHtml(str){
+    return String(str)
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+
+  // Event wiring
+  groupTypeEl.addEventListener("change", () => {
+    state.groupType = groupTypeEl.value;
+
+    // Sensible defaults per type
+    if(state.groupType === "person_based"){
+      // keep existing values
+    } else if(state.groupType === "family"){
+      // keep composition toggle; eligibility toggle not used here
+      state.eligibilityEnabled = false;
+    } else if(state.groupType === "vehicle"){
+      // keep vehicle values
+    }
+
+    renderDynamicFields();
+    updatePreview();
+  });
+
+  descInput.addEventListener("input", updatePreview);
+
+  // Init
+  renderDynamicFields();
+  updatePreview();
+</script>
 </body>
 </html>
