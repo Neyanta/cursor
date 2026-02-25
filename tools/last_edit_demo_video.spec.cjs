@@ -1,5 +1,5 @@
 const path = require("node:path");
-const { test } = require("@playwright/test");
+const { test } = require("playwright/test");
 
 test.use({
   video: "on",
